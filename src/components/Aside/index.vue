@@ -10,8 +10,8 @@ const current = ref<playList>()
 
 const router = useRouter()
 const {getPlayListDetailFn} = usePlayList()
-const test = (item: playList) => {
-  router.push('/mySongList')
+const itemClick = (item: playList) => {
+  router.push('/song-list')
   console.log('item', item)
   current.value = item
   store.updateCurrentItem(current.value)
@@ -24,7 +24,7 @@ const test = (item: playList) => {
   <div class="aside">
     <div class="play-container">
       <div
-          @click="test(item)"
+          @click="itemClick(item)"
           v-for="(item, i) in store.userPlayList"
           :key="item.id"
           :class="['play-list-item', {current: current?.id ? current.id === item.id : i === 0}]"

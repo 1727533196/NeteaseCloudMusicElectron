@@ -75,43 +75,35 @@ watch(() => props.songs, (val) => {
 <style lang="less" scoped>
 @import './scroll';
 .container {
-
   margin-top: 20px;
   max-height: 363px;
   overflow-y: auto;
-
   .empty {
     width: 5%;
   }
-
   .handle {
     width: 4%;
     margin-right: 5%;
   }
-
   .title {
     width: 40%;
     color: @text;
     margin-right: 40% - 38px;
     @textOverflow();
   }
-
   .singer {
     width: 20%;
     @textOverflow();
     margin-right: 20% - 19px;
   }
-
   .album {
     width: 20%;
     @textOverflow();
     margin-right: 20% - 19px;
   }
-
   .time {
     width: 10%;
   }
-
   .title-container {
     padding: 0 25px;
     display: flex;
@@ -126,8 +118,10 @@ watch(() => props.songs, (val) => {
     .title-item {
       text-align: left;
     }
+    .title-item.title {
+      color: @darkText;
+    }
   }
-
   .list {
     padding: 0 25px;
     justify-content: space-around;
@@ -136,7 +130,6 @@ watch(() => props.songs, (val) => {
     height: 35px;
     color: @darkText;
     align-items: center;
-
     .item {
       text-align: left;
     }

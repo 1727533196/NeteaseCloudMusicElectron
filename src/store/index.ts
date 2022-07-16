@@ -34,6 +34,7 @@ export const useUserInfo = defineStore('userInfoId', {
       this.userLikeIds = ids
     },
     updateCurrentItem(val: playList) {
+      val.name = val.specialType === 5 ? '我喜欢的歌单' : val.name
       this.currentItem = val
     }
   }
