@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from "./router";
 import {createPinia} from "pinia";
 import './assets/iconfont/iconfont.css'
+import ElementIcon from "@/plugins/element-icon";
 
 const pinia = createPinia()
 
@@ -12,4 +13,5 @@ createApp(App)
     .use(pinia)
     .use(router)
     .use(ElementPlus, { zIndex: 3000 })
+    .use(ElementIcon)
     .mount('#app')

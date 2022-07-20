@@ -27,6 +27,7 @@ const playHandler = (item: getMusicDetailData, index: number) => {
 const isLike = (item: getMusicDetailData) => {
   return store.userLikeIds.includes(item.id)
 }
+console.log(props)
 //  :style="{color: item.al.id === props.songs.al?.id && 'red'}"
 </script>
 
