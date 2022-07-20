@@ -12,6 +12,7 @@ export interface State {
   current: 'progress' | 'volume'
   isMute: boolean
   currentTime: number // 当前播放到时间
+  stop: boolean
 }
 export default (audio: Ref<HTMLAudioElement>,
                 plan: Ref<InstanceType<typeof CurrentTime>>,
@@ -28,6 +29,7 @@ export default (audio: Ref<HTMLAudioElement>,
     current: 'progress',
     isMute: false,
     currentTime: 0,
+    stop: false,
   })
   let mouseIsEnter = false;
   let timer: NodeJS.Timeout
@@ -40,7 +42,7 @@ export default (audio: Ref<HTMLAudioElement>,
     state.isMute = volume === 0
   })
   const timeupdate = () => {
-    if(isDown.value){
+    if(isDown.value || state.stop){
       return
     }
     state.currentTime = audio.value!.currentTime
@@ -50,12 +52,12 @@ export default (audio: Ref<HTMLAudioElement>,
     // state.height = (audio.value!.volume / volume.value!.offsetHeight) * 100
   }
   const volumeHandler = (target: boolean) => {
-    const volume = Number(localStorage.getItem('volume') || 1)
+    const volume = Number(sessionStorage.getItem('volume') || localStorage.getItem('volume') || 1)
     state.isMute = target
     console.log('volume', volume, target)
     state.height = target ? 0 : volume * 100
-    audio.value!.volume = target ? 0 : 1
-    localStorage.setItem('volume', String(audio.value!.volume))
+    audio.value!.volume = target ? 0 : volume
+    sessionStorage.setItem('ectype_volume', String(audio.value!.volume))
   }
   const mouseenterHandler = (target: 'progress' | 'volume' = 'progress') => {
     state[target] = true
@@ -78,6 +80,7 @@ export default (audio: Ref<HTMLAudioElement>,
       clearTimeout(timer)
       timer = setTimeout(() => {
         localStorage.setItem('volume', String(audio.value!.volume))
+        sessionStorage.setItem('ectype_volume', String(audio.value!.volume))
         store.volume = audio.value!.volume
       }, 50)
     }
@@ -109,16 +112,16 @@ export default (audio: Ref<HTMLAudioElement>,
       const height = Math.min((volume.value!.volume.getBoundingClientRect().bottom - e.clientY) / offsetHeight * 100, 100)
       state.height = height < 0 ? 0 : height
       audio.value!.volume = state.height / 100
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        localStorage.setItem('volume', String(audio.value!.volume))
-        store.volume = audio.value!.volume
-      }, 50)
     }
   })
   document.addEventListener('mouseup', (e) => {
     if(!isDown.value) {
       return
+    }
+    if(state.current === 'volume') {
+      localStorage.setItem('volume', String(audio.value!.volume))
+      sessionStorage.setItem('ectype_volume', String(audio.value!.volume))
+      store.volume = audio.value!.volume
     }
     state.volume = mouseIsEnter
     mouseIsEnter = false

@@ -14,6 +14,7 @@ export const playListState = reactive<State>({
 
 export default () => {
   const store = useUserInfo()
+  // 获取用户指定歌单列表
   const getPlayListDetailFn = async (id: number) => {
     if(!store.profile.userId) {
       const {playlist} = await getPlayListDetail(id)

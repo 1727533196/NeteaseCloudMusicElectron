@@ -6,6 +6,10 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Aside: typeof import('./src/components/Aside/index.vue')['default']
+    BaseAside: typeof import('./src/components/BaseAside/index.vue')['default']
+    BaseBottom: typeof import('./src/components/BaseBottom/index.vue')['default']
+    BaseHeader: typeof import('./src/components/BaseHeader/index.vue')['default']
+    BaseList: typeof import('./src/components/SongList/index.vue')['default']
     Bottom: typeof import('./src/components/Bottom/index.vue')['default']
     CurrentTime: typeof import('./src/components/MusicPlayer/compoents/CurrentTime.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -18,6 +22,8 @@ declare module '@vue/runtime-core' {
     MusicPlayer: typeof import('./src/components/MusicPlayer/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SongInfo: typeof import('./src/components/SongInfo/index.vue')['default']
+    SongList: typeof import('./src/components/SongList/index.vue')['default']
     Volume: typeof import('./src/components/MusicPlayer/compoents/Volume.vue')['default']
     Volume1: typeof import('./src/components/MusicPlayer/compoents/Volume1.vue')['default']
   }

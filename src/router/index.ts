@@ -12,9 +12,9 @@ const router = createRouter({
       component: () => import('@/views/Test/test2.vue')
     },
     {
-      path: '/song-list',
-      name: 'songList',
-      component: () => import('@/views/MySongList/index.vue')
+      path: '/play-list',
+      name: 'playList',
+      component: () => import('@/views/PlayList/index.vue')
     }
   ]
 })

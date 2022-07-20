@@ -1,6 +1,6 @@
 import {likeMusicApi} from "@/api/musicList";
 import {ElMessage} from "element-plus";
-import usePlayList from "@/components/Aside/usePlayList";
+import usePlayList from "@/layout/BaseAside/usePlayList";
 import {useUserInfo} from "@/store";
 
 export default () => {

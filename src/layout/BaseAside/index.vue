@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {useUserInfo} from "@/store";
-import usePlayList from "@/components/Aside/usePlayList";
+import usePlayList from "./usePlayList";
 import {playList} from "@/api/musicList";
 import {useRouter} from "vue-router";
 
@@ -11,7 +11,7 @@ const current = ref<playList>()
 const router = useRouter()
 const {getPlayListDetailFn} = usePlayList()
 const itemClick = (item: playList) => {
-  router.push('/song-list')
+  router.push('/play-list')
   console.log('item', item)
   current.value = item
   store.updateCurrentItem(current.value)

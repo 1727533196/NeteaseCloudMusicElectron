@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, ref, defineExpose, Ref, UnwrapRef, computed} from "vue";
+import {defineProps, ref, defineExpose, Ref, UnwrapRef, computed, onMounted, nextTick} from "vue";
 import {useUserInfo} from "@/store";
 import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
 import {getMusicDetailData} from "@/api/musicList";
@@ -10,19 +10,22 @@ import useMusic from "@/components/MusicPlayer/useMusic";
 
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
+type userAudio =   {
+  play: (lengthen?: boolean) => Promise<undefined>,
+  pause: (isNeed?: boolean, lengthen?: boolean) => Promise<undefined>
+} & Omit<HTMLAudioElement, 'pause' | 'play'>
 
 export interface MusicPlayerInstanceType {
-  play: () => void,
-  orderStatusVal: UnwrapRef<typeof orderStatusVal>,
-  audio: Ref<HTMLAudioElement | undefined>
+  orderStatusVal: UnwrapRef<typeof orderStatusVal>
+  audio: UnwrapRef<userAudio>
+  isPlay: UnwrapRef<boolean>
+  reset: (val: boolean) => void
 }
-
 interface Props {
   src: string
   ids: number[]
   songs: getMusicDetailData
 }
-
 const {likeMusic} = useMusic()
 const store = useUserInfo()
 const props = defineProps<Props>()
@@ -30,44 +33,79 @@ const emit = defineEmits(['playEnd', 'cutSong'])
 const isPlay = ref(false)
 // 0列表循环  1单曲循环  2随机播放  3顺序播放
 const orderStatusVal = ref<0 | 1 | 2 | 3>(0)
-const audio = ref<HTMLAudioElement>()
+const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>()
 const volume = ref<InstanceType<typeof Volume>>()
 
+let originPlay: HTMLMediaElement["play"]
+let originPause: HTMLMediaElement["pause"]
+onMounted(() => {
+  originPlay = audio.value!.play as HTMLMediaElement["play"]
+  originPause = audio.value!.pause as HTMLMediaElement["pause"]
+  // 播放，音量过渡提高
+  audio.value!.play = (lengthen: boolean = false) => {
+    let volume = store.volume
+    audio.value!.volume = 0
+    originPlay.call(audio.value)
+    isPlay.value = true
+    mouseState.stop = false
+    return transitionVolume(volume, lengthen)
+  }
+  // 音量过渡减少为0，然后暂停
+  audio.value!.pause = (isNeed: boolean = true, lengthen: boolean = false) => {
+    let volume = store.volume
+    isNeed && (isPlay.value = false)
+    return transitionVolume(volume, false, lengthen)
+  }
+})
 console.log('store', store)
 let timer: NodeJS.Timer
-function transitionVolume(volume: number, target: boolean = true) {
+// 当过渡完成时会返回Promise
+function transitionVolume(volume: number, target: boolean = true, lengthen: boolean = false): Promise<undefined> {
   clearInterval(timer)
-  if(target) {
+  const playVolume = lengthen ? 40 : 15
+  const pauseVolume = lengthen ? 20 : 10
+  return new Promise((resolve) => {
+    if(target) {
+      timer = setInterval(() => {
+        audio.value!.volume = Math.min(audio.value!.volume + volume / playVolume, volume)
+        if (audio.value!.volume >= volume) {
+          resolve(undefined)
+          clearInterval(timer)
+        }
+      }, 50)
+      return
+    }
     timer = setInterval(() => {
-      audio.value!.volume = Math.min(audio.value!.volume + volume / 10, volume)
-      if (audio.value!.volume >= volume) {
+      audio.value!.volume = Math.max(audio.value!.volume - volume / pauseVolume, 0)
+      if (audio.value!.volume <= 0) {
         clearInterval(timer)
+        originPause.call(audio.value)
+        audio.value!.volume = volume
+        resolve(undefined)
       }
     }, 50)
-    return
-  }
-  timer = setInterval(() => {
-    audio.value!.volume = Math.max(audio.value!.volume - volume / 10, 0)
-    if (audio.value!.volume <= 0) {
-      clearInterval(timer)
-      audio.value?.pause()
-      audio.value!.volume = volume
-    }
-  }, 50)
+  })
 }
+const {
+  mouseleaveHandler,
+  mouseenterHandler,
+  mousedownHandler,
+  timeupdate,
+  circleDown,
+  volumeHandler,
+  volumechange,
+  mouseupHandler,
+  state: mouseState,
+} = useMouseSlide(<Ref<HTMLAudioElement>>audio, plan, volume)
 
-const play = () => {
-  let volume = store.volume
-  audio.value!.volume = 0
-  transitionVolume(volume)
-  audio.value?.play()
-  isPlay.value = true
-}
-const pause = () => {
-  let volume = store.volume
-  transitionVolume(volume, false)
-  isPlay.value = false
+const reset = (val: boolean) => {
+  mouseState.width = 0
+  mouseState.currentTime = 0
+  isPlay.value = val
+  // 这里需要停止timeupdate的事件监视，因为在暂停音乐时会过渡结束（就相当于还是在播放一段时间），
+  //  这样会导致进度条进度重置不及时
+  mouseState.stop = true  // 在每次play方法时都会重置stop值
 }
 const end = () => {
   emit('playEnd')
@@ -82,24 +120,15 @@ const id = computed(() => {
   return props.songs.id
 })
 
-const {
-  mouseleaveHandler,
-  mouseenterHandler,
-  mousedownHandler,
-  timeupdate,
-  circleDown,
-  volumeHandler,
-  volumechange,
-  mouseupHandler,
-  state: mouseState,
-} = useMouseSlide(<Ref<HTMLAudioElement>>audio, plan, volume)
+
 
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose({
   audio,
-  play,
-  orderStatusVal: orderStatusVal,
+  orderStatusVal,
+  isPlay,
+  reset,
 })
 </script>
 
@@ -134,8 +163,8 @@ defineExpose({
       <div class="cut-container">
         <i @click="setOrderHandler" :class="['iconfont', orderStatus[orderStatusVal]]"></i>
         <i @click="emit('cutSong', false)" class="iconfont cut icon-shangyishou"></i>
-        <i v-show="isPlay" @click="pause" class="iconfont operation icon-Pause"></i>
-        <i v-show="!isPlay" @click="play" class="iconfont operation icon-kaishi1"></i>
+        <i v-show="isPlay" @click="audio.pause" class="iconfont operation icon-Pause"></i>
+        <i v-show="!isPlay" @click="audio.play" class="iconfont operation icon-kaishi1"></i>
         <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
       </div>
       <div class="plan-container">

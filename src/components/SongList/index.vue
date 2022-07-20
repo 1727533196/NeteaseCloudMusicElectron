@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import {ref} from "vue";
 import {formattingTime} from '@/utils'
 import {getMusicDetailData} from "@/api/musicList";
 import {useUserInfo} from "@/store";
@@ -27,9 +27,6 @@ const playHandler = (item: getMusicDetailData, index: number) => {
 const isLike = (item: getMusicDetailData) => {
   return store.userLikeIds.includes(item.id)
 }
-watch(() => props.songs, (val) => {
-  console.log('val', val)
-})
 //  :style="{color: item.al.id === props.songs.al?.id && 'red'}"
 </script>
 
@@ -43,13 +40,13 @@ watch(() => props.songs, (val) => {
       <div class="title-item album">专辑</div>
       <div class="title-item time">时间</div>
     </div>
-<!--    key的问题， 用id会偶发更新错误-->
+<!--    设置背景颜色时，一定要用background，不要用backgroundColor-->
     <div
       @dblclick="playHandler(item, i)"
       :key="item.id"
       v-for="(item, i) in props.list"
       class="list"
-      :style="{backgroundColor: item.id === id ? 'rgba(255, 255, 255, 0.08)' :
+      :style="{background: item.id === props.songs.id ? 'rgba(255, 255, 255, 0.08)' :
        i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}"
     >
       <div class="item empty">{{ formatCount(i + 1) }}</div>
@@ -76,8 +73,9 @@ watch(() => props.songs, (val) => {
 @import './scroll';
 .container {
   margin-top: 20px;
-  max-height: 363px;
   overflow-y: auto;
+  flex: 1;
+  margin-bottom: 136px;
   .empty {
     width: 5%;
   }

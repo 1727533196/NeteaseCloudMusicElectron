@@ -28,26 +28,36 @@ console.log(import.meta.env.VITE_APP_WEB_URL)
   <R extends unknown, D>(url: string, method?: Method, config?: AxiosRequestConfig & {data: R, params: R}): Promise<D>;
   <R extends unknown, D>(url: string, data: R, method?: Method): Promise<D>;
   <R extends unknown, D>(url: string, data: R, config?: AxiosRequestConfig): Promise<D>;
+  
+重写了audio的play和pause，让他们具有音量过渡效果
+    开始播放的过渡时间比暂停长一点，这样效果感觉会更好些
 ````
 
 ```
 已知bug：
-    1. 音量静音获取有问题
-    2. 双击播放时会偶发出现上一首歌选中的背景颜色没去掉
+    1. 音量静音获取有问题 -done
+    2. 双击播放时会偶发出现上一首歌选中的背景颜色没去掉 -done
+    3. 当自动切换到下一首歌时，背景颜色没有过来，字体颜色颜色没问题 -done
+    4. 当切歌时会因为音量过渡原因延迟重置进度条长度 （暂停和播放icon也会有这个问题） -done
+    5. 当音乐还没有加载完成时，应该给进度条设置禁用 （目前没有设置，点击进度条快进时，等音乐加载完成进度条会重置）
+    
 需要优化:
     1. 应该给每个列表分区保存ids, 目前都是共同的,会导致切换其他列表ids也变换
     2. 在关闭应用时保存当前歌曲id,以及播放进度
     3. 一上来自动选中上一次播放歌单的列表
-    4. 暂停/播放 开启音乐淡入淡出 (暂停播放已完成，切歌时应该也加上)
-    5. 优化滚动条样式
+    4. 暂停/播放 开启音乐淡入淡出 (暂停播放已完成，切歌时应该也加上) -done
+    5. 优化滚动条样式 -done
     6. Uncaught (in promise): The play() request was interrupted by a call to pause()
+    7. 播放当前歌曲时，再次双击播放进度应该调整为当前
+    8. 当歌曲播放完时应该立即给上url，而不应该等过渡结束再给
 
 实现顺序
     1. 播放器
-        1. 实现播放顺序  (随机播放 & 顺序播放 & 列表循环 & 单曲循环) 100%(暂时没问题)
-        2. 取消/添加喜欢
-    1. 实现歌单信息
+        1. 实现播放顺序  (随机播放 & 顺序播放 & 列表循环 & 单曲循环) -done
+        2. 取消/添加喜欢 -done
+    1. 实现歌单信息 -done  （操作还没有完成）
     2. 布局左侧菜单,先写死
     3. 歌单列表操作
+    4. 搜索
 
 ```
