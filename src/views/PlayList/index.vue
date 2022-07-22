@@ -6,8 +6,10 @@ import SongList from '@/components/SongList/index.vue'
 import Bottom from '@/layout/BaseBottom/index.vue'
 import SongInfo from '@/components/SongInfo/index.vue'
 import {useListPower} from "@/views/PlayList/useListPower";
+import {useUserInfo} from '@/store'
 
-
+const store = useUserInfo()
+console.log(store)
 const audioInstance = ref<MusicPlayerInstanceType>()
 const {getMusicUrlHandler, cutSongHandler, playEnd, state} = useListPower(audioInstance)
 </script>
