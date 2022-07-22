@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 
 
-export const useSongInfo = defineStore('songInfoId', {
+export const useUserPlay = defineStore('songInfoId', {
   state() {
     return {
 

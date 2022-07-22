@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {useUserInfo} from "@/store";
-import {ref} from "vue";
+import Search from '@/components/Search/index.vue'
 
-const search = ref('');
 const store = useUserInfo()
 
 </script>
@@ -11,7 +10,7 @@ const store = useUserInfo()
   <div class="window-container">
     <div class="left"></div>
     <div class="center">
-      <input class="search" placeholder="搜索内容" v-model="search"/>
+      <Search/>
     </div>
     <div class="right">
       <div :style="{backgroundImage: `url(${store.profile.avatarUrl})`}" class="head-portraits"></div>
@@ -41,20 +40,6 @@ const store = useUserInfo()
     margin-left: 15px;
   }
   .center {
-    .search {
-      border: none;
-      box-shadow: none;
-      width: 160px;
-      height: 30px;
-      outline: none;
-      border-radius: 20px;
-      background-color: rgb(43,43,46);
-      padding-left: 15px;
-      padding-right: 15px;
-      box-sizing: border-box;
-      font-size: 12px;
-      color: white;
-    }
   }
   .right {
     margin-right: 200px;

@@ -5,27 +5,17 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    Aside: typeof import('./src/components/Aside/index.vue')['default']
-    BaseAside: typeof import('./src/components/BaseAside/index.vue')['default']
-    BaseBottom: typeof import('./src/components/BaseBottom/index.vue')['default']
-    BaseHeader: typeof import('./src/components/BaseHeader/index.vue')['default']
-    BaseList: typeof import('./src/components/SongList/index.vue')['default']
-    Bottom: typeof import('./src/components/Bottom/index.vue')['default']
     CurrentTime: typeof import('./src/components/MusicPlayer/compoents/CurrentTime.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
-    ElTable: typeof import('element-plus/es')['ElTable']
-    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
-    Header: typeof import('./src/components/Header/index.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    List: typeof import('./src/components/List/index.vue')['default']
     MusicPlayer: typeof import('./src/components/MusicPlayer/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Search: typeof import('./src/components/Search/index.vue')['default']
     SongInfo: typeof import('./src/components/SongInfo/index.vue')['default']
     SongList: typeof import('./src/components/SongList/index.vue')['default']
     Volume: typeof import('./src/components/MusicPlayer/compoents/Volume.vue')['default']
-    Volume1: typeof import('./src/components/MusicPlayer/compoents/Volume1.vue')['default']
   }
 }
 

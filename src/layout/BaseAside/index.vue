@@ -25,7 +25,7 @@ const itemClick = (item: playList) => {
     <div class="play-container">
       <div
           @click="itemClick(item)"
-          v-for="(item, i) in store.userPlayList"
+          v-for="(item, i) in store.userPlayListInfo"
           :key="item.id"
           :class="['play-list-item', {current: current?.id ? current.id === item.id : i === 0}]"
       >{{item.specialType === 5 ? '我喜欢的音乐' : item.name}}</div>

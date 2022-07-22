@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import {profile} from "@/api/user";
-import {playList} from "@/api/musicList";
+import {getMusicDetailData, playList} from "@/api/musicList";
 
 export const useUserInfo = defineStore('userInfoId', {
   state: () => {
@@ -13,10 +13,11 @@ export const useUserInfo = defineStore('userInfoId', {
         vipType: null as null | number,
         userId: null as null | number, // 用户id
       },
-      userPlayList: [] as playList[], // 用户歌单
+      userPlayListInfo: [] as playList[], // 用户歌单列表信息
       userLikeIds: [] as number[], // 用户喜欢列表ids
-      currentItem: {} as playList, // 用户当前选中的列表
-      volume: Number(localStorage.getItem('volume')) || 1
+      currentItem: {} as playList, // 用户当前选中的歌单列表
+      volume: Number(localStorage.getItem('volume')) || 1,
+      currentPlayList: [] as getMusicDetailData[], // 用户当前正在播放音乐的列表
     }
   },
   actions: {
@@ -28,7 +29,7 @@ export const useUserInfo = defineStore('userInfoId', {
       this.profile.userId && localStorage.setItem('userId', String(this.profile.userId))
     },
     updateUserPlayList(val: playList[]) {
-      this.userPlayList = val
+      this.userPlayListInfo = val
     },
     updateUserLikeIds(ids: number[]) {
       this.userLikeIds = ids
@@ -36,7 +37,10 @@ export const useUserInfo = defineStore('userInfoId', {
     updateCurrentItem(val: playList) {
       val.name = val.specialType === 5 ? '我喜欢的歌单' : val.name
       this.currentItem = val
-    }
+    },
+    updateCurrentPlayList(playList: getMusicDetailData[]) {
+      this.currentPlayList = playList
+    },
   }
 })
 

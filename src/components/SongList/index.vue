@@ -9,25 +9,22 @@ interface Props {
   list: getMusicDetailData[]
   songs: getMusicDetailData
 }
-
 const props = defineProps<Props>()
 const emit = defineEmits(['play'])
 const store = useUserInfo()
 const {likeMusic} = useMusic()
+const id = ref(0)
 
 const formatCount = (index: number) => {
   return index.toString().length > 1 ? index : '0' + index
 }
-const id = ref(0)
 const playHandler = (item: getMusicDetailData, index: number) => {
   id.value = item.id
-  console.log('item', item)
   emit('play', item.id, index)
 }
 const isLike = (item: getMusicDetailData) => {
   return store.userLikeIds.includes(item.id)
 }
-//  :style="{color: item.al.id === props.songs.al?.id && 'red'}"
 </script>
 
 <template>

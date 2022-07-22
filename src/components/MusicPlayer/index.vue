@@ -266,8 +266,10 @@ defineExpose({
       justify-content: center;
       align-items: center;
 
-      .iconfont + .iconfont {
+      .iconfont {
         cursor: pointer;
+      }
+      .iconfont + .iconfont {
         margin-left: 35px;
       }
 
