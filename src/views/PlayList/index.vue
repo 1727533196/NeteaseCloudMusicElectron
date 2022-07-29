@@ -16,16 +16,12 @@ const {getMusicUrlHandler, cutSongHandler, playEnd, state} = useListPower(audioI
 
 <template>
   <SongInfo></SongInfo>
-  <SongList @play="getMusicUrlHandler" :songs="state.songs" :list="playListState.playList"/>
-  <Bottom>
-    <MusicPlayer
-      @cutSong="cutSongHandler"
-      @playEnd="playEnd"
-      ref="audioInstance"
-      :ids="playListState.ids"
-      :songs="state.songs"
-      :src="state.musicUrl"></MusicPlayer>
-  </Bottom>
+  <SongList
+    :loading="playListState.loading"
+    @play="getMusicUrlHandler"
+    :songs="state.songs"
+    :list="playListState.playList"
+  />
 </template>
 
 <style lang="less" scoped>

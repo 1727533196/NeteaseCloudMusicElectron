@@ -8,6 +8,7 @@ import useMusic from "@/components/MusicPlayer/useMusic";
 interface Props {
   list: getMusicDetailData[]
   songs: getMusicDetailData
+  loading?: boolean
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['play'])
@@ -37,31 +38,37 @@ const isLike = (item: getMusicDetailData) => {
       <div class="title-item album">专辑</div>
       <div class="title-item time">时间</div>
     </div>
-<!--    设置背景颜色时，一定要用background，不要用backgroundColor-->
     <div
-      @dblclick="playHandler(item, i)"
-      :key="item.id"
-      v-for="(item, i) in props.list"
-      class="list"
-      :style="{background: item.id === props.songs.id ? 'rgba(255, 255, 255, 0.08)' :
-       i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}"
-    >
-      <div class="item empty">{{ formatCount(i + 1) }}</div>
-      <div class="item handle">
-        <i v-if="isLike(item)" @click="likeMusic(item.id, false)"  class="iconfont icon-xihuan1"></i>
-        <i v-else  @click="likeMusic(item.id)"  class="iconfont icon-xihuan"></i>
-      </div>
+      v-show="props.loading"
+      v-loading="props.loading"
+      class="loading"></div>
+<!--    设置背景颜色时，一定要用background，不要用backgroundColor-->
+    <div class="list-container">
       <div
-        :style="{color: item.id === props.songs.id ? 'red' : ''}"
-        class="item title"
+        @dblclick="playHandler(item, i)"
+        :key="item.id"
+        v-for="(item, i) in props.list"
+        class="list"
+        :style="{background: item.id === props.songs.id ? 'rgba(255, 255, 255, 0.08)' :
+       i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}"
       >
-        {{ item.name }}
+        <div class="item empty">{{ formatCount(i + 1) }}</div>
+        <div class="item handle">
+          <i v-if="isLike(item)" @click="likeMusic(item.id, false)"  class="iconfont icon-xihuan1"></i>
+          <i v-else  @click="likeMusic(item.id)"  class="iconfont icon-xihuan"></i>
+        </div>
+        <div
+          :style="{color: item.id === props.songs.id ? 'rgb(255,60,60)' : ''}"
+          class="item title"
+        >
+          {{ item.name }}
+        </div>
+        <div class="item singer">
+          <span style="margin-right: 5px" v-for="item in item.ar">{{ item.name }}</span>
+        </div>
+        <div class="item album">{{ item.al.name }}</div>
+        <div class="item time">{{ formattingTime(item.dt) }}</div>
       </div>
-      <div class="item singer">
-        <span style="margin-right: 5px" v-for="item in item.ar">{{ item.name }}</span>
-      </div>
-      <div class="item album">{{ item.al.name }}</div>
-      <div class="item time">{{ formattingTime(item.dt) }}</div>
     </div>
   </div>
 </template>
@@ -73,6 +80,15 @@ const isLike = (item: getMusicDetailData) => {
   overflow-y: auto;
   flex: 1;
   margin-bottom: 136px;
+  position: relative;
+  .loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    :deep(.el-loading-mask) {
+      background-color: #2b2b2b;
+    }
+  }
   .empty {
     width: 5%;
   }
