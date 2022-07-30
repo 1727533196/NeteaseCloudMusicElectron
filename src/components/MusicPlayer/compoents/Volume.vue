@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineExpose, ref} from "vue";
+import {ref} from "vue";
 import {getMusicDetailData} from "@/api/musicList";
 import {State} from "@/components/MusicPlayer/useMouseSlide";
 

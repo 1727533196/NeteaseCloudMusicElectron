@@ -1,11 +1,23 @@
 <script setup lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+import {onMounted, ref} from 'vue'
 import Header from '@/layout/BaseHeader/index.vue'
 import Aside from '@/layout/BaseAside/index.vue'
-import {getUserAccountFn} from "@/utils/userInfo";
+import Bottom from '@/layout/BaseBottom/index.vue'
+import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
+import {getUserAccountFn} from "@/utils/userInfo"
+import {useMusicAction} from "@/store/music";
 
 // const platform = window.electronAPI.platform
+const audioInstance = ref<MusicPlayerInstanceType>()
+const music = useMusicAction()
+onMounted(() => {
+  if(audioInstance.value !== undefined) {
+    window.$audio = audioInstance.value!
+  }
+})
+
 getUserAccountFn()
 </script>
 
@@ -16,6 +28,15 @@ getUserAccountFn()
     <div class="top"></div>
     <router-view></router-view>
   </div>
+  <Bottom>
+    <MusicPlayer
+      @cutSong="music.cutSongHandler"
+      @playEnd="music.playEnd"
+      ref="audioInstance"
+      :songs="music.songs"
+      :src="music.musicUrl"
+    ></MusicPlayer>
+  </Bottom>
 </template>
 
 <style lang="less">

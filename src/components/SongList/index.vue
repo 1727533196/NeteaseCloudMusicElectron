@@ -19,7 +19,15 @@ const id = ref(0)
 const formatCount = (index: number) => {
   return index.toString().length > 1 ? index : '0' + index
 }
+// 暂停，双击应该继续播放。 没暂停，双击当前应该阻止行为
 const playHandler = (item: getMusicDetailData, index: number) => {
+  if($audio.isPlay && id.value === item.id) {
+    return
+  }
+  console.log('$audio.isPlay && id.value === item.id', $audio.isPlay , id.value ,item.id)
+  if(!$audio.isPlay && id.value === item.id) {
+    return $audio.play()
+  }
   id.value = item.id
   emit('play', item.id, index)
 }

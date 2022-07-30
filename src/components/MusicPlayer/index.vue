@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, ref, defineExpose, Ref, UnwrapRef, computed, onMounted, nextTick} from "vue";
+import {ref, Ref, UnwrapRef, computed, onMounted, nextTick} from "vue";
 import {useUserInfo} from "@/store";
 import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
 import {getMusicDetailData} from "@/api/musicList";
@@ -7,7 +7,6 @@ import {formattingTime} from "@/utils";
 import CurrentTime from './compoents/CurrentTime.vue';
 import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
-
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -17,13 +16,15 @@ type userAudio =   {
 
 export interface MusicPlayerInstanceType {
   orderStatusVal: UnwrapRef<typeof orderStatusVal>
-  audio: UnwrapRef<userAudio>
+  el: UnwrapRef<userAudio>
   isPlay: UnwrapRef<boolean>
   reset: (val: boolean) => void
+  pause: typeof pause
+  play: typeof play
 }
 interface Props {
   src: string
-  ids: number[]
+  ids?: number[]
   songs: getMusicDetailData
 }
 const {likeMusic} = useMusic()
@@ -43,21 +44,26 @@ onMounted(() => {
   originPlay = audio.value!.play as HTMLMediaElement["play"]
   originPause = audio.value!.pause as HTMLMediaElement["pause"]
   // 播放，音量过渡提高
-  audio.value!.play = (lengthen: boolean = false) => {
-    let volume = store.volume
-    audio.value!.volume = 0
-    originPlay.call(audio.value)
-    isPlay.value = true
-    mouseState.stop = false
-    return transitionVolume(volume, lengthen)
-  }
+  audio.value!.play = play
   // 音量过渡减少为0，然后暂停
-  audio.value!.pause = (isNeed: boolean = true, lengthen: boolean = false) => {
-    let volume = store.volume
-    isNeed && (isPlay.value = false)
-    return transitionVolume(volume, false, lengthen)
-  }
+  audio.value!.pause = pause
 })
+function play(lengthen: boolean = false) {
+  let volume = store.volume
+  audio.value!.volume = 0
+  console.log('props', props.src)
+  originPlay.call(audio.value)
+  isPlay.value = true
+  mouseState.stop = false
+  return transitionVolume(volume, true,lengthen)
+}
+function pause(isNeed: boolean = true, lengthen: boolean = false) {
+  let volume = store.volume
+  // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候
+  //  这个时候会先调用pause暂停上一首进行过渡，然后在调用play播放，这个时候就不需要更新暂停标识
+  isNeed && (isPlay.value = false)
+  return transitionVolume(volume, false, lengthen)
+}
 console.log('store', store)
 let timer: NodeJS.Timer
 // 当过渡完成时会返回Promise
@@ -120,8 +126,6 @@ const id = computed(() => {
   return props.songs.id
 })
 
-
-
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose({
@@ -129,6 +133,8 @@ defineExpose({
   orderStatusVal,
   isPlay,
   reset,
+  play,
+  pause,
 })
 </script>
 

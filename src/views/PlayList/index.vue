@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import {ref} from "vue";
 import {playListState} from "@/layout/BaseAside/usePlayList";
-import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
 import SongList from '@/components/SongList/index.vue'
-import Bottom from '@/layout/BaseBottom/index.vue'
 import SongInfo from '@/components/SongInfo/index.vue'
-import {useListPower} from "@/views/PlayList/useListPower";
 import {useUserInfo} from '@/store'
+import {useMusicAction} from "@/store/music";
 
 const store = useUserInfo()
-console.log(store)
-const audioInstance = ref<MusicPlayerInstanceType>()
-const {getMusicUrlHandler, cutSongHandler, playEnd, state} = useListPower(audioInstance)
+const music = useMusicAction()
 </script>
 
 <template>
   <SongInfo></SongInfo>
   <SongList
+    @play="music.getMusicUrlHandler"
     :loading="playListState.loading"
-    @play="getMusicUrlHandler"
-    :songs="state.songs"
+    :songs="music.songs"
     :list="playListState.playList"
   />
 </template>
