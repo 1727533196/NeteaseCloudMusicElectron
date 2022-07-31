@@ -7,6 +7,7 @@ import {useMusicAction} from "@/store/music";
 
 const store = useUserInfo()
 const music = useMusicAction()
+console.log('111', 111)
 </script>
 
 <template>

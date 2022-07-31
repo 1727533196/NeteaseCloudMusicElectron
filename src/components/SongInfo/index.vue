@@ -12,7 +12,7 @@ watch(store.currentItem, (val) => {
 </script>
 
 <template>
-  <div class="list-info">
+  <div v-if="store.currentItem.coverImgUrl" class="list-info">
     <div :style="{backgroundImage: `url(${store.currentItem.coverImgUrl})`}" class="left"></div>
     <div class="right">
       <div class="song-name">

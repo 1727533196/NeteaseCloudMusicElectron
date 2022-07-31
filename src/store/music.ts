@@ -17,6 +17,7 @@ export const useMusicAction = defineStore('musicActionId', {
     }
   },
   actions: {
+    // 获取音乐url
     async getMusicUrlHandler(id: string, i?: number) {
       const [{data}, {songs}] = await Promise.all([getMusicUrl(id), getMusicDetail(id)])
       this.songs = songs[0]

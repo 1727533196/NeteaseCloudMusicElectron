@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import {profile} from "@/api/user";
-import {getMusicDetailData, playList} from "@/api/musicList";
+import {CurrentItem, getMusicDetailData, playList} from "@/api/musicList";
 
 export const useUserInfo = defineStore('userInfoId', {
   state: () => {
@@ -15,7 +15,7 @@ export const useUserInfo = defineStore('userInfoId', {
       },
       userPlayListInfo: [] as playList[], // 用户歌单列表信息
       userLikeIds: [] as number[], // 用户喜欢列表ids
-      currentItem: {} as playList, // 用户当前选中的歌单列表
+      currentItem: {} as CurrentItem, // 用户当前左侧选中的歌单列表
       volume: Number(localStorage.getItem('volume')) || 1,
       currentPlayList: [] as getMusicDetailData[], // 用户当前正在播放音乐的列表
     }
@@ -34,7 +34,7 @@ export const useUserInfo = defineStore('userInfoId', {
     updateUserLikeIds(ids: number[]) {
       this.userLikeIds = ids
     },
-    updateCurrentItem(val: playList) {
+    updateCurrentItem(val: CurrentItem) {
       val.name = val.specialType === 5 ? '我喜欢的歌单' : val.name
       this.currentItem = val
     },

@@ -14,7 +14,6 @@ const itemClick = (item: playList) => {
   router.push('/play-list')
   console.log('item', item)
   current.value = item
-  store.updateCurrentItem(current.value)
   getPlayListDetailFn(item.id)
 }
 

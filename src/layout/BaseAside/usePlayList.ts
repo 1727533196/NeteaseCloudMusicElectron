@@ -30,6 +30,7 @@ export default () => {
       const [{playlist}, {ids}] = await Promise.all([getPlayListDetail(id), getLikeMusicListIds(store.profile.userId)])
       playListState.playList = playlist.tracks;
       playListState.ids = playlist.tracks.map(item => item.id)
+      store.updateCurrentItem(playlist)
       store.updateUserLikeIds(ids)
     } finally {
       playListState.loading = false

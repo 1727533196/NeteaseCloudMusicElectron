@@ -35,6 +35,20 @@ interface GetPlayListDetailRes {
   code: 200
   playlist: {
     tracks: getMusicDetailData[]
+    id: number
+    name: string
+    coverImgUrl: string // 歌单封面图片
+    userId: number
+    updateTime: number
+    createTime: number // 创建时间
+    specialType: 0 | 5 | 10 | 20| 100 | 200 | 300
+    playCount: number // 播放量
+    trackCount: number //歌单下歌曲总数
+    creator: {
+      nickname: string
+      userId: number
+      avatarUrl: string
+    }
   }
 }
 
@@ -47,7 +61,9 @@ interface GetMusicUrlRes {
   code: number
   data: getMusicUrlData[]
 }
-
+export interface CurrentItem extends playList{
+  tracks: getMusicDetailData[]
+}
 export type getMusicDetailData = {
   al: { // 名称详情
     id: number
