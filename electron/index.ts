@@ -39,6 +39,7 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+    // 如果用户不是在 macOS(darwin) 上运行程序，则调用 app.quit()。
     if (process.platform !== 'darwin') {
         app.quit();
     }

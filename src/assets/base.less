@@ -34,3 +34,12 @@ html,body,#app {
   overflow: hidden;
   background-color: rgb(43,43,43);
 }
+#app {
+  user-select: none;
+}
+.window-container {
+  -webkit-app-region: drag;
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+}

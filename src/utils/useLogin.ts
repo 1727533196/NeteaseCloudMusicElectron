@@ -1,5 +1,5 @@
 import {captchaLogin, phoneLogin} from "@/api/login";
-import {setCookies} from "@/utils/cookies.js";
+import {setCookies} from "@/utils/cookies";
 import {ElMessage} from "element-plus";
 import {useUserInfo} from "@/store";
 import {getUserPlayListFn} from "@/utils/userInfo";
@@ -13,7 +13,7 @@ export const sendCodePhone = async (phone: string) => {
     if(data) {
       ElMessage.success('验证码已发送')
     }
-  } catch (e) {
+  } catch (e: any) {
     ElMessage.error(e.message)
   }
 }
@@ -28,7 +28,7 @@ export const codeLogin = async (phone: string, code: string) => {
     localStorage.setItem('token',data.token)
     setCookies(data.cookie);
     getUserPlayListFn()
-  } catch (e) {
+  } catch (e: any) {
     console.log('e', e)
     ElMessage.error(e.message)
   }

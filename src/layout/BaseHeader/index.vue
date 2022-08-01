@@ -8,11 +8,11 @@ const store = useUserInfo()
 
 <template>
   <div class="window-container">
-    <div class="left"></div>
-    <div class="center">
+    <div class="left np-drag"></div>
+    <div class="center no-drag">
       <Search/>
     </div>
-    <div class="right">
+    <div class="right no-drag">
       <div :style="{backgroundImage: `url(${store.profile.avatarUrl})`}" class="head-portraits"></div>
       <div class="nickname">{{store.profile.nickname}}</div>
     </div>

@@ -7,7 +7,6 @@ import {useMusicAction} from "@/store/music";
 
 const store = useUserInfo()
 const music = useMusicAction()
-console.log('111', 111)
 </script>
 
 <template>
@@ -16,6 +15,7 @@ console.log('111', 111)
     @play="music.getMusicUrlHandler"
     :loading="playListState.loading"
     :songs="music.songs"
+    :ids="playListState.ids"
     :list="playListState.playList"
   />
 </template>

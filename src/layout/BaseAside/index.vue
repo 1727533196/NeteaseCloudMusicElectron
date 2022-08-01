@@ -2,17 +2,19 @@
 import {ref} from "vue";
 import {useUserInfo} from "@/store";
 import usePlayList from "./usePlayList";
-import {playList} from "@/api/musicList";
+import {PlayList} from "@/api/musicList";
 import {useRouter} from "vue-router";
 
 const store = useUserInfo()
-const current = ref<playList>()
+const current = ref<PlayList>()
 
 const router = useRouter()
 const {getPlayListDetailFn} = usePlayList()
-const itemClick = (item: playList) => {
+const itemClick = (item: PlayList) => {
+  if(item.id === current.value?.id) {
+    return
+  }
   router.push('/play-list')
-  console.log('item', item)
   current.value = item
   getPlayListDetailFn(item.id)
 }

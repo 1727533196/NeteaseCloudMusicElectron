@@ -74,7 +74,7 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
   return new Promise((resolve) => {
     if(target) {
       timer = setInterval(() => {
-        audio.value!.volume = Math.min(audio.value!.volume + volume / playVolume, volume)
+        audio.value!.volume = Math.min((audio.value?.volume || store.volume) + volume / playVolume, volume)
         if (audio.value!.volume >= volume) {
           resolve(undefined)
           clearInterval(timer)
@@ -83,7 +83,7 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
       return
     }
     timer = setInterval(() => {
-      audio.value!.volume = Math.max(audio.value!.volume - volume / pauseVolume, 0)
+      audio.value!.volume = Math.max((audio.value?.volume || store.volume) - volume / pauseVolume, 0)
       if (audio.value!.volume <= 0) {
         clearInterval(timer)
         originPause.call(audio.value)
@@ -129,7 +129,7 @@ const id = computed(() => {
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose({
-  audio,
+  el: audio,
   orderStatusVal,
   isPlay,
   reset,

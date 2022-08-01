@@ -1,35 +1,46 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {formattingTime} from '@/utils'
-import {getMusicDetailData} from "@/api/musicList";
+import {CurrentItem, getMusicDetailData} from "@/api/musicList";
 import {useUserInfo} from "@/store";
 import useMusic from "@/components/MusicPlayer/useMusic";
+import {useMusicAction} from "@/store/music";
 
 interface Props {
-  list: getMusicDetailData[]
+  list: CurrentItem
   songs: getMusicDetailData
   loading?: boolean
+  ids: number[]
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['play'])
 const store = useUserInfo()
+const music = useMusicAction()
 const {likeMusic} = useMusic()
 const id = ref(0)
 
 const formatCount = (index: number) => {
   return index.toString().length > 1 ? index : '0' + index
 }
-// 暂停，双击应该继续播放。 没暂停，双击当前应该阻止行为
 const playHandler = (item: getMusicDetailData, index: number) => {
-  if($audio.isPlay && id.value === item.id) {
+  // 没暂停，双击当前应该什么都不做
+  if($audio.isPlay && props.songs.id === item.id) {
     return
   }
-  console.log('$audio.isPlay && id.value === item.id', $audio.isPlay , id.value ,item.id)
-  if(!$audio.isPlay && id.value === item.id) {
+  // 暂停，双击应该继续播放。
+  if(!$audio.isPlay && props.songs.id === item.id) {
     return $audio.play()
+  }
+  console.log('props.list', props.list, music.currentItem)
+  // 判断与上一次歌单是否相同
+  if(music.oldList.id !== music.currentItem.id) {
+    music.updateRuntimeList(props.list, props.ids)
   }
   id.value = item.id
   emit('play', item.id, index)
+}
+const mousedownHandler = (item: getMusicDetailData) => {
+  id.value = item.id
 }
 const isLike = (item: getMusicDetailData) => {
   return store.userLikeIds.includes(item.id)
@@ -54,10 +65,11 @@ const isLike = (item: getMusicDetailData) => {
     <div class="list-container">
       <div
         @dblclick="playHandler(item, i)"
+        @mousedown="mousedownHandler(item)"
         :key="item.id"
-        v-for="(item, i) in props.list"
+        v-for="(item, i) in props.list.tracks"
         class="list"
-        :style="{background: item.id === props.songs.id ? 'rgba(255, 255, 255, 0.08)' :
+        :style="{background: item.id === id ? 'rgba(255, 255, 255, 0.08)' :
        i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}"
       >
         <div class="item empty">{{ formatCount(i + 1) }}</div>
@@ -66,7 +78,7 @@ const isLike = (item: getMusicDetailData) => {
           <i v-else  @click="likeMusic(item.id)"  class="iconfont icon-xihuan"></i>
         </div>
         <div
-          :style="{color: item.id === props.songs.id ? 'rgb(255,60,60)' : ''}"
+          :style="{color: item.id === props.songs.id && props.list.id === music.runtimeList.id ? 'rgb(255,60,60)' : ''}"
           class="item title"
         >
           {{ item.name }}

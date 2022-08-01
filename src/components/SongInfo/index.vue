@@ -1,28 +1,30 @@
 <script setup lang="ts">
-import {useUserInfo} from "@/store";
 import {formatDate} from "@/utils";
 import {watch} from "vue";
+import {useMusicAction} from "@/store/music";
+import {useUserInfo} from "@/store";
 
+const music = useMusicAction()
 const store = useUserInfo()
 
 console.log('store', store)
-watch(store.currentItem, (val) => {
+watch(music.currentItem, (val) => {
   console.log('val', val)
 })
 </script>
 
 <template>
-  <div v-if="store.currentItem.coverImgUrl" class="list-info">
-    <div :style="{backgroundImage: `url(${store.currentItem.coverImgUrl})`}" class="left"></div>
+  <div v-if="music.currentItem.coverImgUrl" class="list-info">
+    <div :style="{backgroundImage: `url(${music.currentItem.coverImgUrl})`}" class="left"></div>
     <div class="right">
       <div class="song-name">
         <div class="tag">歌单</div>
-        <div class="name">{{store.currentItem.creator.nickname}}</div>
+        <div class="name">{{music.currentItem.creator.nickname}}</div>
       </div>
       <div style="margin-top: 5px" class="song-info">
-        <div :style="{backgroundImage: `url(${store.currentItem.creator.avatarUrl})`}" class="avatar"></div>
+        <div :style="{backgroundImage: `url(${music.currentItem.creator.avatarUrl})`}" class="avatar"></div>
         <div class="nickname">{{store.profile.nickname}}</div>
-        <div class="create-timer">{{formatDate(store.currentItem.createTime, 'YY-MM-DD hh:mm:ss')}}创建</div>
+        <div class="create-timer">{{formatDate(music.currentItem.createTime, 'YY-MM-DD hh:mm:ss')}}创建</div>
       </div>
       <div class="song-handle">
         <div class="btn">播放全部</div>
@@ -33,11 +35,11 @@ watch(store.currentItem, (val) => {
       <div class="song-count">
         <div class="p1">
           <span>歌曲 : </span>
-          <span class="total">{{ store.currentItem.trackCount }}</span>
+          <span class="total">{{ music.currentItem.trackCount }}</span>
         </div>
         <div class="p2">
           <span>播放 : </span>
-          <span class="count">{{ store.currentItem.playCount }}</span>
+          <span class="count">{{ music.currentItem.playCount }}</span>
         </div>
       </div>
     </div>

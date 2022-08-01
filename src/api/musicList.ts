@@ -1,21 +1,6 @@
 import request from "../utils/request";
 
-export type playList = {
-  id: number
-  name: string
-  coverImgUrl: string // 歌单封面图片
-  userId: number
-  updateTime: number
-  createTime: number // 创建时间
-  specialType: 0 | 5 | 10 | 20| 100 | 200 | 300
-  playCount: number // 播放量
-  trackCount: number //歌单下歌曲总数
-  creator: {
-    nickname: string
-    userId: number
-    avatarUrl: string
-  }
-}
+export type PlayList = Omit<GetPlayListDetailRes["playlist"],'tracks'>
 // specialType 注解
 //   0	普通歌单
 //   5	红心歌单
@@ -25,7 +10,7 @@ export type playList = {
 //   200	视频歌单
 //   300	分享歌单
 export interface GetUserPlayListRes {
-  playlist: playList[]
+  playlist: PlayList[]
   code: string
   more: boolean
   version: string
@@ -61,7 +46,7 @@ interface GetMusicUrlRes {
   code: number
   data: getMusicUrlData[]
 }
-export interface CurrentItem extends playList{
+export interface CurrentItem extends PlayList{
   tracks: getMusicDetailData[]
 }
 export type getMusicDetailData = {
