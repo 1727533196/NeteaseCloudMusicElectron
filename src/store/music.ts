@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {CurrentItem, getMusicDetail, getMusicDetailData, getMusicUrl} from "@/api/musicList";
+import {CurrentItem, getMusicDetail, GetMusicDetailData, getMusicUrl} from "@/api/musicList";
 import {nextTick, watch, ref} from "vue";
 import {playListState} from "@/layout/BaseAside/usePlayList";
 import {randomNum} from "@/utils";
@@ -15,7 +15,7 @@ export const useMusicAction = defineStore('musicActionId', {
   state() {
     return {
       musicUrl: '',
-      songs: {} as getMusicDetailData,
+      songs: {} as GetMusicDetailData,
       currentItem: {} as CurrentItem, // 用户当前左侧选中的歌单列表，会随着用户选中的菜单变化
       runtimeList: {} as CurrentItem, // 用户当前正在播放音乐的列表
       runtimeIds: [] as number[], // 用户当前正在播放音乐的列表ids

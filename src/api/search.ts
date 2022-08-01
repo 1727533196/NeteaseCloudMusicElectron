@@ -1,12 +1,12 @@
 import request from "@/utils/request";
-import {getMusicDetailData} from "@/api/musicList";
+import {GetMusicDetailData} from "@/api/musicList";
 
 interface CloudSearch {
   code: number
   result: {
     searchQcReminder: null
     songCount: number
-    songs: getMusicDetailData[]
+    songs: GetMusicDetailData[]
   }
 }
 export const cloudSearch = (keywords: string, limit = 30) =>

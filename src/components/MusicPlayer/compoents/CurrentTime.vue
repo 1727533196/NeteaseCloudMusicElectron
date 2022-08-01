@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {getMusicDetailData} from "@/api/musicList";
+import {GetMusicDetailData} from "@/api/musicList";
 import {State} from "@/components/MusicPlayer/useMouseSlide";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   mouseleaveHandler: (target: 'progress') => void
   mousedownHandler: (event: MouseEvent,target: 'progress') => void
   circleDown: (event: MouseEvent,target: 'progress') => void
-  songs: getMusicDetailData
+  songs: GetMusicDetailData
   mouseState: State
 }
 const props = defineProps<Props>()

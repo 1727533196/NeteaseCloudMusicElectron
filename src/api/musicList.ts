@@ -19,7 +19,7 @@ export interface GetUserPlayListRes {
 interface GetPlayListDetailRes {
   code: 200
   playlist: {
-    tracks: getMusicDetailData[]
+    tracks: GetMusicDetailData[]
     id: number
     name: string
     coverImgUrl: string // 歌单封面图片
@@ -47,9 +47,9 @@ interface GetMusicUrlRes {
   data: getMusicUrlData[]
 }
 export interface CurrentItem extends PlayList{
-  tracks: getMusicDetailData[]
+  tracks: GetMusicDetailData[]
 }
-export type getMusicDetailData = {
+export type GetMusicDetailData = {
   al: { // 名称详情
     id: number
     name: number
@@ -69,7 +69,7 @@ export type getMusicDetailData = {
 
 interface GetMusicDetailRes {
   code: number
-  songs: getMusicDetailData[]
+  songs: GetMusicDetailData[]
 }
 
 // 获取喜欢音乐列表ids
@@ -102,4 +102,4 @@ export const addOrDelPlaylist = (op: 'add' | 'del', pid: number, tracks: number)
 export const likeMusicApi = (id: number, like: boolean = true) =>
     request<{id: number, like: boolean}, {code: number
       playlistId: number
-      songs: getMusicDetailData[]}>('/like', {id, like} ,'get')
+      songs: GetMusicDetailData[]}>('/like', {id, like} ,'get')

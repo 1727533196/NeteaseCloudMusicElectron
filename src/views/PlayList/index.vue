@@ -17,6 +17,7 @@ const music = useMusicAction()
     :songs="music.songs"
     :ids="playListState.ids"
     :list="playListState.playList"
+    :list-info="playListState.listInfo"
   />
 </template>
 

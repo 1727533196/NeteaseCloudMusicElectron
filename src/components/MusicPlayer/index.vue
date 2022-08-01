@@ -2,7 +2,7 @@
 import {ref, Ref, UnwrapRef, computed, onMounted, nextTick} from "vue";
 import {useUserInfo} from "@/store";
 import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
-import {getMusicDetailData} from "@/api/musicList";
+import {GetMusicDetailData} from "@/api/musicList";
 import {formattingTime} from "@/utils";
 import CurrentTime from './compoents/CurrentTime.vue';
 import Volume from './compoents/Volume.vue'
@@ -25,7 +25,7 @@ export interface MusicPlayerInstanceType {
 interface Props {
   src: string
   ids?: number[]
-  songs: getMusicDetailData
+  songs: GetMusicDetailData
 }
 const {likeMusic} = useMusic()
 const store = useUserInfo()

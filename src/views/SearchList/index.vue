@@ -9,8 +9,9 @@ const music = useMusicAction()
 <template>
   <SongList
     @play="music.getMusicUrlHandler"
-    :songs="state.songs"
-    :list="state.resultList"></SongList>
+    :songs="music.songs"
+    :list="state.resultList"
+  ></SongList>
 </template>
 
 <style lang="less" scoped>
