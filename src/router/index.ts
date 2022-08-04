@@ -51,7 +51,8 @@ const router = createRouter({
       name: 'lately',
       component: () => import('@/views/LatelyPlay/index.vue')
     },
-  ]
+  ],
+  scrollBehavior: () => ({top: 0,})
 })
 
 export default router

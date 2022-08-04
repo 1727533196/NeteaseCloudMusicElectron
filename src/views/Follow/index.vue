@@ -3,8 +3,7 @@
 </script>
 
 <template>
-  关注
-
+  <h1>关注</h1>
 </template>
 
 <style scoped>

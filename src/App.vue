@@ -23,10 +23,15 @@ getUserAccountFn()
 
 <template>
   <Header></Header>
-  <Aside></Aside>
-  <div class="main">
-    <div class="top"></div>
-    <router-view></router-view>
+  <div style="height: calc(100% - 136px);">
+    <div id="box">
+      <Aside></Aside>
+      <div class="main">
+        <div class="top"></div>
+        <router-view></router-view>
+      </div>
+    </div>
+    <div style="height: 20px"></div>
   </div>
   <Bottom>
     <MusicPlayer

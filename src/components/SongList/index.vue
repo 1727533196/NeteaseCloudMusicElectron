@@ -33,10 +33,8 @@ const playHandler = (item: GetMusicDetailData, index: number) => {
   if(!$audio.isPlay && props.songs.id === item.id) {
     return $audio.play()
   }
-  console.log('props.list', props.list, music.currentItem)
   // 判断与上一次歌单是否相同
   if(music.oldList.id !== music.currentItem.id && props.ids && props.listInfo) {
-    console.log('props.listInfo', props.listInfo)
     music.updateRuntimeList({tracks:props.list, ...props.listInfo}, props.ids)
   }
   id.value = item.id

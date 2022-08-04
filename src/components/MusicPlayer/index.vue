@@ -51,7 +51,6 @@ onMounted(() => {
 function play(lengthen: boolean = false) {
   let volume = store.volume
   audio.value!.volume = 0
-  console.log('props', props.src)
   originPlay.call(audio.value)
   isPlay.value = true
   mouseState.stop = false
@@ -64,7 +63,6 @@ function pause(isNeed: boolean = true, lengthen: boolean = false) {
   isNeed && (isPlay.value = false)
   return transitionVolume(volume, false, lengthen)
 }
-console.log('store', store)
 let timer: NodeJS.Timer
 // 当过渡完成时会返回Promise
 function transitionVolume(volume: number, target: boolean = true, lengthen: boolean = false): Promise<undefined> {

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  视频
+  <h1>视频</h1>
 </template>
 
 <style scoped>

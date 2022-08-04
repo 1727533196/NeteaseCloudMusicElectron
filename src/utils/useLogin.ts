@@ -9,7 +9,6 @@ import {getUserPlayListFn} from "@/utils/userInfo";
 export const sendCodePhone = async (phone: string) => {
   try {
     const {data} = await captchaLogin(phone)
-    console.log('data', data)
     if(data) {
       ElMessage.success('验证码已发送')
     }

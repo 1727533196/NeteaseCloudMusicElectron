@@ -3,7 +3,8 @@
 </script>
 
 <template>
-  私人FM
+  <h1>私人FM</h1>
+
 </template>
 
 <style scoped>

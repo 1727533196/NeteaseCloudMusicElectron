@@ -41,7 +41,7 @@ export const useUserInfo = defineStore('userInfoId', {
           myList.push({
             ...item,
             name: item.specialType === 5 ? '我喜欢的音乐' : item.name,
-            icon: '',
+            icon: item.specialType === 5 ? 'icon-xihuan' : '',
             path: "/play-list"
           })
         }

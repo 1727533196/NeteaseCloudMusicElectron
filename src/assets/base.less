@@ -5,21 +5,26 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 @text: rgb(210,210,210);
 @darkText: rgb(150, 150, 150);
 @subject: rgb(236,65,65);
 
+#box {
+  margin-top: 62px;
+  display: flex;
+  height: calc(100% - 2px);
+}
 .main{
-  height: calc(100% - 136px);
-  margin-top: 60px;
+  height: 100%;
+  //margin-top: 60px;
   overflow: hidden;
-  margin-left: 210px;
+  overflow-y: auto;
+  width: 100%;
+  //margin-left: 210px;
   display: flex;
   align-content: baseline;
   flex-direction: column;
   .top {
-    height: 20px;
     margin-bottom: 20px;
   }
 }
@@ -33,7 +38,7 @@ html,body,#app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: white;
   overflow: hidden;
   background-color: rgb(43,43,43);
 }

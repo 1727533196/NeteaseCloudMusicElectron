@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import {formatDate} from "@/utils";
-import {watch} from "vue";
 import {useMusicAction} from "@/store/music";
 import {useUserInfo} from "@/store";
 
 const music = useMusicAction()
 const store = useUserInfo()
-
-console.log('store', store)
-watch(music.currentItem, (val) => {
-  console.log('val', val)
-})
 </script>
 
 <template>

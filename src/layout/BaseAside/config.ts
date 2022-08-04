@@ -2,13 +2,19 @@ import {reactive} from "vue";
 import {PlayList} from "@/api/musicList";
 
 
-type paths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/play-list']
-export type ListItem = {name: string, icon: string, path: paths[number]} & Partial<PlayList>
+export const paths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/play-list']
+export type ListItem = {
+  name: string,
+  icon: string,
+  path: typeof paths[number]
+  fontSize?: number
+} & Partial<PlayList>
 interface MenuConfig {
   title: '我的音乐' | '创建的歌单' | '收藏的歌单' | false,
   mark: 'my' | 'play' | 'subscribedList' | false,
   list: ListItem[]
 }
+const fontSize = 15
 export const originAsideMenuConfig: MenuConfig[] = [
   {
     title: false,
@@ -17,22 +23,26 @@ export const originAsideMenuConfig: MenuConfig[] = [
       {
         name: '发现音乐',
         icon: '',
-        path: '/home'
+        path: '/home',
+        fontSize,
       },
       {
         name: '私人FM',
         icon: '',
-        path: '/fm'
+        path: '/fm',
+        fontSize,
       },
       {
         name: '视频',
         icon: '',
-        path: '/video'
+        path: '/video',
+        fontSize,
       },
       {
         name: '关注',
         icon: '',
-        path: '/follow'
+        path: '/follow',
+        fontSize
       },
     ],
   },

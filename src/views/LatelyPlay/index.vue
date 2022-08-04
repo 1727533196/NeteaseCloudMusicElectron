@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  最近播放
+  <h1>最近播放</h1>
 </template>
 
 <style scoped>
