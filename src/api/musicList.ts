@@ -1,21 +1,14 @@
 import request from "../utils/request";
 
-export type playList = {
-  id: number
-  name: string
-  coverImgUrl: string // 歌单封面图片
-  userId: number
-  updateTime: number
-  createTime: number // 创建时间
-  specialType: 0 | 5 | 10 | 20| 100 | 200 | 300
-  playCount: number // 播放量
-  trackCount: number //歌单下歌曲总数
-  creator: {
-    nickname: string
-    userId: number
-    avatarUrl: string
-  }
+export type PlayList = Omit<GetPlayListDetailRes["playlist"],'tracks'>
+
+export interface GetUserPlayListRes {
+  playlist: PlayList[]
+  code: string
+  more: boolean
+  version: string
 }
+
 // specialType 注解
 //   0	普通歌单
 //   5	红心歌单
@@ -24,17 +17,29 @@ export type playList = {
 //   100	官方歌单
 //   200	视频歌单
 //   300	分享歌单
-export interface GetUserPlayListRes {
-  playlist: playList[]
-  code: string
-  more: boolean
-  version: string
-}
-
 interface GetPlayListDetailRes {
   code: 200
   playlist: {
-    tracks: getMusicDetailData[]
+    id: number // 歌单id
+    name: string // 歌单名称
+    coverImgUrl: string // 歌单封面图片
+    userId: number // 创建歌单的用户id
+    updateTime: number
+    createTime: number // 创建时间
+    specialType: 0 | 5 | 10 | 20| 100 | 200 | 300
+    playCount: number // 播放量
+    trackCount: number //歌单下歌曲总数
+    tags: Array<string>
+    tracks: GetMusicDetailData[]
+    creator: { // 创建这个歌单的用户信息
+      nickname: string
+      userId: number
+      avatarUrl: string
+      userType: 4
+      vipType: 11
+    }
+    subscribed: boolean // 是否收藏
+    subscribedCount: number // 收藏总数
   }
 }
 
@@ -47,8 +52,10 @@ interface GetMusicUrlRes {
   code: number
   data: getMusicUrlData[]
 }
-
-export type getMusicDetailData = {
+export interface CurrentItem extends PlayList{
+  tracks: GetMusicDetailData[]
+}
+export type GetMusicDetailData = {
   al: { // 名称详情
     id: number
     name: number
@@ -68,7 +75,7 @@ export type getMusicDetailData = {
 
 interface GetMusicDetailRes {
   code: number
-  songs: getMusicDetailData[]
+  songs: GetMusicDetailData[]
 }
 
 // 获取喜欢音乐列表ids
@@ -101,4 +108,4 @@ export const addOrDelPlaylist = (op: 'add' | 'del', pid: number, tracks: number)
 export const likeMusicApi = (id: number, like: boolean = true) =>
     request<{id: number, like: boolean}, {code: number
       playlistId: number
-      songs: getMusicDetailData[]}>('/like', {id, like} ,'get')
+      songs: GetMusicDetailData[]}>('/like', {id, like} ,'get')

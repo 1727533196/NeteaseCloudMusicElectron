@@ -20,8 +20,39 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: () => import('@/views/SearchList/index.vue')
-    }
-  ]
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: () => import('@/views/Home/index.vue')
+    },
+    {
+      path: '/fm',
+      name: 'fm',
+      component: () => import('@/views/PrivateFm/index.vue')
+    },
+    {
+      path: '/video',
+      name: 'video',
+      component: () => import('@/views/Video/index.vue')
+    },
+    {
+      path: '/follow',
+      name: 'follow',
+      component: () => import('@/views/Follow/index.vue')
+    },
+    {
+      path: '/local',
+      name: 'local',
+      component: () => import('@/views/Local/index.vue')
+    },
+    {
+      path: '/lately',
+      name: 'lately',
+      component: () => import('@/views/LatelyPlay/index.vue')
+    },
+  ],
+  scrollBehavior: () => ({top: 0,})
 })
 
 export default router

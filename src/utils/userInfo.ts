@@ -18,7 +18,6 @@ export const getUserPlayListFn = async () => {
 
   if(uid) {
     const data = await getUserPlayList(uid)
-    console.log('store',  store)
     store.updateUserPlayList(data.playlist)
   }
 }

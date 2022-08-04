@@ -54,7 +54,6 @@ export default (audio: Ref<HTMLAudioElement>,
   const volumeHandler = (target: boolean) => {
     const volume = Number(sessionStorage.getItem('volume') || localStorage.getItem('volume') || 1)
     state.isMute = target
-    console.log('volume', volume, target)
     state.height = target ? 0 : volume * 100
     audio.value!.volume = target ? 0 : volume
     sessionStorage.setItem('ectype_volume', String(audio.value!.volume))

@@ -1,35 +1,57 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onBeforeMount, onMounted, ref, watch} from "vue";
 import {useUserInfo} from "@/store";
 import usePlayList from "./usePlayList";
-import {playList} from "@/api/musicList";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
+import {asideMenuConfig, ListItem, paths} from "@/layout/BaseAside/config";
 
 const store = useUserInfo()
-const current = ref<playList>()
+const current = ref<ListItem>()
 
 const router = useRouter()
+const route = useRoute()
 const {getPlayListDetailFn} = usePlayList()
-const itemClick = (item: playList) => {
-  router.push('/play-list')
-  console.log('item', item)
-  current.value = item
-  store.updateCurrentItem(current.value)
-  getPlayListDetailFn(item.id)
+const init = () => {
+  itemClick(asideMenuConfig[0].list[0])
 }
-
+watch(() => route.path, (value) => {
+  paths.includes(value) || (current.value = undefined)
+})
+const itemClick = (item: ListItem) => {
+  // current在这里为上一次
+  // 有id说明获取的是歌单
+  if(item.id && item.id !== current.value?.id) {
+    getPlayListDetailFn(item.id)
+    // 防止上一次current没有id导致下面判断path出问题
+    current.value?.id && (current.value = item)
+  }
+  if(item.path === current.value?.path) {
+    return
+  }
+  router.push(item.path)
+  current.value = item
+}
+init()
+// 列表选中条件，有id优先id，没有id用path
 </script>
 
 <template>
   <div class="aside">
     <div class="play-container">
-      <div
-          @click="itemClick(item)"
-          v-for="(item, i) in store.userPlayListInfo"
-          :key="item.id"
-          :class="['play-list-item', {current: current?.id ? current.id === item.id : i === 0}]"
-      >{{item.specialType === 5 ? '我喜欢的音乐' : item.name}}</div>
-      <div class='play-list-item' @click="router.replace('/test2')">获取个人信息</div>
+      <template :key="i" v-for="(menuItem, i) in asideMenuConfig">
+        <div class="lump">
+          <div v-if="menuItem.mark" class="title">{{menuItem.title}}</div>
+          <div
+            @click="itemClick(item)"
+            v-for="item in menuItem.list"
+            :style="{fontSize: item.fontSize+'px' || ''}"
+            :class="['play-list-item', {current: current?.id ? current.id === item.id : item.path === route.path}]"
+          >
+            <i :class="['iconfont', item.icon || '']"></i>
+            <span>{{item.name}}</span>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -37,31 +59,44 @@ const itemClick = (item: playList) => {
 <style lang="less" scoped>
 .aside {
   border-right: 1px rgb(67,67,67) solid;
-  width: 190px;
+  width: 250px;
   height: 100%;
   background-color: rgb(43,43,43);
-  position: fixed;
-  left: 0;
-  top: 62px;
+  //position: fixed;
+  //left: 0;
+  //top: 62px;
   padding: 10px 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
 
   .play-container {
-    .play-list-item {
-      cursor: pointer;
-      color: @text;
-      font-size: 15px;
-      text-align: left;
-      line-height: 40px;
-      @textOverflow();
-      padding: 0 10px;
-      border-radius: 5px;
+    .lump {
+      padding-bottom: 10px;
+      .title {
+        font-size: 14px;
+        color: @darkText;
+        text-align: left;
+        padding: 0 10px;
+        margin-bottom: 5px;
+      }
+      .play-list-item {
+        cursor: pointer;
+        color: @text;
+        font-size: 14px;
+        text-align: left;
+        line-height: 40px;
+        @textOverflow();
+        padding: 0 10px;
+        border-radius: 5px;
+      }
+      .play-list-item:hover{
+        background-color: rgba(255,255,255,0.05);
+      }
+      .current.play-list-item {
+        background-color: rgba(255,255,255,0.05);
+      }
     }
-    .play-list-item:hover{
-      background-color: rgba(255,255,255,0.05);
-    }
-    .current.play-list-item {
-      background-color: rgba(255,255,255,0.05);
-    }
+
   }
 }
 </style>

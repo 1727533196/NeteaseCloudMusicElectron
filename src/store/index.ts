@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import {profile} from "@/api/user";
-import {getMusicDetailData, playList} from "@/api/musicList";
+import {PlayList} from "@/api/musicList";
+import {asideMenuConfig, ListItem} from "@/layout/BaseAside/config";
 
 export const useUserInfo = defineStore('userInfoId', {
   state: () => {
@@ -13,35 +14,47 @@ export const useUserInfo = defineStore('userInfoId', {
         vipType: null as null | number,
         userId: null as null | number, // 用户id
       },
-      userPlayListInfo: [] as playList[], // 用户歌单列表信息
+      userPlayListInfo: [] as PlayList[], // 用户歌单列表信息
       userLikeIds: [] as number[], // 用户喜欢列表ids
-      currentItem: {} as playList, // 用户当前选中的歌单列表
-      volume: Number(localStorage.getItem('volume')) || 1,
-      currentPlayList: [] as getMusicDetailData[], // 用户当前正在播放音乐的列表
+      volume: Number(localStorage.getItem('volume')) || 1, // 用户当前播放器音量
     }
   },
   actions: {
     updateProfile(val: profile) {
       type key = keyof typeof val
       for (const valKey in this.profile) {
+        // @ts-ignore
         this.profile[valKey as key] = val[valKey as key]
       }
       this.profile.userId && localStorage.setItem('userId', String(this.profile.userId))
     },
-    updateUserPlayList(val: playList[]) {
+    updateUserPlayList(val: PlayList[]) {
       this.userPlayListInfo = val
+
+      let copyVal = JSON.parse(JSON.stringify(val)) as PlayList[]
+      let myList: ListItem[] = []
+      let subscribedList: ListItem[] = []
+      copyVal.forEach(item => {
+        if(item.subscribed) {
+          subscribedList.push({...item, icon: '', path: "/play-list"})
+        } else {
+          myList.push({
+            ...item,
+            name: item.specialType === 5 ? '我喜欢的音乐' : item.name,
+            icon: item.specialType === 5 ? 'icon-xihuan' : '',
+            path: "/play-list"
+          })
+        }
+      })
+      let playItem = asideMenuConfig.find(item => item.mark === 'play')
+      let subscribedListItem = asideMenuConfig.find(item => item.mark === 'subscribedList')
+      myList.length && (playItem!.list = myList)
+      subscribedList.length && (subscribedListItem!.list = subscribedList)
     },
     updateUserLikeIds(ids: number[]) {
       this.userLikeIds = ids
     },
-    updateCurrentItem(val: playList) {
-      val.name = val.specialType === 5 ? '我喜欢的歌单' : val.name
-      this.currentItem = val
-    },
-    updateCurrentPlayList(playList: getMusicDetailData[]) {
-      this.currentPlayList = playList
-    },
-  }
+  },
 })
 
 /*

@@ -57,9 +57,6 @@ const request: Request = (url, method?: unknown | Method, config?) => {
     return http.post(url, method)
   }
   else if(typeof config === 'string') {
-    console.log('config.toLowerCase() !== \'get\' ? \'data\' : \'params\'', config.toLowerCase() !== 'get' ? 'data' : 'params')
-    console.log('method', method)
-    console.log('config', config)
     return http({
       ...<AxiosRequestConfig>config,
       url,

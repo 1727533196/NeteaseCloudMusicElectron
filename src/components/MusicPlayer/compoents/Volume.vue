@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {defineExpose, ref} from "vue";
-import {getMusicDetailData} from "@/api/musicList";
+import {ref} from "vue";
+import {GetMusicDetailData} from "@/api/musicList";
 import {State} from "@/components/MusicPlayer/useMouseSlide";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   circleDown: (event: MouseEvent,target: 'volume') => void
   volumeHandler: (target: boolean) => void
   mouseupHandler: () => void
-  songs: getMusicDetailData
+  songs: GetMusicDetailData
   mouseState: State
 }
 const props = defineProps<Props>()
