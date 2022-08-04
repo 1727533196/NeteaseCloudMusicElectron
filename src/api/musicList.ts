@@ -1,6 +1,14 @@
 import request from "../utils/request";
 
 export type PlayList = Omit<GetPlayListDetailRes["playlist"],'tracks'>
+
+export interface GetUserPlayListRes {
+  playlist: PlayList[]
+  code: string
+  more: boolean
+  version: string
+}
+
 // specialType 注解
 //   0	普通歌单
 //   5	红心歌单
@@ -9,31 +17,29 @@ export type PlayList = Omit<GetPlayListDetailRes["playlist"],'tracks'>
 //   100	官方歌单
 //   200	视频歌单
 //   300	分享歌单
-export interface GetUserPlayListRes {
-  playlist: PlayList[]
-  code: string
-  more: boolean
-  version: string
-}
-
 interface GetPlayListDetailRes {
   code: 200
   playlist: {
-    tracks: GetMusicDetailData[]
-    id: number
-    name: string
+    id: number // 歌单id
+    name: string // 歌单名称
     coverImgUrl: string // 歌单封面图片
-    userId: number
+    userId: number // 创建歌单的用户id
     updateTime: number
     createTime: number // 创建时间
     specialType: 0 | 5 | 10 | 20| 100 | 200 | 300
     playCount: number // 播放量
     trackCount: number //歌单下歌曲总数
-    creator: {
+    tags: Array<string>
+    tracks: GetMusicDetailData[]
+    creator: { // 创建这个歌单的用户信息
       nickname: string
       userId: number
       avatarUrl: string
+      userType: 4
+      vipType: 11
     }
+    subscribed: boolean // 是否收藏
+    subscribedCount: number // 收藏总数
   }
 }
 

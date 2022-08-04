@@ -2,21 +2,28 @@
 import {ref} from "vue";
 import {useUserInfo} from "@/store";
 import usePlayList from "./usePlayList";
-import {PlayList} from "@/api/musicList";
 import {useRouter} from "vue-router";
+import {asideMenuConfig, ListItem} from "@/layout/BaseAside/config";
 
 const store = useUserInfo()
-const current = ref<PlayList>()
+const current = ref<ListItem>()
 
 const router = useRouter()
 const {getPlayListDetailFn} = usePlayList()
-const itemClick = (item: PlayList) => {
-  if(item.id === current.value?.id) {
+const itemClick = (item: ListItem) => {
+  // current在这里为上一次
+  console.log('item.path , current.value?.path', item.name , current.value?.name)
+  // 有id说明获取的是歌单
+  if(item.id && item.id !== current.value?.id) {
+    getPlayListDetailFn(item.id)
+    // 防止上一次current没有id导致下面判断path出问题
+    current.value?.id && (current.value = item)
+  }
+  if(item.path === current.value?.path) {
     return
   }
-  router.push('/play-list')
+  router.push(item.path)
   current.value = item
-  getPlayListDetailFn(item.id)
 }
 
 </script>
@@ -24,12 +31,16 @@ const itemClick = (item: PlayList) => {
 <template>
   <div class="aside">
     <div class="play-container">
-      <div
-          @click="itemClick(item)"
-          v-for="(item, i) in store.userPlayListInfo"
-          :key="item.id"
-          :class="['play-list-item', {current: current?.id ? current.id === item.id : i === 0}]"
-      >{{item.specialType === 5 ? '我喜欢的音乐' : item.name}}</div>
+      <template :key="i" v-for="(menuItem, i) in asideMenuConfig">
+        <div class="lump">
+          <div v-if="menuItem.mark" class="title">{{menuItem.title}}</div>
+          <div
+            @click="itemClick(item)"
+            v-for="item in menuItem.list"
+            :class="['play-list-item', {current: current?.id ? current.id === item.id : i === 0}]"
+          >{{item.name}}</div>
+        </div>
+      </template>
       <div class='play-list-item' @click="router.replace('/test2')">获取个人信息</div>
     </div>
   </div>
@@ -47,22 +58,29 @@ const itemClick = (item: PlayList) => {
   padding: 10px 10px;
 
   .play-container {
-    .play-list-item {
-      cursor: pointer;
-      color: @text;
-      font-size: 15px;
-      text-align: left;
-      line-height: 40px;
-      @textOverflow();
-      padding: 0 10px;
-      border-radius: 5px;
+    .lump {
+      .title {
+        font-size: 14px;
+        color: @darkText;
+      }
+      .play-list-item {
+        cursor: pointer;
+        color: @text;
+        font-size: 15px;
+        text-align: left;
+        line-height: 40px;
+        @textOverflow();
+        padding: 0 10px;
+        border-radius: 5px;
+      }
+      .play-list-item:hover{
+        background-color: rgba(255,255,255,0.05);
+      }
+      .current.play-list-item {
+        background-color: rgba(255,255,255,0.05);
+      }
     }
-    .play-list-item:hover{
-      background-color: rgba(255,255,255,0.05);
-    }
-    .current.play-list-item {
-      background-color: rgba(255,255,255,0.05);
-    }
+
   }
 }
 </style>

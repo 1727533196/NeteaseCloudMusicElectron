@@ -1,3 +1,5 @@
+@import './scroll';
+
 @textOverflow: {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -9,7 +11,7 @@
 @subject: rgb(236,65,65);
 
 .main{
-  height: 100%;
+  height: calc(100% - 136px);
   margin-top: 60px;
   overflow: hidden;
   margin-left: 210px;
@@ -18,6 +20,7 @@
   flex-direction: column;
   .top {
     height: 20px;
+    margin-bottom: 20px;
   }
 }
 * {

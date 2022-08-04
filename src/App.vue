@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import {onMounted, ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import Header from '@/layout/BaseHeader/index.vue'
 import Aside from '@/layout/BaseAside/index.vue'
 import Bottom from '@/layout/BaseBottom/index.vue'
@@ -17,8 +17,8 @@ onMounted(() => {
     window.$audio = audioInstance.value!
   }
 })
-
 getUserAccountFn()
+
 </script>
 
 <template>
@@ -30,9 +30,9 @@ getUserAccountFn()
   </div>
   <Bottom>
     <MusicPlayer
+      ref="audioInstance"
       @cutSong="music.cutSongHandler"
       @playEnd="music.playEnd"
-      ref="audioInstance"
       :songs="music.songs"
       :src="music.musicUrl"
     ></MusicPlayer>

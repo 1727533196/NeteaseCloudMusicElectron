@@ -12,6 +12,7 @@ interface Props {
   loading?: boolean
   ids?: number[]
   listInfo?: PlayList
+  scroll?: boolean
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['play'])
@@ -57,7 +58,7 @@ const activeText = (item: GetMusicDetailData) => {
 </script>
 
 <template>
-  <div class="container">
+  <div :style="{overflowY: props.scroll ? 'auto' : 'visible'}" class="container">
     <div class="title-container">
       <div class="title-item empty"></div>
       <div class="title-item handle">操作</div>
@@ -103,12 +104,9 @@ const activeText = (item: GetMusicDetailData) => {
 </template>
 
 <style lang="less" scoped>
-@import './scroll';
 .container {
   margin-top: 20px;
-  overflow-y: auto;
   flex: 1;
-  margin-bottom: 136px;
   position: relative;
   .loading {
     position: absolute;

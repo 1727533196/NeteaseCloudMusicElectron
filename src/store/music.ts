@@ -1,11 +1,8 @@
 import {defineStore} from "pinia";
 import {CurrentItem, getMusicDetail, GetMusicDetailData, getMusicUrl} from "@/api/musicList";
 import {nextTick, watch, ref} from "vue";
-import {playListState} from "@/layout/BaseAside/usePlayList";
 import {randomNum} from "@/utils";
-import {useUserInfo} from "@/store/index";
 
-console.log('use', useUserInfo)
 const index = ref(0)
 const lastIndexList = ref<number[]>([])
 watch(index, (value, oldValue) => {
@@ -25,11 +22,7 @@ export const useMusicAction = defineStore('musicActionId', {
   actions: {
     updateCurrentItem(val: CurrentItem) {
       val.name = val.specialType === 5 ? '我喜欢的歌单' : val.name
-
       this.currentItem = val
-      setTimeout(() => {
-        console.log('playlist', this.currentItem)
-      }, 2000)
     },
     updateRuntimeList(list: CurrentItem, ids: number []) {
       this.runtimeList = list

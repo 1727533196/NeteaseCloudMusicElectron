@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import {profile} from "@/api/user";
-import {CurrentItem, PlayList} from "@/api/musicList";
+import {PlayList} from "@/api/musicList";
+import {asideMenuConfig, ListItem} from "@/layout/BaseAside/config";
 
 export const useUserInfo = defineStore('userInfoId', {
   state: () => {
@@ -29,11 +30,31 @@ export const useUserInfo = defineStore('userInfoId', {
     },
     updateUserPlayList(val: PlayList[]) {
       this.userPlayListInfo = val
+
+      let copyVal = JSON.parse(JSON.stringify(val)) as PlayList[]
+      let myList: ListItem[] = []
+      let subscribedList: ListItem[] = []
+      copyVal.forEach(item => {
+        if(item.subscribed) {
+          subscribedList.push({...item, icon: '', path: "/play-list"})
+        } else {
+          myList.push({
+            ...item,
+            name: item.specialType === 5 ? '我喜欢的音乐' : item.name,
+            icon: '',
+            path: "/play-list"
+          })
+        }
+      })
+      let playItem = asideMenuConfig.find(item => item.mark === 'play')
+      let subscribedListItem = asideMenuConfig.find(item => item.mark === 'subscribedList')
+      myList.length && (playItem!.list = myList)
+      subscribedList.length && (subscribedListItem!.list = subscribedList)
     },
     updateUserLikeIds(ids: number[]) {
       this.userLikeIds = ids
     },
-  }
+  },
 })
 
 /*
