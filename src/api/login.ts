@@ -34,3 +34,6 @@ export const loginQrCreate = (key: string, qrimg?: boolean) =>
 // 二维码检测扫码状态接口
 export const loginQrCheck = (key: string) =>
   request<{key: string}, LoginQrCheckRes>(`/login/qr/check?key=${key}`, 'get')
+
+// 获取登录状态
+export const loginStatus = (cookie: string) => request('/login/status', {cookie})
