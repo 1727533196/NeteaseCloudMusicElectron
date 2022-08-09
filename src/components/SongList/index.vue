@@ -7,15 +7,15 @@ import useMusic from "@/components/MusicPlayer/useMusic";
 import {useMusicAction} from "@/store/music";
 
 interface Props {
-  list: GetMusicDetailData[]
-  songs: GetMusicDetailData
-  loading?: boolean
-  ids?: number[]
-  listInfo?: PlayList
-  scroll?: boolean
+  list: GetMusicDetailData[] // 列表信息
+  songs: GetMusicDetailData // 播放器正在播放的歌曲信息
+  loading?: boolean // 是否加载中
+  ids?: number[] // 歌曲id列表
+  listInfo?: PlayList // 歌单信息
+  scroll?: boolean // 是否显示滚动条
 }
 const props = defineProps<Props>()
-const emit = defineEmits(['play'])
+const emit = defineEmits(['play']) // 播放歌曲
 const store = useUserInfo()
 const music = useMusicAction()
 const {likeMusic} = useMusic()
@@ -115,11 +115,11 @@ const activeText = (item: GetMusicDetailData) => {
     }
   }
   .empty {
-    width: 5%;
+    width: 50px;
   }
   .handle {
-    width: 4%;
-    margin-right: 5%;
+    width: 45px;
+    margin-right: 20px;
   }
   .title {
     width: 40%;
@@ -149,7 +149,7 @@ const activeText = (item: GetMusicDetailData) => {
     justify-content: space-around;
 
     .empty {
-      width: 40px;
+      width: 45px;
     }
     .title-item {
       text-align: left;
@@ -172,7 +172,6 @@ const activeText = (item: GetMusicDetailData) => {
     .handle {
       font-size: 18px;
       cursor: pointer;
-      text-align: center;
       .icon-xihuan1 {
         font-size: 18px;
         color: #eb4141;

@@ -8,7 +8,6 @@ const activeName = ref(tabsConfig[0].name)
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
-
 </script>
 
 <template>
@@ -23,10 +22,10 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 
 <style lang="less" scoped>
 .padding-container {
-  //display: flex;
-  //justify-content: center;
-  //flex-wrap: wrap;
   :deep(.el-tabs) {
+    .el-tabs__active-bar {
+      background-color: @subject;
+    }
     .el-tabs__item {
       color: @darkText;
       font-size: 16px;

@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import {useRoute} from "vue-router";
+import {useMusicAction} from "@/store/music";
+import usePlayList, {playListState} from "@/layout/BaseAside/usePlayList";
+import SongInfo from '@/components/SongInfo/index.vue';
 import SongList from '@/components/SongList/index.vue'
-import SongInfo from '@/components/SongInfo/index.vue'
-import {playListState} from "@/layout/BaseAside/usePlayList"
-import {useMusicAction} from "@/store/music"
 
+
+const { getPlayListDetailFn } = usePlayList()
+const route = useRoute()
 const music = useMusicAction()
+
+const init = () => {
+  route.query.id && getPlayListDetailFn(+route.query.id)
+}
+init()
 </script>
 
 <template>
@@ -19,6 +28,6 @@ const music = useMusicAction()
   />
 </template>
 
-<style lang="less" scoped>
+<style scoped>
 
 </style>

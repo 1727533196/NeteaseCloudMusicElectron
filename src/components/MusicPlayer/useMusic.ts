@@ -1,10 +1,10 @@
 import {likeMusicApi} from "@/api/musicList";
 import {ElMessage} from "element-plus";
 import usePlayList from "@/layout/BaseAside/usePlayList";
-import {useUserInfo} from "@/store";
+import {useMusicAction} from "@/store/music";
 
 export default () => {
-  const store = useUserInfo()
+  const store = useMusicAction()
   const likeMusic = async (id: number, isLike: boolean = true) => {
     try {
       const data = await likeMusicApi(id, isLike)

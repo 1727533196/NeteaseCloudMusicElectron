@@ -8,6 +8,7 @@ const lastIndexList = ref<number[]>([])
 watch(index, (value, oldValue) => {
   lastIndexList.value.push(oldValue)
 })
+// 会把用户当前正在播放的列表单独存储起来，以便切换歌单时没有播放切换的歌单不会被清空
 export const useMusicAction = defineStore('musicActionId', {
   state() {
     return {

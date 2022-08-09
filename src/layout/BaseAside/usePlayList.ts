@@ -28,23 +28,22 @@ export default () => {
       // 如果用户没有登录
       if(!store.profile.userId) {
         const {playlist} = await getPlayListDetail(id)
-        playListState.playList = playlist.tracks
-        playListState.ids = playlist.tracks.map(item => item.id)
-        const {tracks, ...args} = playlist
-        playListState.listInfo = args
-        music.updateCurrentItem(playlist)
+        updatePlayList(playlist)
         return
       }
       const [{playlist}, {ids}] = await Promise.all([getPlayListDetail(id), getLikeMusicListIds(store.profile.userId)])
-      playListState.playList = playlist.tracks
-      playListState.ids = playlist.tracks.map(item => item.id)
-      const {tracks, ...args} = playlist
-      playListState.listInfo = args
-      music.updateCurrentItem(playlist)
+      updatePlayList(playlist)
       store.updateUserLikeIds(ids)
     } finally {
       playListState.loading = false
     }
+  }
+  const updatePlayList = (list: CurrentItem) => {
+    playListState.playList = list.tracks
+    playListState.ids = list.tracks.map(item => item.id)
+    const {tracks, ...args} = list
+    playListState.listInfo = args
+    music.updateCurrentItem(list)
   }
 
   return {

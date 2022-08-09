@@ -3,12 +3,21 @@ interface Props {
   picUrl: string
   name: string
 }
+const emit = defineEmits(['click'])
 const props = defineProps<Props>()
+
+const clickHandler = () => {
+  emit('click')
+}
 </script>
 
 <template>
   <div class="card-box">
-    <div :style="{backgroundImage: `url(${props.picUrl}`}" class="card"></div>
+    <div
+      @click="clickHandler"
+      :style="{backgroundImage: `url(${props.picUrl}`}"
+      class="card"
+    ></div>
     <div class="text">{{props.name}}</div>
   </div>
 </template>

@@ -7,6 +7,7 @@ interface Props {
   title: string
 }
 const props = defineProps<Props>()
+const emit = defineEmits(['click'])
 </script>
 
 <template>
@@ -18,7 +19,9 @@ const props = defineProps<Props>()
     <div class="subject">
       <slot></slot>
       <Card
+        @click="emit('click', item)"
         v-for="item in props.recommend"
+        :item="item"
         :name="item.name"
         :pic-url="item.picUrl"
       />
