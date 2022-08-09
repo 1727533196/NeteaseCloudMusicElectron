@@ -1,45 +1,52 @@
 <script setup lang="ts">
-import {Banner, banner} from "@/api/home";
-import {reactive} from "vue";
+import { ref } from 'vue'
+import type { TabsPaneContext } from 'element-plus'
+import {tabsConfig} from './config'
 
-const state = reactive({
-  banners: [] as Banner[]
-})
-async function getBanner() {
-  const {banners} = await banner()
-  state.banners = banners
+const activeName = ref(tabsConfig[0].name)
+
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  console.log(tab, event)
 }
-getBanner()
 
 </script>
 
 <template>
-  <h1>发现音乐</h1>
-  <div class="home-container">
-    <el-carousel :autoplay="false" :interval="4000" type="card" height="200px">
-      <el-carousel-item v-for="item in state.banners" :key="item.imageUrl">
-        <img class="home-banner" :src="item.imageUrl" alt="img">
-      </el-carousel-item>
-    </el-carousel>
+  <div class="padding-container">
+    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+      <el-tab-pane :name="item.name" :label="item.label" v-for="item in tabsConfig">
+        <component :is="item.component"></component>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <style lang="less" scoped>
-.home-container {
-  width: 800px;
-  .el-carousel__item {
-    border-radius: 5px;
-    .home-banner {
-      margin: 0;
-      width: 100%;
-      height: 100%;
+.padding-container {
+  //display: flex;
+  //justify-content: center;
+  //flex-wrap: wrap;
+  :deep(.el-tabs) {
+    .el-tabs__item {
+      color: @darkText;
+      font-size: 16px;
+      transition: font-size 0.1s;
+    }
+    .el-tabs__nav-wrap::after {
+      content: none;
+    }
+    .is-active {
+      font-size: 20px !important;
+      color: white !important;
+      font-weight: 800;
+    }
+    .el-tabs__content {
+      padding-top: 20px;
+      text-align: left;
     }
   }
-  .el-carousel__item.is-active {
-    width: 540px;
-    transform: translateX(130px) scale(1) !important;
-    border-radius: 10px;
-  }
+
+
 
 }
 </style>

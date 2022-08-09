@@ -25,7 +25,7 @@ const createWindow = () => {
 
         win.loadURL(url);
     }
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
 };
 
 app.whenReady().then(() => {

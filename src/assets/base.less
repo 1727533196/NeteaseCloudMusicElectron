@@ -1,9 +1,11 @@
 @import './scroll';
 
-@textOverflow: {
+.textOverflow (@line: 1) {
+  text-overflow:ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @line;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 @text: rgb(210,210,210);
 @darkText: rgb(150, 150, 150);
@@ -26,6 +28,9 @@
   flex-direction: column;
   .top {
     margin-bottom: 20px;
+  }
+  .padding-container {
+    padding: 0 25px
   }
 }
 * {

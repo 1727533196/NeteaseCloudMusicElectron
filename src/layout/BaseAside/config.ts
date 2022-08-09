@@ -1,7 +1,6 @@
 import {reactive} from "vue";
 import {PlayList} from "@/api/musicList";
 
-
 export const paths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/play-list']
 export type ListItem = {
   name: string,

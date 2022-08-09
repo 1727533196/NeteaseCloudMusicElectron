@@ -125,16 +125,16 @@ const activeText = (item: GetMusicDetailData) => {
     width: 40%;
     color: @text;
     margin-right: 40% - 38px;
-    @textOverflow();
+    .textOverflow();;
   }
   .singer {
     width: 20%;
-    @textOverflow();
+    .textOverflow();;
     margin-right: 20% - 19px;
   }
   .album {
     width: 20%;
-    @textOverflow();
+    .textOverflow();;
     margin-right: 20% - 19px;
   }
   .time {

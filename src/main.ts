@@ -7,10 +7,8 @@ import {createPinia} from "pinia";
 import './assets/iconfont/iconfont.css'
 import ElementIcon from "@/plugins/element-icon";
 
-const pinia = createPinia()
-
 createApp(App)
-    .use(pinia)
+    .use(createPinia())
     .use(router)
     .use(ElementPlus, { zIndex: 3000 })
     .use(ElementIcon)

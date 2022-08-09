@@ -247,12 +247,12 @@ defineExpose({
       .song-name {
         font-size: 15px;
         max-width: 140px;
-        @textOverflow();
+        .textOverflow();;
       }
 
       .name-container {
         max-width: 140px;
-        @textOverflow();
+        .textOverflow();;
       }
     }
   }

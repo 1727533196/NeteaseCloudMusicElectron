@@ -40,7 +40,7 @@ init()
     <div class="play-container">
       <template :key="i" v-for="(menuItem, i) in asideMenuConfig">
         <div class="lump">
-          <div v-if="menuItem.mark" class="title">{{menuItem.title}}</div>
+          <div v-if="menuItem.mark && menuItem.list.length" class="title">{{menuItem.title}}</div>
           <div
             @click="itemClick(item)"
             v-for="item in menuItem.list"
@@ -85,7 +85,7 @@ init()
         font-size: 14px;
         text-align: left;
         line-height: 40px;
-        @textOverflow();
+        .textOverflow();;
         padding: 0 10px;
         border-radius: 5px;
       }

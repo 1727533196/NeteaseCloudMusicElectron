@@ -55,7 +55,7 @@ const store = useUserInfo()
     }
     .nickname {
       max-width: 80px;
-      @textOverflow();
+      .textOverflow();;
       color: rgb(165,167,168);
       font-size: 12px;
     }
