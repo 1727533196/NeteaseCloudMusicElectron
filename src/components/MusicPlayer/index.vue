@@ -7,6 +7,7 @@ import {formattingTime} from "@/utils";
 import CurrentTime from './compoents/CurrentTime.vue';
 import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
+import MusicDetail from "@/components/MusicDetail/index.vue";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -124,6 +125,11 @@ const id = computed(() => {
   return props.songs.id
 })
 
+const openDetail = ref(false)
+const openMusicDetail = () => {
+  openDetail.value = !openDetail.value
+}
+
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose({
@@ -148,6 +154,7 @@ defineExpose({
     ></audio>
     <div class="left">
       <div
+        @click="openMusicDetail"
         :style="{backgroundImage: `url(${props.songs.al?.picUrl})`}"
         class="picture"
       ></div>
@@ -198,6 +205,7 @@ defineExpose({
         :songs="props.songs"
       />
     </div>
+    <MusicDetail v-model="openDetail"/>
   </div>
 </template>
 
@@ -234,6 +242,10 @@ defineExpose({
       width: 50px;
       height: 50px;
       border-radius: 5px;
+
+    }
+    .picture:hover {
+      filter:blur(2px);
     }
 
     .name-info {

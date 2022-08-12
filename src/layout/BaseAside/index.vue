@@ -68,6 +68,12 @@ init()
   padding: 10px 10px;
   box-sizing: border-box;
   overflow-y: auto;
+  &:hover::-webkit-scrollbar-thumb {
+    visibility: visible;
+  }
+  &::-webkit-scrollbar-thumb {
+    visibility: hidden;
+  }
 
   .play-container {
     .lump {

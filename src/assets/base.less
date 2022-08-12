@@ -10,6 +10,7 @@
 @text: rgb(210,210,210);
 @darkText: rgb(150, 150, 150);
 @subject: rgb(236,65,65);
+@bgColor: #2b2b2b;
 
 #box {
   margin-top: 62px;
@@ -49,7 +50,9 @@ html,body,#app {
 }
 #app {
   user-select: none;
+  position: relative;
 }
+// electron 无边框拖动窗口
 .window-container {
   -webkit-app-region: drag;
   .no-drag {

@@ -17,7 +17,7 @@ export interface GetUserPlayListRes {
 //   100	官方歌单
 //   200	视频歌单
 //   300	分享歌单
-interface GetPlayListDetailRes {
+export interface GetPlayListDetailRes {
   code: 200
   playlist: {
     id: number // 歌单id

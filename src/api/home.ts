@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import type {GetMusicDetailData} from "@/api/musicList";
 
 export type Banner = {
   encodeId: string
@@ -58,7 +59,16 @@ interface RecommendSongListRes {
   haveRcmdSongs: boolean
   recommend: Array<Recommend>
 }
-
+interface RecommendSongRes {
+  code: number
+  data: {
+    dailySongs: GetMusicDetailData[],
+    recommendReasons: Array<{
+      reason: string
+      songId: number
+    }>
+  }
+}
 export const banner = () => request<null, BannerRes>('/banner')
 
 // 获取推荐歌单
@@ -68,7 +78,7 @@ export const personalized = () => request<null, PersonalizedRes>('/personalized'
 export const recommendSongList = () => request<null, RecommendSongListRes>('/recommend/resource', 'get')
 
 // 获取每日推荐歌曲
-export const recommendSong = () => request('/recommend/songs', 'get')
+export const recommendSong = () => request<null, RecommendSongRes>('/recommend/songs', 'get')
 
 export const homepage = () => request('/homepage/block/page', 'get')
 

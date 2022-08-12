@@ -25,29 +25,28 @@ export default () => {
     playListState.loading = true
     music.oldList = {tracks: playListState.playList, ...playListState.listInfo}
     try {
-      // 如果用户没有登录
-      if(!store.profile.userId) {
-        const {playlist} = await getPlayListDetail(id)
-        updatePlayList(playlist)
-        return
-      }
-      const [{playlist}, {ids}] = await Promise.all([getPlayListDetail(id), getLikeMusicListIds(store.profile.userId)])
+      const {playlist} = await getPlayListDetail(id)
       updatePlayList(playlist)
-      store.updateUserLikeIds(ids)
     } finally {
       playListState.loading = false
     }
   }
-  const updatePlayList = (list: CurrentItem) => {
+  const updatePlayList = async (list: CurrentItem) => {
     playListState.playList = list.tracks
     playListState.ids = list.tracks.map(item => item.id)
+    // 过滤掉track属性
     const {tracks, ...args} = list
     playListState.listInfo = args
     music.updateCurrentItem(list)
+    if(store.isLogin) {
+      const { ids } = await getLikeMusicListIds(store.profile.userId!)
+      ids.length && store.updateUserLikeIds(ids)
+    }
   }
 
   return {
     getPlayListDetailFn,
+    updatePlayList,
   }
 }
 

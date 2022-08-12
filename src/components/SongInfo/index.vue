@@ -13,11 +13,11 @@ const store = useUserInfo()
     <div class="right">
       <div class="song-name">
         <div class="tag">歌单</div>
-        <div class="name">{{music.currentItem.creator.nickname}}</div>
+        <div class="name">{{music.currentItem.name}}</div>
       </div>
       <div style="margin-top: 5px" class="song-info">
         <div :style="{backgroundImage: `url(${music.currentItem.creator.avatarUrl})`}" class="avatar"></div>
-        <div class="nickname">{{store.profile.nickname}}</div>
+        <div class="nickname">{{music.currentItem.creator.nickname}}</div>
         <div class="create-timer">{{formatDate(music.currentItem.createTime, 'YY-MM-DD hh:mm:ss')}}创建</div>
       </div>
       <div class="song-handle">
