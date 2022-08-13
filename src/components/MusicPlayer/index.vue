@@ -59,7 +59,7 @@ function play(lengthen: boolean = false) {
 }
 function pause(isNeed: boolean = true, lengthen: boolean = false) {
   let volume = store.volume
-  // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候
+  // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候:
   //  这个时候会先调用pause暂停上一首进行过渡，然后在调用play播放，这个时候就不需要更新暂停标识
   isNeed && (isPlay.value = false)
   return transitionVolume(volume, false, lengthen)
@@ -73,7 +73,7 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
   return new Promise((resolve) => {
     if(target) {
       timer = setInterval(() => {
-        audio.value!.volume = Math.min((audio.value?.volume || store.volume) + volume / playVolume, volume)
+        audio.value!.volume = Math.min(audio.value!.volume + volume / playVolume, volume)
         if (audio.value!.volume >= volume) {
           resolve(undefined)
           clearInterval(timer)
@@ -82,7 +82,7 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
       return
     }
     timer = setInterval(() => {
-      audio.value!.volume = Math.max((audio.value?.volume || store.volume) - volume / pauseVolume, 0)
+      audio.value!.volume = Math.max(audio.value!.volume - volume / pauseVolume, 0)
       if (audio.value!.volume <= 0) {
         clearInterval(timer)
         originPause.call(audio.value)
@@ -175,7 +175,7 @@ defineExpose({
         <i @click="setOrderHandler" :class="['iconfont', orderStatus[orderStatusVal]]"></i>
         <i @click="emit('cutSong', false)" class="iconfont cut icon-shangyishou"></i>
         <i v-show="isPlay" @click="audio.pause" class="iconfont operation icon-Pause"></i>
-        <i v-show="!isPlay" @click="audio.play" class="iconfont operation icon-kaishi1"></i>
+        <i v-show="!isPlay" @click="audio.play(false)" class="iconfont operation icon-kaishi1"></i>
         <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
       </div>
       <div class="plan-container">

@@ -14,7 +14,7 @@ export const useMusicAction = defineStore('musicActionId', {
     return {
       musicUrl: '',
       songs: {} as GetMusicDetailData,
-      currentItem: {} as CurrentItem, // 用户当前左侧选中的歌单列表，会随着用户选中的菜单变化
+      currentItem: {} as CurrentItem, // 用户当前选中的歌单列表，会随着用户选中的菜单变化
       runtimeList: {} as CurrentItem, // 用户当前正在播放音乐的列表
       runtimeIds: [] as number[], // 用户当前正在播放音乐的列表ids
       oldList: {} as CurrentItem, // 用户上一次播放的歌单列表

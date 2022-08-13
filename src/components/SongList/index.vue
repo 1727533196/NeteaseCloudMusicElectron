@@ -25,16 +25,20 @@ const formatCount = (index: number) => {
   return index.toString().length > 1 ? index : '0' + index
 }
 const playHandler = (item: GetMusicDetailData, index: number) => {
-  // 没暂停，双击当前应该什么都不做
-  if($audio.isPlay && props.songs.id === item.id) {
-    return
+  // 歌曲相同的情况下, 如果当前双击的歌曲不是当前正在播放的歌单歌曲,那应该播放
+  if(music.runtimeList.id === music.currentItem.id) {
+    // 没暂停，双击当前应该什么都不做
+    if($audio.isPlay && props.songs.id === item.id) {
+      return
+    }
+    // 暂停，双击应该继续播放。
+    if(!$audio.isPlay && props.songs.id === item.id) {
+      return $audio.play()
+    }
   }
-  // 暂停，双击应该继续播放。
-  if(!$audio.isPlay && props.songs.id === item.id) {
-    return $audio.play()
-  }
-  // 判断与上一次歌单是否相同
-  if(music.oldList.id !== music.currentItem.id && props.ids && props.listInfo) {
+  // 判断与当前歌单是否相同
+  if(music.runtimeList.id !== music.currentItem.id && props.ids && props.listInfo) {
+    // 如果不相同就更新 当前歌单
     music.updateRuntimeList({tracks:props.list, ...props.listInfo}, props.ids)
   }
   id.value = item.id

@@ -35,6 +35,7 @@ const setModelValue = computed({
   left: 0;
   transition: height 0.5s;
   z-index: 2003;
+  overflow: hidden;
   .close {
     position: absolute;
     top: 0;
