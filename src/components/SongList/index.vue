@@ -7,15 +7,15 @@ import useMusic from "@/components/MusicPlayer/useMusic";
 import {useMusicAction} from "@/store/music";
 
 interface Props {
-  list: GetMusicDetailData[]
-  songs: GetMusicDetailData
-  loading?: boolean
-  ids?: number[]
-  listInfo?: PlayList
-  scroll?: boolean
+  list: GetMusicDetailData[] // 列表信息
+  songs: GetMusicDetailData // 播放器正在播放的歌曲信息
+  loading?: boolean // 是否加载中
+  ids?: number[] // 歌曲id列表
+  listInfo?: PlayList // 歌单信息
+  scroll?: boolean // 是否显示滚动条
 }
 const props = defineProps<Props>()
-const emit = defineEmits(['play'])
+const emit = defineEmits(['play']) // 播放歌曲
 const store = useUserInfo()
 const music = useMusicAction()
 const {likeMusic} = useMusic()
@@ -25,16 +25,20 @@ const formatCount = (index: number) => {
   return index.toString().length > 1 ? index : '0' + index
 }
 const playHandler = (item: GetMusicDetailData, index: number) => {
-  // 没暂停，双击当前应该什么都不做
-  if($audio.isPlay && props.songs.id === item.id) {
-    return
+  // 歌曲相同的情况下, 如果当前双击的歌曲不是当前正在播放的歌单歌曲,那应该播放
+  if(music.runtimeList.id === music.currentItem.id) {
+    // 没暂停，双击当前应该什么都不做
+    if($audio.isPlay && props.songs.id === item.id) {
+      return
+    }
+    // 暂停，双击应该继续播放。
+    if(!$audio.isPlay && props.songs.id === item.id) {
+      return $audio.play()
+    }
   }
-  // 暂停，双击应该继续播放。
-  if(!$audio.isPlay && props.songs.id === item.id) {
-    return $audio.play()
-  }
-  // 判断与上一次歌单是否相同
-  if(music.oldList.id !== music.currentItem.id && props.ids && props.listInfo) {
+  // 判断与当前歌单是否相同
+  if(music.runtimeList.id !== music.currentItem.id && props.ids && props.listInfo) {
+    // 如果不相同就更新 当前歌单
     music.updateRuntimeList({tracks:props.list, ...props.listInfo}, props.ids)
   }
   id.value = item.id
@@ -115,26 +119,26 @@ const activeText = (item: GetMusicDetailData) => {
     }
   }
   .empty {
-    width: 5%;
+    width: 50px;
   }
   .handle {
-    width: 4%;
-    margin-right: 5%;
+    width: 45px;
+    margin-right: 20px;
   }
   .title {
     width: 40%;
     color: @text;
     margin-right: 40% - 38px;
-    @textOverflow();
+    .textOverflow();;
   }
   .singer {
     width: 20%;
-    @textOverflow();
+    .textOverflow();;
     margin-right: 20% - 19px;
   }
   .album {
     width: 20%;
-    @textOverflow();
+    .textOverflow();;
     margin-right: 20% - 19px;
   }
   .time {
@@ -149,7 +153,7 @@ const activeText = (item: GetMusicDetailData) => {
     justify-content: space-around;
 
     .empty {
-      width: 40px;
+      width: 45px;
     }
     .title-item {
       text-align: left;
@@ -172,7 +176,6 @@ const activeText = (item: GetMusicDetailData) => {
     .handle {
       font-size: 18px;
       cursor: pointer;
-      text-align: center;
       .icon-xihuan1 {
         font-size: 18px;
         color: #eb4141;

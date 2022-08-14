@@ -2,6 +2,7 @@
 import {formatDate} from "@/utils";
 import {useMusicAction} from "@/store/music";
 import {useUserInfo} from "@/store";
+import BaseButton from '@/components/BaseButton/index.vue'
 
 const music = useMusicAction()
 const store = useUserInfo()
@@ -13,18 +14,18 @@ const store = useUserInfo()
     <div class="right">
       <div class="song-name">
         <div class="tag">歌单</div>
-        <div class="name">{{music.currentItem.creator.nickname}}</div>
+        <div class="name">{{music.currentItem.name}}</div>
       </div>
       <div style="margin-top: 5px" class="song-info">
         <div :style="{backgroundImage: `url(${music.currentItem.creator.avatarUrl})`}" class="avatar"></div>
-        <div class="nickname">{{store.profile.nickname}}</div>
+        <div class="nickname">{{music.currentItem.creator.nickname}}</div>
         <div class="create-timer">{{formatDate(music.currentItem.createTime, 'YY-MM-DD hh:mm:ss')}}创建</div>
       </div>
       <div class="song-handle">
-        <div class="btn">播放全部</div>
-        <div class="btn">收藏</div>
-        <div class="btn">分享</div>
-        <div class="btn">下载全部</div>
+        <BaseButton type="subject">播放全部</BaseButton>
+        <BaseButton>收藏</BaseButton>
+        <BaseButton>分享</BaseButton>
+        <BaseButton>下载全部</BaseButton>
       </div>
       <div class="song-count">
         <div class="p1">
@@ -105,28 +106,6 @@ const store = useUserInfo()
     }
     .song-handle {
       font-size: 14px;
-      .btn {
-        padding: 5px 15px;
-        border-radius: 30px;
-        border: 1px solid rgb(70,70,70);
-        & {
-          cursor: pointer;
-        }
-        &:hover {
-          background-color: rgba(255,255,255,0.03);
-        }
-        &:first-child:hover {
-          background-color: rgb(220,20,20);
-        }
-      }
-      .btn:first-child {
-        background-color: @subject;
-        border: none;
-        color: white;
-      }
-      .btn + .btn {
-        margin-left: 8px;
-      }
     }
     .song-count {
       font-size: 13px;

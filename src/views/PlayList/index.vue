@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import {playListState} from "@/layout/BaseAside/usePlayList";
 import SongList from '@/components/SongList/index.vue'
 import SongInfo from '@/components/SongInfo/index.vue'
-import {useUserInfo} from '@/store'
-import {useMusicAction} from "@/store/music";
+import {playListState} from "@/layout/BaseAside/usePlayList"
+import {useMusicAction} from "@/store/music"
 
-const store = useUserInfo()
 const music = useMusicAction()
 </script>
 

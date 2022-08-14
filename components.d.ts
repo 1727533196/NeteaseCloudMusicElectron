@@ -5,11 +5,17 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    BaseButton: typeof import('./src/components/BaseButton/index.vue')['default']
+    Card: typeof import('./src/components/Card/index.vue')['default']
+    CardChunk: typeof import('./src/components/CardChunk/index.vue')['default']
     CurrentTime: typeof import('./src/components/MusicPlayer/compoents/CurrentTime.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
+    MusicDetail: typeof import('./src/components/MusicDetail/index.vue')['default']
     MusicPlayer: typeof import('./src/components/MusicPlayer/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

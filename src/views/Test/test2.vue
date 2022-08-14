@@ -2,9 +2,10 @@
 import {getUserAccountFn} from "@/utils/userInfo";
 import { onUnmounted, ref } from "vue";
 import {codeLogin, sendCodePhone} from "@/utils/useLogin";
-import { loginQrCheck, loginQrCreate, loginQrKey } from "@/api/login";
+import {loginQrCheck, loginQrCreate, loginQrKey, loginStatus} from "@/api/login";
 import { setCookies } from "@/utils/cookies";
 import { ElMessage } from "element-plus/es";
+import request from "@/utils/request";
 
 const phone = ref('')
 const code = ref('')
@@ -40,10 +41,13 @@ const init = async () => {
     } else if(code === 802) {
       flag.value = true
     } else if(code === 803) {
-      isSucceed.value = true
-      setCookies(cookie);
       clearInterval(timer)
+      isSucceed.value = true
+      console.log('cookie', cookie)
+      const cookies = cookie.replace('HTTPOnly', '')
+      setCookies(cookies);
       ElMessage.success('授权登陆成功')
+      loginStatus()
     }
   }, 3000)
   return timer
@@ -53,6 +57,7 @@ init()
 onUnmounted(() => {
   clearInterval(timer)
 })
+
 </script>
 
 <template>

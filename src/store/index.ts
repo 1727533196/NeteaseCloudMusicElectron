@@ -14,6 +14,7 @@ export const useUserInfo = defineStore('userInfoId', {
         vipType: null as null | number,
         userId: null as null | number, // 用户id
       },
+      isLogin: false, // 是否登录
       userPlayListInfo: [] as PlayList[], // 用户歌单列表信息
       userLikeIds: [] as number[], // 用户喜欢列表ids
       volume: Number(localStorage.getItem('volume')) || 1, // 用户当前播放器音量
@@ -21,12 +22,17 @@ export const useUserInfo = defineStore('userInfoId', {
   },
   actions: {
     updateProfile(val: profile) {
+      if(!val.userId) {
+        this.$reset()
+        return
+      }
       type key = keyof typeof val
       for (const valKey in this.profile) {
         // @ts-ignore
         this.profile[valKey as key] = val[valKey as key]
       }
-      this.profile.userId && localStorage.setItem('userId', String(this.profile.userId))
+      localStorage.setItem('userId', String(this.profile.userId))
+      this.isLogin = true
     },
     updateUserPlayList(val: PlayList[]) {
       this.userPlayListInfo = val

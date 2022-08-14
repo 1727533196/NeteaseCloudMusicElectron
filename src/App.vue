@@ -8,10 +8,13 @@ import Bottom from '@/layout/BaseBottom/index.vue'
 import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
 import {getUserAccountFn} from "@/utils/userInfo"
 import {useMusicAction} from "@/store/music";
+import MusicDetail from "@/components/MusicDetail/index.vue";
+import {useFlags} from "@/store/flags";
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
 const music = useMusicAction()
+const flags = useFlags()
 onMounted(() => {
   if(audioInstance.value !== undefined) {
     window.$audio = audioInstance.value!

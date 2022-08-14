@@ -7,6 +7,7 @@ import {formattingTime} from "@/utils";
 import CurrentTime from './compoents/CurrentTime.vue';
 import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
+import MusicDetail from "@/components/MusicDetail/index.vue";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -58,7 +59,7 @@ function play(lengthen: boolean = false) {
 }
 function pause(isNeed: boolean = true, lengthen: boolean = false) {
   let volume = store.volume
-  // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候
+  // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候:
   //  这个时候会先调用pause暂停上一首进行过渡，然后在调用play播放，这个时候就不需要更新暂停标识
   isNeed && (isPlay.value = false)
   return transitionVolume(volume, false, lengthen)
@@ -72,7 +73,7 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
   return new Promise((resolve) => {
     if(target) {
       timer = setInterval(() => {
-        audio.value!.volume = Math.min((audio.value?.volume || store.volume) + volume / playVolume, volume)
+        audio.value!.volume = Math.min(audio.value!.volume + volume / playVolume, volume)
         if (audio.value!.volume >= volume) {
           resolve(undefined)
           clearInterval(timer)
@@ -81,7 +82,7 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
       return
     }
     timer = setInterval(() => {
-      audio.value!.volume = Math.max((audio.value?.volume || store.volume) - volume / pauseVolume, 0)
+      audio.value!.volume = Math.max(audio.value!.volume - volume / pauseVolume, 0)
       if (audio.value!.volume <= 0) {
         clearInterval(timer)
         originPause.call(audio.value)
@@ -124,6 +125,11 @@ const id = computed(() => {
   return props.songs.id
 })
 
+const openDetail = ref(false)
+const openMusicDetail = () => {
+  openDetail.value = !openDetail.value
+}
+
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose({
@@ -148,6 +154,7 @@ defineExpose({
     ></audio>
     <div class="left">
       <div
+        @click="openMusicDetail"
         :style="{backgroundImage: `url(${props.songs.al?.picUrl})`}"
         class="picture"
       ></div>
@@ -168,7 +175,7 @@ defineExpose({
         <i @click="setOrderHandler" :class="['iconfont', orderStatus[orderStatusVal]]"></i>
         <i @click="emit('cutSong', false)" class="iconfont cut icon-shangyishou"></i>
         <i v-show="isPlay" @click="audio.pause" class="iconfont operation icon-Pause"></i>
-        <i v-show="!isPlay" @click="audio.play" class="iconfont operation icon-kaishi1"></i>
+        <i v-show="!isPlay" @click="audio.play(false)" class="iconfont operation icon-kaishi1"></i>
         <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
       </div>
       <div class="plan-container">
@@ -198,6 +205,7 @@ defineExpose({
         :songs="props.songs"
       />
     </div>
+    <MusicDetail v-model="openDetail"/>
   </div>
 </template>
 
@@ -234,6 +242,10 @@ defineExpose({
       width: 50px;
       height: 50px;
       border-radius: 5px;
+
+    }
+    .picture:hover {
+      filter:blur(2px);
     }
 
     .name-info {
@@ -247,12 +259,12 @@ defineExpose({
       .song-name {
         font-size: 15px;
         max-width: 140px;
-        @textOverflow();
+        .textOverflow();;
       }
 
       .name-container {
         max-width: 140px;
-        @textOverflow();
+        .textOverflow();;
       }
     }
   }
