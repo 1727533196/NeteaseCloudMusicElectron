@@ -2,13 +2,12 @@
 import {useRoute} from "vue-router";
 import {useMusicAction} from "@/store/music";
 import usePlayList, {playListState} from "@/layout/BaseAside/usePlayList";
+import {varDayim} from '@/utils'
+import BaseButton from "@/components/BaseButton/index.vue";
 import SongInfo from '@/components/SongInfo/index.vue';
 import SongList from '@/components/SongList/index.vue'
-import {recommendSong} from "@/api/home";
-import {playListMock} from "@/views/DailyRecommend/dailyRecommendSongsConfig";
-import BaseButton from "@/components/BaseButton/index.vue";
 
-const { getPlayListDetailFn, updatePlayList } = usePlayList()
+const { getPlayListDetailFn, getRecommendSongs } = usePlayList()
 const route = useRoute()
 const music = useMusicAction()
 
@@ -16,11 +15,7 @@ const init = () => {
   const { id } = route.query as { id: number | 'recommendSongs' | null}
   // 是否是每日推荐歌曲
   if (id === 'recommendSongs') {
-    recommendSong().then(({data}) => {
-      playListMock.tracks = data.dailySongs
-      console.log('playListMock', playListMock)
-      updatePlayList(playListMock)
-    })
+    getRecommendSongs()
   } else {
     id && getPlayListDetailFn(+id)
   }
@@ -36,7 +31,7 @@ init()
         <div class="row-left row"></div>
         <div class="row-right row"></div>
         <div class="line"></div>
-        <span class="text">14</span>
+        <span class="text">{{ varDayim() }}</span>
       </div>
       <div class="text-info">
         <div class="text-info-title">每日歌曲推荐</div>

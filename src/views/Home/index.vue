@@ -26,6 +26,9 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
     .el-tabs__active-bar {
       background-color: @subject;
     }
+    .el-tabs__content {
+      overflow: inherit;
+    }
     .el-tabs__item {
       color: @darkText;
       font-size: 16px;

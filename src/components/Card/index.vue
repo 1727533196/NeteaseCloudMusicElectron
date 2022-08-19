@@ -27,6 +27,9 @@ const clickHandler = () => {
   width: calc(15vw - 10px);
   max-width: calc(40vw - 10px);
   margin-bottom: 20px;
+  & + & {
+    margin-left: 20px;
+  }
   .card {
     width: calc(15vw - 10px);
     max-width: calc(40vw - 10px);

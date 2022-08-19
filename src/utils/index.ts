@@ -45,3 +45,8 @@ export function formatDate(timestamp: number, format: 'YY-MM-DD hh:mm:ss' | 'YY-
                        .replace(/ss/g, preArr[sec] || ''+sec)
   return result
 }
+
+// 获取当前月份的第几天
+export function varDayim() {
+  return new Date().getDate()
+}

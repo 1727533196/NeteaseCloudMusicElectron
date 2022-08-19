@@ -9,8 +9,10 @@ const createWindow = () => {
             color: '#222225',
             symbolColor: '#ADAFB2FF'
         },
-        height: 690,
-        width: 1041,
+        // height: 690,
+        // width: 1041,
+        height: 750,
+        width: 1100,
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, './preload.js'),
