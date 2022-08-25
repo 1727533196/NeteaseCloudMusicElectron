@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {CurrentItem, getMusicDetail, GetMusicDetailData, getMusicUrl} from "@/api/musicList";
+import {CurrentItem, getLyric, getMusicDetail, GetMusicDetailData, getMusicUrl} from "@/api/musicList";
 import {nextTick, watch, ref} from "vue";
 import {randomNum} from "@/utils";
 
@@ -12,12 +12,13 @@ watch(index, (value, oldValue) => {
 export const useMusicAction = defineStore('musicActionId', {
   state() {
     return {
-      musicUrl: '',
-      songs: {} as GetMusicDetailData,
+      musicUrl: '', // 用户当前播放器播放的音乐url
+      songs: {} as GetMusicDetailData, // 用户当前播放器播放的音乐
       currentItem: {} as CurrentItem, // 用户当前选中的歌单列表，会随着用户选中的菜单变化
       runtimeList: {} as CurrentItem, // 用户当前正在播放音乐的列表
-      runtimeIds: [] as number[], // 用户当前正在播放音乐的列表ids
       oldList: {} as CurrentItem, // 用户上一次播放的歌单列表
+      runtimeIds: [] as number[], // 用户当前正在播放音乐的列表ids
+      lyric: '',
     }
   },
   actions: {
@@ -29,8 +30,16 @@ export const useMusicAction = defineStore('musicActionId', {
       this.runtimeList = list
       this.runtimeIds = ids
     },
+    // 获取歌词
+    async getLyricHandler(id: number) {
+      const {klyric, lrc} = await getLyric(id)
+      console.log('Y---> klyric, lrc', klyric, lrc)
+      console.log('Y---> data', klyric.lyric)
+      console.log('Y---> data', lrc.lyric)
+    },
     // 获取音乐url
-    async getMusicUrlHandler(id: string, i?: number) {
+    async getMusicUrlHandler(id: number, i?: number) {
+      this.getLyricHandler(id)
       const [{data}, {songs}] = await Promise.all([getMusicUrl(id), getMusicDetail(id)])
       this.songs = songs[0]
       index.value = i === undefined ? index.value : i
@@ -57,7 +66,7 @@ export const useMusicAction = defineStore('musicActionId', {
       if (index.value > this.runtimeIds.length - 1) {
         return
       }
-      this.getMusicUrlHandler(String(this.runtimeIds[index.value]))
+      this.getMusicUrlHandler(this.runtimeIds[index.value])
     },
     cutSongHandler(target: boolean) {
       if ([0, 1, 3].includes($audio?.orderStatusVal!)) {
@@ -68,14 +77,14 @@ export const useMusicAction = defineStore('musicActionId', {
           index.value = this.runtimeIds.length - 1
         }
         target ?
-          this.getMusicUrlHandler(String(this.runtimeIds[index.value])) :
-          this.getMusicUrlHandler(String(this.runtimeIds[index.value]))
+          this.getMusicUrlHandler(this.runtimeIds[index.value]) :
+          this.getMusicUrlHandler(this.runtimeIds[index.value])
         return
       }
       if (!target) {
         const i = (lastIndexList.value[lastIndexList.value.length - 1] as number | undefined) ||
           this.orderTarget($audio?.orderStatusVal!)
-        this.getMusicUrlHandler(String(this.runtimeIds[i]))
+        this.getMusicUrlHandler(this.runtimeIds[i])
         lastIndexList.value.splice(lastIndexList.value.length - 1)
         return;
       }
@@ -84,3 +93,4 @@ export const useMusicAction = defineStore('musicActionId', {
   },
 
 })
+

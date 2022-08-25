@@ -2,6 +2,7 @@
 import {ref} from "vue";
 import {GetMusicDetailData} from "@/api/musicList";
 import {State} from "@/components/MusicPlayer/useMouseSlide";
+import {useFlags} from "@/store/flags";
 
 interface Props {
   mouseenterHandler: (target: 'progress') => void
@@ -13,6 +14,7 @@ interface Props {
 }
 const props = defineProps<Props>()
 const plan = ref<HTMLDivElement>()
+const flags = useFlags()
 
 defineExpose({
   plan,
@@ -29,7 +31,7 @@ defineExpose({
     :class="['plan', {'enter-plan': props.mouseState.progress}]"
   >
     <div
-      :style="{borderRadius: props.mouseState.progress ? '5px' : ''}"
+      :style="{borderRadius: props.mouseState.progress ? '5px' : '', background: flags.isOpenDetail ? 'rgba(255,255,255,0.15)' : ''}"
       class="progress"
     ></div>
     <div
@@ -57,13 +59,11 @@ defineExpose({
   border-radius: 5px;
 }
 .plan {
-  margin: 0 10px;
   transition: 0.1s;
   position: relative;
-  width: 350px;
-  height: 3px;
+  width: 100%;
+  height: 2px;
   overflow: hidden;
-  border-radius: 1px;
   .progress {
     width: 100%;
     position: absolute;

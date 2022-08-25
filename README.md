@@ -83,3 +83,13 @@ console.log(import.meta.env.VITE_APP_WEB_URL)
     4. 搜索
 
 ```
+
+# Electron API
+```
+win.maximize() // 最大化窗口
+win.unmaximize() // 取消最大化窗口
+win.minimize() // 最小化窗口
+win.restore() // 将窗口从最小化状态还原到其以前的状态
+win.close() // 尝试关闭窗口。这与用户手动单击窗口的关闭按钮具有相同的效果
+```
+

@@ -77,6 +77,18 @@ interface GetMusicDetailRes {
   code: number
   songs: GetMusicDetailData[]
 }
+interface GetLyricRes {
+  code: number
+  klyric: {
+    lyric: string
+    version: number
+  }
+  lrc: {
+    lyric: string
+    version: number
+  }
+  version: 39
+}
 
 // 获取喜欢音乐列表ids
 export const getLikeMusicListIds = (uid: number) =>
@@ -89,7 +101,7 @@ export const getUserPlayList = (uid: number) => request<{ uid: string }, GetUser
 export const getUserPlayListMusic = (id: number) => request(`/playlist/track/all?id=${id}&limit=10&offset=0`, 'get')
 
 // 获取音乐url
-export const getMusicUrl = (id: string) =>
+export const getMusicUrl = (id: number) =>
     request<string, GetMusicUrlRes>(`/song/url?id=${id}`, 'get')
 
 // 获取歌单详情  可以获取歌单全部歌曲
@@ -97,7 +109,7 @@ export const getPlayListDetail = (id: number) =>
     request<{ id: number }, GetPlayListDetailRes>(`/playlist/detail?id=${id}`, 'get')
 
 // 获取歌曲详情
-export const getMusicDetail = (ids: string) =>
+export const getMusicDetail = (ids: number) =>
     request<string, GetMusicDetailRes>(`/song/detail?ids=${ids}`, 'get')
 
 // 对歌单添加或删除歌曲
@@ -109,3 +121,6 @@ export const likeMusicApi = (id: number, like: boolean = true) =>
     request<{id: number, like: boolean}, {code: number
       playlistId: number
       songs: GetMusicDetailData[]}>('/like', {id, like} ,'get')
+
+// 获取歌词
+export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyric?id=${id}`, 'get')

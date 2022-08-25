@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, Ref, UnwrapRef, computed, onMounted, nextTick} from "vue";
+import {ref, Ref, UnwrapRef, computed, onMounted} from "vue";
 import {useUserInfo} from "@/store";
 import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
 import {GetMusicDetailData} from "@/api/musicList";
@@ -8,6 +8,7 @@ import CurrentTime from './compoents/CurrentTime.vue';
 import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
 import MusicDetail from "@/components/MusicDetail/index.vue";
+import {useFlags} from "@/store/flags";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -36,8 +37,8 @@ const isPlay = ref(false)
 // 0列表循环  1单曲循环  2随机播放  3顺序播放
 const orderStatusVal = ref<0 | 1 | 2 | 3>(0)
 const audio = ref<userAudio>()
-const plan = ref<InstanceType<typeof CurrentTime>>()
-const volume = ref<InstanceType<typeof Volume>>()
+const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
+const volume = ref<InstanceType<typeof Volume>>() // 音量组件实例
 
 let originPlay: HTMLMediaElement["play"]
 let originPause: HTMLMediaElement["pause"]
@@ -125,11 +126,10 @@ const id = computed(() => {
   return props.songs.id
 })
 
-const openDetail = ref(false)
+const flags = useFlags()
 const openMusicDetail = () => {
-  openDetail.value = !openDetail.value
+  flags.isOpenDetail = !flags.isOpenDetail
 }
-
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose({
@@ -179,7 +179,6 @@ defineExpose({
         <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
       </div>
       <div class="plan-container">
-        <div v-if="props.songs.ar" class="current-time">{{ formattingTime(mouseState.currentTime * 1000) }}</div>
         <CurrentTime
           ref="plan"
           :mouse-state="mouseState"
@@ -189,10 +188,12 @@ defineExpose({
           :circle-down="circleDown"
           :songs="props.songs"
         />
-        <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
       </div>
     </div>
     <div class="right">
+      <div v-if="props.songs.ar" class="current-time">{{ formattingTime(mouseState.currentTime * 1000) }}</div>
+      <span style="margin: 0 5px;line-height: 15px">/</span>
+      <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
       <Volume
         ref="volume"
         :mouse-state="mouseState"
@@ -205,11 +206,22 @@ defineExpose({
         :songs="props.songs"
       />
     </div>
-    <MusicDetail v-model="openDetail"/>
   </div>
 </template>
 
+<style lang="less">
+.el-overlay {
+  .music-drawer {
+    background-image: url("../../assets/defaultBg.png");
+    .bgSetting()
+  }
+
+}
+</style>
 <style lang="less" scoped>
+:deep(.el-drawer) {
+  height: 100%;
+}
 .bottom-container {
   display: flex;
   justify-content: space-between;
@@ -238,7 +250,7 @@ defineExpose({
     }
 
     .picture {
-      background-size: contain;
+      .bgSetting();
       width: 50px;
       height: 50px;
       border-radius: 5px;
@@ -329,19 +341,20 @@ defineExpose({
     .plan-container {
       display: flex;
       align-items: center;
-      margin-top: 3px;
       height: 15px;
-
-      .current-time, .total-time {
-        color: rgb(86, 96, 91);
-        font-size: 11px;
-      }
+      position: absolute;
+      top: -8px;
+      width: 100%;
     }
   }
 
   .right {
     width: 25%;
-    color: @text;
+    display: flex;
+    .current-time, .total-time {
+      color: @darkText;
+      font-size: 12px;
+    }
   }
 
 }

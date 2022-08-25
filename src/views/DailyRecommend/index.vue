@@ -31,7 +31,7 @@ init()
         <div class="row-left row"></div>
         <div class="row-right row"></div>
         <div class="line"></div>
-        <span class="text">{{ varDayim() }}</span>
+        <div class="text">{{ varDayim() }}</div>
       </div>
       <div class="text-info">
         <div class="text-info-title">每日歌曲推荐</div>
@@ -95,6 +95,7 @@ init()
         font-size: 40px;
         font-weight: 800;
         color: @subject;
+        text-align: center;
       }
     }
     .text-info {

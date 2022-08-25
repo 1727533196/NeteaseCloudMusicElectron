@@ -48,7 +48,7 @@ const store = useUserInfo()
 
   .left {
     background-image: url("https://p1.music.126.net/9GAbSb_hlXPu66HWInJOww==/109951162846052486.jpg");
-    background-size: contain;
+    .bgSetting();
     width: 180px;
     height: 180px;
     border-radius: 10px;
@@ -90,7 +90,7 @@ const store = useUserInfo()
         border-radius: 50%;
         width: 25px;
         height: 25px;
-        background-size: contain;
+        .bgSetting();
         cursor: pointer;
       }
       .nickname {

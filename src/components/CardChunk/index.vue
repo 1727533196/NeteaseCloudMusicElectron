@@ -31,8 +31,8 @@ const clickSliderHandler = () => {
         :pic-url="item.picUrl"
       />
     </div>
-    <el-icon @click="clickSliderHandler" :size="50" class="arrow left"><ArrowLeft /></el-icon>
-    <el-icon @click="clickSliderHandler" :size="50" class="arrow right"><ArrowRight /></el-icon>
+<!--    <el-icon @click="clickSliderHandler" :size="50" class="arrow left"><ArrowLeft /></el-icon>-->
+<!--    <el-icon @click="clickSliderHandler" :size="50" class="arrow right"><ArrowRight /></el-icon>-->
   </div>
 </template>
 
@@ -61,9 +61,9 @@ const clickSliderHandler = () => {
   .subject {
     padding-top: 15px;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: space-between;
-    overflow-x: hidden;
+    //overflow-x: auto;
   }
 }
 </style>
