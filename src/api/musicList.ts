@@ -79,12 +79,12 @@ interface GetMusicDetailRes {
 }
 interface GetLyricRes {
   code: number
-  klyric: {
-    lyric: string
+  klyric: { // 卡拉歌词(逐字)
+    lyric: string // 可能会返回空串
     version: number
   }
-  lrc: {
-    lyric: string
+  lrc: { // 逐行歌词
+    lyric: string // 可能会返回空串
     version: number
   }
   version: 39

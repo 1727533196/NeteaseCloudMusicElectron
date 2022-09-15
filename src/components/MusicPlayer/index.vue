@@ -9,6 +9,7 @@ import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
 import MusicDetail from "@/components/MusicDetail/index.vue";
 import {useFlags} from "@/store/flags";
+import {useMusicAction} from "@/store/music";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -39,6 +40,7 @@ const orderStatusVal = ref<0 | 1 | 2 | 3>(0)
 const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
 const volume = ref<InstanceType<typeof Volume>>() // 音量组件实例
+const music = useMusicAction()
 
 let originPlay: HTMLMediaElement["play"]
 let originPause: HTMLMediaElement["pause"]
@@ -191,7 +193,7 @@ defineExpose({
       </div>
     </div>
     <div class="right">
-      <div v-if="props.songs.ar" class="current-time">{{ formattingTime(mouseState.currentTime * 1000) }}</div>
+      <div v-if="props.songs.ar" class="current-time">{{ formattingTime(music.currentTime * 1000) }}</div>
       <span style="margin: 0 5px;line-height: 15px">/</span>
       <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
       <Volume
@@ -351,8 +353,9 @@ defineExpose({
   .right {
     width: 25%;
     display: flex;
+    align-items: center;
     .current-time, .total-time {
-      color: @darkText;
+      color: @text;
       font-size: 12px;
     }
   }

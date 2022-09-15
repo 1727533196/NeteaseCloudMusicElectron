@@ -1,13 +1,14 @@
 import {defineStore} from "pinia";
 import {CurrentItem, getLyric, getMusicDetail, GetMusicDetailData, getMusicUrl} from "@/api/musicList";
 import {nextTick, watch, ref} from "vue";
-import {randomNum} from "@/utils";
+import {formatLyric, randomNum} from "@/utils";
 
 const index = ref(0)
 const lastIndexList = ref<number[]>([])
 watch(index, (value, oldValue) => {
   lastIndexList.value.push(oldValue)
 })
+export type Lyric = {time: number, text: string, line: number}
 // 会把用户当前正在播放的列表单独存储起来，以便切换歌单时没有播放切换的歌单不会被清空
 export const useMusicAction = defineStore('musicActionId', {
   state() {
@@ -18,7 +19,9 @@ export const useMusicAction = defineStore('musicActionId', {
       runtimeList: {} as CurrentItem, // 用户当前正在播放音乐的列表
       oldList: {} as CurrentItem, // 用户上一次播放的歌单列表
       runtimeIds: [] as number[], // 用户当前正在播放音乐的列表ids
-      lyric: '',
+      lyric: [] as Lyric[],
+      klyric: '',
+      currentTime: 0,
     }
   },
   actions: {
@@ -33,9 +36,9 @@ export const useMusicAction = defineStore('musicActionId', {
     // 获取歌词
     async getLyricHandler(id: number) {
       const {klyric, lrc} = await getLyric(id)
-      console.log('Y---> klyric, lrc', klyric, lrc)
-      console.log('Y---> data', klyric.lyric)
-      console.log('Y---> data', lrc.lyric)
+      // 首先对歌词进行格式化处理
+      // {time: number(s), text: string}
+      this.lyric = formatLyric(lrc.lyric)
     },
     // 获取音乐url
     async getMusicUrlHandler(id: number, i?: number) {

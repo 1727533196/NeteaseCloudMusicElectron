@@ -20,9 +20,10 @@ class Main {
             minHeight: 690,
             minWidth: 1041,
             height: 750,
-            width: 1100,
+            width: 1150,
             webPreferences: {
                 nodeIntegration: true,
+                contextIsolation: true,
                 preload: path.join(__dirname, './preload.js'),
             },
             frame: false,
@@ -76,4 +77,5 @@ class Main {
 }
 
 const main = new Main();
+
 

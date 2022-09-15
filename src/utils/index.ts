@@ -9,6 +9,59 @@ export function formattingTime(msec: number) {
 
   return result
 }
+// interface Test {
+//   name: `${'P'}${string}`
+// }
+
+// 时间反序列化 timeFormat: '11:02.410' = 662.41/s     5 * 60 = 300 + 02.410
+export function timeDeserialize(timeFormat: string) {
+  const timeArr: string[] = timeFormat.split(':') // [11, 02, 41]
+  let result: number = 0
+  for(let i = 0; i < timeArr.length; i++) {
+    if(i === 0) {
+      result += +timeArr[i] * 60
+    } else if(i === 1) {
+      result += +`${timeArr[i]}`
+    }
+  }
+  return result
+}
+
+// 格式化歌词字符串
+export function formatLyric(lyric: string) {
+  const result: Array<{time: number, text: string, line: number}> = []
+  const lyricArr = lyric.split(/\n/)
+  lyricArr.pop() // 删除最后一行多余的
+
+  // 会出现这两种情况, 所以要做处理
+  // [00:24.46]春雨后太阳缓缓的露出笑容;  lyricArr[i].split(']') => ['[00:24.46', '春雨后太阳缓缓的露出笑容']
+  // [03:05.32][01:28.24]这个夏天 融化了整个季节  => ['[03:05.32', '[01:28.24', '这个夏天 融化了整个季节']
+  let isSort = false
+  for (let i = 0; i < lyricArr.length; i++) {
+    let lyricItem = lyricArr[i].split(']')
+    const text = lyricItem.pop() as string
+    // [00:24.46]春雨后太阳缓缓的露出笑容 这种情况就可以直接赋值
+    if(lyricItem.length > 1) {
+      isSort || (isSort = true)
+      for (let i = 0; i < lyricItem.length; i++) {
+        const time = timeDeserialize(lyricItem[i].replace('[', ''))
+        result.push({ time, text, line: i+1 })
+      }
+    } else {
+      const time = timeDeserialize(lyricItem[0].replace('[', ''))
+      result.push({ time, text, line: i+1 })
+    }
+  }
+  if(isSort) {
+    result.sort((a, b) => (a.time - b.time))
+    for (let i = 0; i < result.length; i++) {
+      result[i].line = i + 1
+    }
+  }
+  console.log('Y---> result', result)
+
+  return result
+}
 
 // 随机产生指定范围数
 export function randomNum(minNum: number,maxNum: number){
