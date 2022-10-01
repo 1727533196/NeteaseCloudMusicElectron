@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
 import {useFlags} from "@/store/flags";
 import {formattingTime} from "@/utils";
@@ -13,7 +13,7 @@ const music = useMusicAction()
 const defaultImg = '/src/assets/defaultBg.png'
 const flags = useFlags()
 const musicDetailContainerEl = ref<HTMLDivElement>()
-const lyricContainerEl = ref<HTMLDivElement>()
+const lyrEl = ref<HTMLDivElement>()
 let currentLyricEl: HTMLCollectionOf<HTMLDivElement>
 
 const bg = computed(() => {
@@ -38,26 +38,22 @@ const top = ref(100)
 const targetTime = ref<HTMLDivElement>()
 const currentLyrLine = ref<Lyric>({time: 0, line: 1, text: '0'})
 const isEnterLyric = ref(false) // 用来显示当前歌词的时间
-let isAutoScroll = true // 是否进入歌词区域
 const currentEnterLyric = ref<Lyric>(currentLyrLine.value)
+const moveBox = ref<HTMLDivElement>()
 
-watch(() => music.currentTime, (val) => {
-  let current = music.lyric[currentLyrLine.value.line]
-  if(!lyricContainerEl.value || val < current.time) return
-
-  const item = music.lyric.find((item, index) => {
-    if(index + 1 >= music.lyric.length) {
-      return item
-    }
-    return item.time <= val && music.lyric[index+1].time > val
-  })
-  if(item) {
-    current = music.lyric[current.line-1]
-    currentLyricEl.length && isAutoScroll && lyricContainerEl.value.scroll(0, (currentLyricEl[0].clientHeight * current.line))
-    currentLyrLine.value = current
-  }
-})
 onMounted(() => {
+  watch(() => music.songs.id, () => {
+    if(!music.lyric.length) return
+    nextTick(() => {
+      const items = document.querySelector('.lyric-container')!.getElementsByClassName('lyric-item')
+      for (let i = 0; i < items.length; i++) {
+        items[i].setAttribute('height', items[i].clientHeight+'')
+      }
+    })
+  }, {
+    immediate: true,
+  })
+
   currentLyricEl = document.querySelector('.lyric-container')!.getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
   // 解决切换图片闪烁问题
   watch(bg, (val) => {
@@ -70,23 +66,52 @@ onMounted(() => {
       }
     }
   })
+
+  watch(() => music.currentTime, (val) => {
+    if(!lyrEl.value || !moveBox.value) return
+
+    const item = music.lyric.find((item, index) => {
+      if(index + 1 >= music.lyric.length) {
+        return item
+      }
+      return item.time <= val && music.lyric[index+1].time > val
+    })
+    if(item) {
+      if(!isUserWheel && currentLyricEl.length) {
+        const top = moveBox.value?.offsetTop / 4 + moveBox.value?.offsetTop
+        lyrEl.value!.scrollTo({
+          top: currentLyricEl[0].offsetTop+top - (lyrEl.value!.clientHeight/2),
+          behavior: 'smooth'
+        })
+      }
+      currentLyrLine.value = item
+    }
+  })
+
 })
 const mouseenter = (e: Event, lyric: Lyric) => {
-  clearTimeout(timeout)
-  isAutoScroll = false
   isEnterLyric.value = true
+  // 文本定位
   const el = e.target as HTMLDivElement
-  targetTime.value!.style.left = el.offsetLeft + 20 + 'px'
+  targetTime.value!.style.left = el.offsetLeft + 5 + 'px'
   targetTime.value!.style.top = el.offsetTop + (el.offsetHeight / 4)  + 'px'
   currentEnterLyric.value = lyric
 }
-let timeout: NodeJS.Timeout
 const mouseleave = () => {
-  timeout = setTimeout(() => {
-    isAutoScroll = true
-  }, 1500)
   isEnterLyric.value = false
 }
+
+let isUserWheel = false // 是否为用户滚动，当用户滚动时，会在用户停止三秒之后置为false
+let timeout: NodeJS.Timeout
+// 此事件只有当用户主动滑动滚轮才会触发，而编程的方式来操作滚动条则不会触发
+const wheelHandler = () => {
+  isUserWheel = true
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    isUserWheel = false
+  },3000)
+}
+
 </script>
 
 <template>
@@ -96,8 +121,15 @@ const mouseleave = () => {
       <div class="shadow">
         <div class="lyric-and-bg-container">
           <div class="bg-img"></div>
-          <div ref="lyricContainerEl" class="lyric-container">
-            <div :style="{transform: `translateY(${top}px)`}" class="move-box">
+          <div
+            ref="lyrEl"
+            @wheel="wheelHandler"
+            class="lyric-container"
+          >
+            <div
+              ref="moveBox"
+              class="move-box"
+            >
               <template v-for="item in music.lyric">
                 <div
                   v-if="item.text"
@@ -108,11 +140,18 @@ const mouseleave = () => {
                 >{{item.text}}</div>
                 <div class="empty-lyric" v-else></div>
               </template>
-              <span style="position: absolute; font-size: 14px" v-show="isEnterLyric" ref="targetTime">{{formattingTime(currentEnterLyric.time * 1000)}}</span>
+              <span
+                style="position: absolute; font-size: 12px"
+                v-show="isEnterLyric"
+                ref="targetTime"
+              >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
             </div>
           </div>
         </div>
-        <div class="test" style="height: 80px; position: absolute;bottom: 0;width: 100%"></div>
+        <div
+          class="test"
+          style="height: 80px; position: absolute;bottom: 0;width: 100%;"
+        ></div>
       </div>
     </div>
   </div>
@@ -125,7 +164,7 @@ const mouseleave = () => {
   width: 100%;
   bottom: 0;
   left: 0;
-  transition: height 0.5s;
+  transition: height 0.4s;
   z-index: 2005;
   overflow: hidden;
   .close {
@@ -175,7 +214,7 @@ const mouseleave = () => {
           overflow: auto;
           box-shadow: 0 5px 15px 5px rgba(0,0,0,0.05);
           position: relative;
-          scroll-behavior: smooth;
+          //scroll-behavior: smooth; // 111
           &::-webkit-scrollbar {
             display: none;
           }
@@ -185,16 +224,19 @@ const mouseleave = () => {
             align-items: center;
             position: absolute;
             width: 100%;
-            top: 40%;
-            padding: 0 15px;
+            top: 30%;
+            padding: 0 20px;
+            transition: 0.3s;
             .lyric-item {
-              min-height: 21px;
-              padding: 10px 0;
+              min-height: 10px;
+              padding: 10px 40px;
               width: 100%;
               border-radius: 10px;
               display: flex;
               align-items: center;
               justify-content: center;
+              text-align: center;
+              margin: 3px 0;
               &:hover {
                 background-color: rgba(255,255,255,0.05);
               }

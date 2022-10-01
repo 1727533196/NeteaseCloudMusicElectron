@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 
+// 这里通常标记一些状态
 export const useFlags = defineStore("flagsId", {
   state: () => {
     return {
