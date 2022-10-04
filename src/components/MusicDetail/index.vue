@@ -2,7 +2,7 @@
 import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
 import {useFlags} from "@/store/flags";
-import {formattingTime} from "@/utils";
+import {formattingTime, toggleImg} from "@/utils";
 
 interface Props {
   modelValue: boolean
@@ -12,9 +12,9 @@ const emit = defineEmits(['update:modelValue'])
 const music = useMusicAction()
 const defaultImg = '/src/assets/defaultBg.png'
 const flags = useFlags()
-const musicDetailContainerEl = ref<HTMLDivElement>()
+const cntrEl = ref<HTMLDivElement>()
 const lyrEl = ref<HTMLDivElement>()
-let currentLyricEl: HTMLCollectionOf<HTMLDivElement>
+let currentLyrEl: HTMLCollectionOf<HTMLDivElement>
 
 const bg = computed(() => {
   return music.songs.al?.picUrl || defaultImg
@@ -27,67 +27,73 @@ const setModelValue = computed({
     emit('update:modelValue', val)
   }
 })
-const closeDetail = () => {
-  flags.isOpenDetail = setModelValue.value = false
-}
-const lyricClick = (time: number) => {
-  $audio.el.currentTime = time
-}
-let container: HTMLDivElement | null
-const top = ref(100)
+
 const targetTime = ref<HTMLDivElement>()
 const currentLyrLine = ref<Lyric>({time: 0, line: 1, text: '0'})
 const isEnterLyric = ref(false) // 用来显示当前歌词的时间
 const currentEnterLyric = ref<Lyric>(currentLyrLine.value)
 const moveBox = ref<HTMLDivElement>()
+let index = 0
+
+function findLyric(time: number) {
+  const result = music.lyric.find((item, index) => {
+    if(index + 1 >= music.lyric.length) {
+      return item
+    }
+    return item.time <= time && music.lyric[index+1].time > time
+  })
+  result && moveLyric(result)
+}
+function moveLyric(currentLyr: Lyric) {
+  currentLyrLine.value = currentLyr
+  index = currentLyr.line - 1
+
+  nextTick(() => {
+    const top = moveBox.value!.offsetTop / 4 + moveBox.value!.offsetTop
+    lyrEl.value!.scrollTo({
+      top: currentLyrEl[0].offsetTop+top - (lyrEl.value!.clientHeight/2),
+      behavior: 'smooth'
+    })
+    // currentLyrEl[0].scrollIntoView({
+    //   block: 'center',
+    //   behavior: 'smooth',
+    // })
+  })
+}
+
+watch(() => music.currentTime, (currentTime, lastTime) => {
+  if(!lyrEl.value || !moveBox.value) return
+
+  // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
+  if(Math.abs(currentTime - lastTime) >= 1) {
+    findLyric(currentTime)
+    return
+  }
+
+  if(!music.lyric[index+1]) return;
+  if(
+    !isUserWheel && currentLyrEl.length
+    && (currentTime >= music.lyric[index+1].time)
+  ) {
+    moveLyric(music.lyric[index+1])
+    return
+  }
+})
+
 
 onMounted(() => {
-  watch(() => music.songs.id, () => {
-    if(!music.lyric.length) return
-    nextTick(() => {
-      const items = document.querySelector('.lyric-container')!.getElementsByClassName('lyric-item')
-      for (let i = 0; i < items.length; i++) {
-        items[i].setAttribute('height', items[i].clientHeight+'')
-      }
-    })
-  }, {
-    immediate: true,
-  })
+  currentLyrEl = document.querySelector('.lyric-container')!
+    .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
 
-  currentLyricEl = document.querySelector('.lyric-container')!.getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
   // 解决切换图片闪烁问题
   watch(bg, (val) => {
-    const img = new Image()
-    img.src = val
-    img.onload = () => {
-      if(musicDetailContainerEl.value) {
-        musicDetailContainerEl.value.style.backgroundImage = `url(${img.src})`;
-        (musicDetailContainerEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
+    toggleImg(val).then(img => {
+      if(cntrEl.value) {
+        cntrEl.value.style.backgroundImage = `url(${img.src})`;
+        (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
       }
-    }
-  })
-
-  watch(() => music.currentTime, (val) => {
-    if(!lyrEl.value || !moveBox.value) return
-
-    const item = music.lyric.find((item, index) => {
-      if(index + 1 >= music.lyric.length) {
-        return item
-      }
-      return item.time <= val && music.lyric[index+1].time > val
     })
-    if(item) {
-      if(!isUserWheel && currentLyricEl.length) {
-        const top = moveBox.value?.offsetTop / 4 + moveBox.value?.offsetTop
-        lyrEl.value!.scrollTo({
-          top: currentLyricEl[0].offsetTop+top - (lyrEl.value!.clientHeight/2),
-          behavior: 'smooth'
-        })
-      }
-      currentLyrLine.value = item
-    }
   })
-
 })
 const mouseenter = (e: Event, lyric: Lyric) => {
   isEnterLyric.value = true
@@ -111,13 +117,19 @@ const wheelHandler = () => {
     isUserWheel = false
   },3000)
 }
+const closeDetail = () => {
+  flags.isOpenDetail = setModelValue.value = false
+}
+const lyricClick = (time: number) => {
+  $audio.el.currentTime = time
+}
 
 </script>
 
 <template>
   <div :class="['container', {open: setModelValue}]">
     <el-icon :size="45" @click="closeDetail" class="close np-drag"><ArrowDown /></el-icon>
-    <div ref="musicDetailContainerEl" class="music-detail-container">
+    <div ref="cntrEl" class="music-detail-container">
       <div class="shadow">
         <div class="lyric-and-bg-container">
           <div class="bg-img"></div>
