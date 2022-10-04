@@ -56,4 +56,9 @@ export default [
     name: 'dailyRecommend',
     component: () => import('@/views/DailyRecommend/index.vue'),
   },
+  {
+    path: '/detail',
+    name: 'userDetail',
+    component: () => import('@/views/UserDetail/index.vue'),
+  },
 ]

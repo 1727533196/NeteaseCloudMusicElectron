@@ -8,9 +8,11 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import alias from "@rollup/plugin-alias";
+import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 
 export default defineConfig({
   plugins: [
+    VueSetupExtend(),
     vue(),
     electron({
       main: {

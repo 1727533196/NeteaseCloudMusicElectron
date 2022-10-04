@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import {useRoute} from "vue-router";
-import {useMusicAction} from "@/store/music";
-import usePlayList, {playListState} from "@/layout/BaseAside/usePlayList";
+import {useRoute} from "vue-router"
+import {useMusicAction} from "@/store/music"
+import usePlayList, {playListState} from "@/layout/BaseAside/usePlayList"
 import {varDayim} from '@/utils'
 import BaseButton from "@/components/BaseButton/index.vue";
-import SongInfo from '@/components/SongInfo/index.vue';
+import SongInfo from '@/components/SongInfo/index.vue'
 import SongList from '@/components/SongList/index.vue'
+import {header} from "@/views/PlayList/config"
 
 const { getPlayListDetailFn, getRecommendSongs } = usePlayList()
 const route = useRoute()
@@ -45,6 +46,7 @@ init()
   </div>
   <SongList
     @play="music.getMusicUrlHandler"
+    :header="header"
     :loading="playListState.loading"
     :songs="music.songs"
     :ids="playListState.ids"

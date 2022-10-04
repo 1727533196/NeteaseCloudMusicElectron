@@ -3,6 +3,7 @@ import SongList from '@/components/SongList/index.vue'
 import SongInfo from '@/components/SongInfo/index.vue'
 import {playListState} from "@/layout/BaseAside/usePlayList"
 import {useMusicAction} from "@/store/music"
+import {header} from "@/views/PlayList/config";
 
 const music = useMusicAction()
 </script>
@@ -11,6 +12,7 @@ const music = useMusicAction()
   <SongInfo></SongInfo>
   <SongList
     @play="music.getMusicUrlHandler"
+    :header="header"
     :loading="playListState.loading"
     :songs="music.songs"
     :ids="playListState.ids"

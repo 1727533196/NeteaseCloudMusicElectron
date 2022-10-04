@@ -71,6 +71,7 @@ export type GetMusicDetailData = {
   name: string
   dt: number
   id: number
+  pop: number
 }
 
 interface GetMusicDetailRes {

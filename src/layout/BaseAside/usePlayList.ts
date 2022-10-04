@@ -25,6 +25,7 @@ export default () => {
   // 获取用户指定歌单列表
   const getPlayListDetailFn = async (id: number) => {
     playListState.loading = true
+
     music.oldList = {tracks: playListState.playList, ...playListState.listInfo}
     try {
       // 防止获取的是日推歌曲，因为日推歌曲没有歌单id

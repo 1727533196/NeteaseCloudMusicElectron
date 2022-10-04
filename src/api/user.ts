@@ -23,3 +23,6 @@ export const getUserDetail = (uid: number) => request(`/user/detail?uid=${uid}`,
 
 // 获取账号信息
 export const getUserAccount = () => request<null, getUserAccountRes>('/user/account', 'get');
+
+// 获取歌手详情
+export const getArtistDetail = (id: number) => request(`/artist/detail${id}`, 'get')

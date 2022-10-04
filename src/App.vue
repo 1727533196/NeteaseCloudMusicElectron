@@ -11,6 +11,7 @@ import {useMusicAction} from "@/store/music";
 import {useFlags} from "@/store/flags";
 import {useRoute} from "vue-router";
 import MusicDetail from '@/components/MusicDetail/index.vue'
+import {lookup} from "@/utils";
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
@@ -24,6 +25,7 @@ onMounted(() => {
 })
 getUserAccountFn()
 
+
 </script>
 
 <template>
@@ -34,7 +36,12 @@ getUserAccountFn()
       <Aside></Aside>
       <div class="main">
         <div class="top"></div>
-        <router-view></router-view>
+        <router-view v-slot="{Component}">
+          <keep-alive include="Home">
+            <component :is="Component"></component>
+          </keep-alive>
+        </router-view>
+
       </div>
     </div>
     <div style="height: 20px"></div>

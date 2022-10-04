@@ -103,3 +103,30 @@ export function formatDate(timestamp: number, format: 'YY-MM-DD hh:mm:ss' | 'YY-
 export function varDayim() {
   return new Date().getDate()
 }
+
+// 嵌套取值
+export function lookup(obj: object, key: string): any {
+  if(!key) {
+    return ''
+  }
+  if(!key.includes('.')) {
+    return obj[key as keyof typeof obj]
+  }
+  let temp = obj
+  key.split('.').forEach(item => {
+    temp = temp[item as keyof typeof obj]
+  })
+  return temp
+}
+
+// 切换图片过渡 (防止图片闪烁
+export function toggleImg(src: string): Promise<HTMLImageElement> {
+  const img = new Image()
+  img.src = src
+  return new Promise((resolve) => {
+    img.onload = () => {
+      resolve(img)
+    }
+  })
+}
+
