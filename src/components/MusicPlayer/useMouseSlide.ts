@@ -1,6 +1,7 @@
 import {reactive, Ref, ref, watch} from "vue";
 import CurrentTime from './compoents/CurrentTime.vue';
 import {useUserInfo} from "@/store";
+import {useMusicAction} from "@/store/music";
 
 export interface State {
   width: number // 当前进度条的百分比进度
@@ -11,12 +12,13 @@ export interface State {
   top: number
   current: 'progress' | 'volume'
   isMute: boolean
-  currentTime: number // 当前播放到时间
+  currentTime: number // 当前播放到时间  单位: s
   stop: boolean
 }
 export default (audio: Ref<HTMLAudioElement>,
                 plan: Ref<InstanceType<typeof CurrentTime>>,
                 volume: Ref<{volume: HTMLDivElement}>) => {
+  const music = useMusicAction()
   const isDown = ref(false)
   const store = useUserInfo()
   const state = reactive<State>({
@@ -45,7 +47,7 @@ export default (audio: Ref<HTMLAudioElement>,
     if(isDown.value || state.stop){
       return
     }
-    state.currentTime = audio.value!.currentTime
+    music.currentTime = audio.value!.currentTime
     state.width = (audio.value!.currentTime / audio.value!.duration) * 100
   }
   const volumechange = () => {
@@ -57,6 +59,7 @@ export default (audio: Ref<HTMLAudioElement>,
     state.height = target ? 0 : volume * 100
     audio.value!.volume = target ? 0 : volume
     sessionStorage.setItem('ectype_volume', String(audio.value!.volume))
+    store.volume = audio.value!.volume
   }
   const mouseenterHandler = (target: 'progress' | 'volume' = 'progress') => {
     state[target] = true

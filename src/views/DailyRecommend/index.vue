@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import {useRoute} from "vue-router";
-import {useMusicAction} from "@/store/music";
-import usePlayList, {playListState} from "@/layout/BaseAside/usePlayList";
-import SongInfo from '@/components/SongInfo/index.vue';
-import SongList from '@/components/SongList/index.vue'
-import {recommendSong} from "@/api/home";
-import {playListMock} from "@/views/DailyRecommend/dailyRecommendSongsConfig";
+import {useRoute} from "vue-router"
+import {useMusicAction} from "@/store/music"
+import usePlayList, {playListState} from "@/layout/BaseAside/usePlayList"
+import {varDayim} from '@/utils'
 import BaseButton from "@/components/BaseButton/index.vue";
+import SongInfo from '@/components/SongInfo/index.vue'
+import SongList from '@/components/SongList/index.vue'
+import {header} from "@/views/PlayList/config"
 
-const { getPlayListDetailFn, updatePlayList } = usePlayList()
+const { getPlayListDetailFn, getRecommendSongs } = usePlayList()
 const route = useRoute()
 const music = useMusicAction()
 
@@ -16,11 +16,7 @@ const init = () => {
   const { id } = route.query as { id: number | 'recommendSongs' | null}
   // 是否是每日推荐歌曲
   if (id === 'recommendSongs') {
-    recommendSong().then(({data}) => {
-      playListMock.tracks = data.dailySongs
-      console.log('playListMock', playListMock)
-      updatePlayList(playListMock)
-    })
+    getRecommendSongs()
   } else {
     id && getPlayListDetailFn(+id)
   }
@@ -36,7 +32,7 @@ init()
         <div class="row-left row"></div>
         <div class="row-right row"></div>
         <div class="line"></div>
-        <span class="text">14</span>
+        <div class="text">{{ varDayim() }}</div>
       </div>
       <div class="text-info">
         <div class="text-info-title">每日歌曲推荐</div>
@@ -50,6 +46,7 @@ init()
   </div>
   <SongList
     @play="music.getMusicUrlHandler"
+    :header="header"
     :loading="playListState.loading"
     :songs="music.songs"
     :ids="playListState.ids"
@@ -100,6 +97,7 @@ init()
         font-size: 40px;
         font-weight: 800;
         color: @subject;
+        text-align: center;
       }
     }
     .text-info {

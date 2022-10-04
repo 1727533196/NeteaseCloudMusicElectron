@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {GetMusicDetailData} from "@/api/musicList";
 import {State} from "@/components/MusicPlayer/useMouseSlide";
+import {useFlags} from "@/store/flags";
 
 interface Props {
   mouseenterHandler: (target: 'volume') => void
@@ -13,6 +14,7 @@ interface Props {
   songs: GetMusicDetailData
   mouseState: State
 }
+const flags = useFlags()
 const props = defineProps<Props>()
 const volume = ref<HTMLDivElement>()
 
@@ -135,6 +137,7 @@ defineExpose({
     transform: translateY(-50%);
     position: absolute;
     top: 50%;
+    color: @text;
   }
   .iconfont:hover {
     color: white;

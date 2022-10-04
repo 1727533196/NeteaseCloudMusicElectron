@@ -1,17 +1,46 @@
-__csrf=3ad799e1548e4914a9aa29bd4180b9ad; Max-Age=1296010; Expires=Sat, 20 Aug 2022 16:41:56 GMT;
-Path=/;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/eapi/clientlog;;
-NMTID=00OPJ9jPV_TUP60qk9llG6WFG4oc3UAAAGCbuJkWw; Max-Age=315360000; Expires=Mon, 02 Aug 2032 16:41:46 GMT;
-Path=/;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/api/feedback;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/neapi/clientlog;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/openapi/clientlog;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/wapi/feedback; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/weapi/feedback; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/eapi/feedback; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/weapi/feedback; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/weapi/clientlog; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/api/clientlog; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/api/clientlog; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/wapi/feedback; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/openapi/clientlog; HTTPOnly;MUSIC_U=0b75105c965cab19fd88025e1ea74def2783c482eec319f56c21c72080a7dc51519e07624a9f0053f226077836db9f5db22e4aa5c9e63aaa7599403f595f714c0bf741b344633c9ba0d2166338885bd7; Max-Age=15552000; Expires=Wed, 01 Feb 2023 16:41:46 GMT; Path=/; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/weapi/clientlog; HTTPOnly;MUSIC_SNS=; Max-Age=0; Expires=Fri, 05 Aug 2022 16:41:46 GMT; Path=/;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/eapi/clientlog; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/wapi/clientlog; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/neapi/feedback; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/neapi/clientlog; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/api/feedback; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/neapi/feedback; HTTPOnly;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/wapi/clientlog; HTTPOnly;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:55:53 GMT; Path=/eapi/feedback; HTTPOnly
-
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/eapi/feedback;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/openapi/clientlog;;
-MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/wapi/feedback;;
-MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/wapi/clientlog;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/neapi/clientlog;;
-MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/api/clientlog;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/api/clientlog;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/weapi/feedback;;
-MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/eapi/clientlog;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/weapi/clientlog;;__remember_me=true; Max-Age=1296000; Expires=Sat, 20 Aug 2022 16:43:02 GMT; Path=/;;__csrf=55c3fb5383ce8c4b3c2d51982b468ab5; Max-Age=1296010; Expires=Sat, 20 Aug 2022 16:43:12 GMT; Path=/;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/openapi/clientlog;;NMTID=00OW48jW0fuGKxad0dDr0tc4KlAXHwAAAGCbuONPg; Max-Age=315360000; Expires=Mon, 02 Aug 2032 16:43:02 GMT; Path=/;;MUSIC_U=0b75105c965cab19fd88025e1ea74def2783c482eec319f561ffae610d02ac6c519e07624a9f0053f226077836db9f5de882cfaa7ea2513e7599403f595f714c0bf741b344633c9ba89fe7c55eac81f3; Max-Age=1296000; Expires=Sat, 20 Aug 2022 16:43:02 GMT; Path=/;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/neapi/feedback;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/weapi/feedback;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/eapi/clientlog;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/api/feedback;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/eapi/feedback;;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/wapi/clientlog;;MUSIC_SNS=; Max-Age=0; Expires=Fri, 05 Aug 2022 16:43:02 GMT; Path=/;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/weapi/clientlog;;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/wapi/feedback;;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/api/feedback;;MUSIC_R_T=1505583486311; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/neapi/feedback;;MUSIC_A_T=1505583477960; Max-Age=2147483647; Expires=Wed, 23 Aug 2090 19:57:09 GMT; Path=/neapi/clientlog;
+[00:00.000] 作词 : 方文山
+    [00:01.000] 作曲 : 周杰伦
+    [00:02.000] 编曲 : 林迈可
+    [00:03.32]泛黄的春联还残留在墙上
+    [00:07.49]依稀可见几个字岁岁平安
+    [00:11.60]在我没回去过的老家米缸
+    [00:15.76]爷爷用楷书写一个满
+    [00:19.92]黄金葛爬满了雕花的门窗
+    [00:24.04]夕阳斜斜映在斑驳的砖墙
+    [00:28.16]铺着榉木板的屋内
+    [00:31.00]还弥漫姥姥当年酿的豆瓣酱
+    [00:36.69]我对着黑白照片开始想象
+    [00:40.60]爸和妈当年的模样
+    [00:45.93]说着一口吴侬软语的姑娘
+    [00:49.59]缓缓走过外滩
+    [00:53.95]消失的旧时光一九四三
+    [00:58.22]在回忆的路上时间变好慢
+    [01:02.54]老街坊小弄堂是属于那年代
+    [01:06.80]白墙黑瓦的淡淡的忧伤
+    [01:10.61]消失的旧时光一九四三
+    [01:14.73]回头看的片段有一些风霜
+    [01:19.09]老唱盘旧皮箱装满了
+    [01:22.34]明信片的铁盒里
+    [01:24.73]藏着一片玫瑰花瓣
+    [01:43.57]黄金葛爬满了雕花的门窗
+    [01:47.89]夕阳斜斜映在斑驳的砖墙
+    [01:52.00]铺着榉木板的屋内
+    [01:54.74]还弥漫姥姥当年酿的豆瓣酱
+    [02:00.53]我对着黑白照片开始想象
+    [02:04.44]爸和妈当年的模样
+    [02:09.82]说着一口吴侬软语的姑娘
+    [02:13.38]缓缓走过外滩
+    [02:18.67]消失的旧时光一九四三
+    [02:22.99]在回忆的路上时间变好慢
+    [02:27.41]老街坊小弄堂是属于那年代
+    [02:31.62]白墙黑瓦的淡淡的忧伤
+    [02:35.48]消失的旧时光一九四三
+    [02:39.55]回头看的片段有一些风霜
+    [02:43.96]老唱盘旧皮箱装满了
+    [02:47.17]明信片的铁盒里
+    [02:49.56]藏着一片玫瑰花瓣
+    [02:55.00]制作人：周杰伦
+    [02:56.00]合声编写：周杰伦
+    [02:57.00]合声：周杰伦
+    [02:58.00]录音工程：Gary Yang(J&A STUDIO)
+[02:59.00]混音工程：杨大纬(杨大纬录音工作室)

@@ -1,14 +1,27 @@
 <script setup lang="ts">
-import {ref} from "vue";
-import {formattingTime} from '@/utils'
-import {GetMusicDetailData, PlayList} from "@/api/musicList";
-import {useUserInfo} from "@/store";
-import useMusic from "@/components/MusicPlayer/useMusic";
-import {useMusicAction} from "@/store/music";
+import {ref} from "vue"
+import {useRouter} from "vue-router"
+import {lookup} from '@/utils'
+import {GetMusicDetailData, PlayList} from "@/api/musicList"
+import {useUserInfo} from "@/store"
+import useMusic from "@/components/MusicPlayer/useMusic"
+import {useMusicAction} from "@/store/music"
+
+export interface Header {
+  title: string
+  key: string
+  prop?: string
+  width?: string
+  type?: 'index' | 'handle'
+  class?: string
+  process?: (arg: any) => any
+  slot?: (item: GetMusicDetailData) => HTMLElement
+}
 
 interface Props {
   list: GetMusicDetailData[] // 列表信息
   songs: GetMusicDetailData // 播放器正在播放的歌曲信息
+  header: Header[]
   loading?: boolean // 是否加载中
   ids?: number[] // 歌曲id列表
   listInfo?: PlayList // 歌单信息
@@ -57,23 +70,35 @@ const activeText = (item: GetMusicDetailData) => {
     return item.id === props.songs.id
   }
 }
+
+const router = useRouter()
+const userDetail = (id: number) => {
+  router.push(`/detail?uid=${id}`)
+}
 </script>
 
 <template>
   <div :style="{overflowY: props.scroll ? 'auto' : 'visible'}" class="container">
     <div class="title-container">
-      <div class="title-item empty"></div>
-      <div class="title-item handle">操作</div>
-      <div class="title-item title">标题</div>
-      <div class="title-item singer">歌手</div>
-      <div class="title-item album">专辑</div>
-      <div class="title-item time">时间</div>
+      <template v-for="config in props.header">
+        <div
+          v-if="!config.type"
+          :style="{width: config.width}"
+          :class="['title-item', config.class]"
+        >{{ config.title }}</div>
+        <div
+          v-else-if="config.type === 'index'"
+          :style="{width: config.width}"
+          :class="['title-item', config.class]"
+        ></div>
+        <div
+          v-else-if="config.type === 'handle'"
+          :style="{width: config.width}"
+          :class="['title-item', config.class]"
+        >{{ config.title }}</div>
+      </template>
     </div>
-    <div
-      v-show="props.loading"
-      v-loading="props.loading"
-      class="loading"></div>
-<!--    设置背景颜色时，一定要用background，不要用backgroundColor-->
+    <!--    设置背景颜色时，一定要用background，不要用backgroundColor-->
     <div class="list-container">
       <div
         @dblclick="playHandler(item, i)"
@@ -84,24 +109,63 @@ const activeText = (item: GetMusicDetailData) => {
         :style="{background: item.id === id ? 'rgba(255, 255, 255, 0.08)' :
        i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}"
       >
-        <div class="item empty">{{ formatCount(i + 1) }}</div>
-        <div class="item handle">
-          <i v-if="isLike(item)" @click="likeMusic(item.id, false)"  class="iconfont icon-xihuan1"></i>
-          <i v-else  @click="likeMusic(item.id)"  class="iconfont icon-xihuan"></i>
-        </div>
-        <div
-          :style="{color: activeText(item) ? 'rgb(255,60,60)' : ''}"
-          class="item title"
-        >
-          {{ item.name }}
-        </div>
-        <div class="item singer">
-          <span style="margin-right: 5px" v-for="item in item.ar">{{ item.name }}</span>
-        </div>
-        <div class="item album">{{ item.al.name }}</div>
-        <div class="item time">{{ formattingTime(item.dt) }}</div>
+        <template v-for="config in props.header">
+          <template v-if="!config.type">
+            <div
+              v-if="config.key === 'title'"
+              :style="{color: activeText(item) ? 'rgb(255,60,60)' : '', width: config.width}"
+              :class="['item', config.class]"
+            >
+              {{ item.name }}
+            </div>
+            <div
+              :style="{width: config.width}"
+              v-else-if="config.key === 'singer'"
+              :class="['item', config.class]"
+            >
+              <span
+                v-for="item in item.ar"
+                @click="userDetail(item.id)"
+                class="name"
+                style="margin-right: 5px"
+              >{{ item.name }}</span>
+            </div>
+            <div
+              :style="{width: config.width}"
+              :class="['item', config.class]"
+              v-else-if="config.slot"
+              v-html="config.slot(item)"/>
+            <div
+              v-else
+              :style="{width: config.width}"
+              :class="['item', config.class]"
+            >
+              <template v-if="config.process">{{ config.process(item[config.prop]) }}</template>
+              <template v-else>{{lookup(item, config.prop) }}</template>
+            </div>
+          </template>
+
+          <div
+            :style="{width: config.width}"
+            v-else-if="config.type === 'index'"
+            :class="['item', config.class]"
+          >{{ formatCount(i + 1) }}</div>
+          <div
+            :style="{width: config.width}"
+            v-else-if="config.type === 'handle'"
+            :class="['item', config.class]"
+          >
+            <i v-if="isLike(item)" @click="likeMusic(item.id, false)"  class="iconfont icon-xihuan1"></i>
+            <i v-else  @click="likeMusic(item.id)"  class="iconfont icon-xihuan"></i>
+          </div>
+        </template>
       </div>
     </div>
+
+    <div
+      v-show="props.loading"
+      v-loading="props.loading"
+      class="loading"></div>
   </div>
 </template>
 
@@ -112,10 +176,16 @@ const activeText = (item: GetMusicDetailData) => {
   position: relative;
   .loading {
     position: absolute;
-    width: 100%;
+    z-index: 99;
+    top: 0;
     height: 100%;
+    width: 100%;
     :deep(.el-loading-mask) {
       background-color: #2b2b2b;
+
+      .el-loading-spinner {
+        top: 5%;
+      }
     }
   }
   .empty {
@@ -135,6 +205,13 @@ const activeText = (item: GetMusicDetailData) => {
     width: 20%;
     .textOverflow();;
     margin-right: 20% - 19px;
+    .name {
+      cursor: pointer;
+      &:hover {
+        color: @text;
+      }
+    }
+
   }
   .album {
     width: 20%;
@@ -151,10 +228,6 @@ const activeText = (item: GetMusicDetailData) => {
     height: 35px;
     color: @darkText;
     justify-content: space-around;
-
-    .empty {
-      width: 45px;
-    }
     .title-item {
       text-align: left;
     }
@@ -179,10 +252,12 @@ const activeText = (item: GetMusicDetailData) => {
       .icon-xihuan1 {
         font-size: 18px;
         color: #eb4141;
+        margin-left: 4px;
       }
       .icon-xihuan {
         color: #a5a7a8;
         font-size: 19px;
+        margin-left: 4px;
       }
     }
 

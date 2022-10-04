@@ -25,12 +25,12 @@ const clickHandler = () => {
 <style lang="less" scoped>
 .card-box {
   width: calc(15vw - 10px);
-  max-width: calc(40vw - 10px);
   margin-bottom: 20px;
+  //& + & {
+  //  margin-left: 20px;
+  //}
   .card {
     width: calc(15vw - 10px);
-    max-width: calc(40vw - 10px);
-    max-height: calc(40vw - 10px);
     height: calc(15vw - 10px);
     border-radius: 5px;
     background-size: cover;

@@ -16,7 +16,6 @@ const router = useRouter()
 async function init() {
   const {recommend} = await recommendSongList()
   state.recommend = recommend
-  console.log('result 获取每日推荐歌单', recommend)
 }
 init()
 

@@ -7,13 +7,17 @@
   -webkit-line-clamp: @line;
   overflow: hidden;
 }
+.bgSetting {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 @text: rgb(210,210,210);
 @darkText: rgb(150, 150, 150);
 @subject: rgb(236,65,65);
 @bgColor: #2b2b2b;
 
 #box {
-  margin-top: 62px;
   display: flex;
   height: calc(100% - 2px);
 }
@@ -31,7 +35,7 @@
     margin-bottom: 20px;
   }
   .padding-container {
-    padding: 0 25px
+    padding: 0 35px
   }
 }
 * {
@@ -44,10 +48,9 @@ html,body,#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: @text;
   overflow: hidden;
-  background-color: rgb(43,43,43);
+  background-color: @bgColor;
 }
 #app {
   user-select: none;

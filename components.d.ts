@@ -22,6 +22,7 @@ declare module '@vue/runtime-core' {
     Search: typeof import('./src/components/Search/index.vue')['default']
     SongInfo: typeof import('./src/components/SongInfo/index.vue')['default']
     SongList: typeof import('./src/components/SongList/index.vue')['default']
+    UserDetailCard: typeof import('./src/components/UserDetailCard/index.vue')['default']
     Volume: typeof import('./src/components/MusicPlayer/compoents/Volume.vue')['default']
   }
 }

@@ -1,16 +1,27 @@
 <script setup lang="ts">
-import {formatDate} from "@/utils";
+import {formatDate, toggleImg} from "@/utils";
 import {useMusicAction} from "@/store/music";
 import {useUserInfo} from "@/store";
 import BaseButton from '@/components/BaseButton/index.vue'
+import {ref, watch} from "vue";
 
 const music = useMusicAction()
 const store = useUserInfo()
+const left = ref<HTMLDivElement>()
+
+watch(() => music.currentItem.coverImgUrl, (val) => {
+  toggleImg(val).then(img => {
+    if(left.value) {
+      left.value!.style.backgroundImage = `url(${img.src})`
+    }
+  })
+})
+
 </script>
 
 <template>
   <div v-if="music.currentItem.coverImgUrl" class="list-info">
-    <div :style="{backgroundImage: `url(${music.currentItem.coverImgUrl})`}" class="left"></div>
+    <div ref="left" class="left"></div>
     <div class="right">
       <div class="song-name">
         <div class="tag">歌单</div>
@@ -48,7 +59,8 @@ const store = useUserInfo()
 
   .left {
     background-image: url("https://p1.music.126.net/9GAbSb_hlXPu66HWInJOww==/109951162846052486.jpg");
-    background-size: contain;
+    transition: 0.8s background-image;
+    .bgSetting();
     width: 180px;
     height: 180px;
     border-radius: 10px;
@@ -90,7 +102,7 @@ const store = useUserInfo()
         border-radius: 50%;
         width: 25px;
         height: 25px;
-        background-size: contain;
+        .bgSetting();
         cursor: pointer;
       }
       .nickname {

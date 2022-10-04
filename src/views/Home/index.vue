@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Home">
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
 import {tabsConfig} from './config'
@@ -25,6 +25,9 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   :deep(.el-tabs) {
     .el-tabs__active-bar {
       background-color: @subject;
+    }
+    .el-tabs__content {
+      overflow: inherit;
     }
     .el-tabs__item {
       color: @darkText;
