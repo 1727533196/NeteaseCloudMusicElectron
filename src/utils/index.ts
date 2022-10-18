@@ -29,7 +29,7 @@ export function timeDeserialize(timeFormat: string) {
 
 // 格式化歌词字符串
 export function formatLyric(lyric: string) {
-  const result: Array<{time: number, text: string, line: number}> = []
+  const result: Array<{time: number | boolean, text: string, line: number}> = []
   const lyricArr = lyric.split(/\n/)
   lyricArr.pop() // 删除最后一行多余的
 
@@ -40,6 +40,11 @@ export function formatLyric(lyric: string) {
   for (let i = 0; i < lyricArr.length; i++) {
     let lyricItem = lyricArr[i].split(']')
     const text = lyricItem.pop() as string
+    if(lyricItem[0] === undefined) {
+      result.push({ time: false, text: lyricArr[i], line: i+1 })
+      result.notSupportedScroll = true
+      continue
+    }
     // [00:24.46]春雨后太阳缓缓的露出笑容 这种情况就可以直接赋值
     if(lyricItem.length > 1) {
       isSort || (isSort = true)
@@ -53,12 +58,11 @@ export function formatLyric(lyric: string) {
     }
   }
   if(isSort) {
-    result.sort((a, b) => (a.time - b.time))
+    result.sort((a, b) => (a.time as number - (b.time as number)))
     for (let i = 0; i < result.length; i++) {
       result[i].line = i + 1
     }
   }
-  console.log('Y---> result', result)
 
   return result
 }

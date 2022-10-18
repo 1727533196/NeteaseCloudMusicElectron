@@ -3,9 +3,11 @@ import {ref} from "vue";
 import {useRouter} from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import useSearch from "@/components/Search/useSearch";
+import {searchHotDetail} from "@/api/search";
 
 const router = useRouter()
 const keywords = ref('');
+const showSuggest = ref(false)
 
 const {search} = useSearch()
 
@@ -14,6 +16,19 @@ const searchHandler = () => {
   search(keywords.value)
 }
 
+const focusHandler = () => {
+  showSuggest.value = true
+
+}
+const blurHandler = () => {
+  showSuggest.value = false
+}
+
+const init = async () => {
+  const res =  await searchHotDetail()
+  console.log('Y---> res', res)
+}
+init()
 </script>
 
 <template>
@@ -28,9 +43,14 @@ const searchHandler = () => {
     </el-icon>
     <input
       v-model="keywords"
+      @focus="focusHandler"
+      @blur="blurHandler"
       class="search"
       placeholder="搜索内容"
     />
+    <div v-show="showSuggest" class="suggest">
+
+    </div>
   </div>
 </template>
 
@@ -60,6 +80,16 @@ const searchHandler = () => {
     background-color: transparent;
     font-size: 12px;
     color: white;
+  }
+  .suggest {
+    position: absolute;
+    width: 400px;
+    height: 80vh;
+    background-color: rgb(54,54,54);
+    transform: translateX(-50%) translateY(100%);
+    left: 50%;
+    bottom: -30px;
+    z-index: 10;
   }
 }
 </style>

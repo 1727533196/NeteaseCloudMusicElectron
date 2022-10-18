@@ -62,7 +62,7 @@ function moveLyric(currentLyr: Lyric) {
 }
 
 watch(() => music.currentTime, (currentTime, lastTime) => {
-  if(!lyrEl.value || !moveBox.value) return
+  if(!lyrEl.value || !moveBox.value || music.lyric.notSupportedScroll) return
 
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(currentTime - lastTime) >= 1) {
@@ -121,6 +121,9 @@ const closeDetail = () => {
   flags.isOpenDetail = setModelValue.value = false
 }
 const lyricClick = (time: number) => {
+  if (music.lyric.notSupportedScroll) {
+    return
+  }
   $audio.el.currentTime = time
 }
 
@@ -138,6 +141,7 @@ const lyricClick = (time: number) => {
             @wheel="wheelHandler"
             class="lyric-container"
           >
+            <div class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
             <div
               ref="moveBox"
               class="move-box"
@@ -150,11 +154,11 @@ const lyricClick = (time: number) => {
                   @click="lyricClick(item.time)"
                   :class="['lyric-item', {'current-lyric-item': currentLyrLine.line === item.line}]"
                 >{{item.text}}</div>
-                <div class="empty-lyric" v-else></div>
+                <div :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]" v-else-if="!music.lyric.notSupportedScroll"></div>
               </template>
               <span
                 style="position: absolute; font-size: 12px"
-                v-show="isEnterLyric"
+                v-show="!music.lyric.notSupportedScroll && isEnterLyric"
                 ref="targetTime"
               >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
             </div>
@@ -227,6 +231,21 @@ const lyricClick = (time: number) => {
           box-shadow: 0 5px 15px 5px rgba(0,0,0,0.05);
           position: relative;
           //scroll-behavior: smooth; // 111
+          .not-supported-scroll {
+            transform: translateX(-50%);
+            position: absolute;
+            left: 50%;
+            top: 70px;
+            color: @darkText;
+            span {
+              cursor: pointer;
+              font-size: 16px;
+              color: @darkText;
+              &:hover {
+                color: @text;
+              }
+            }
+          }
           &::-webkit-scrollbar {
             display: none;
           }

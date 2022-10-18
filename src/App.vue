@@ -11,7 +11,6 @@ import {useMusicAction} from "@/store/music";
 import {useFlags} from "@/store/flags";
 import {useRoute} from "vue-router";
 import MusicDetail from '@/components/MusicDetail/index.vue'
-import {lookup} from "@/utils";
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
