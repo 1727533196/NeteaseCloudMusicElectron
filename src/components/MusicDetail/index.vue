@@ -48,17 +48,20 @@ function moveLyric(currentLyr: Lyric) {
   currentLyrLine.value = currentLyr
   index = currentLyr.line - 1
 
-  nextTick(() => {
-    const top = moveBox.value!.offsetTop / 4 + moveBox.value!.offsetTop
-    lyrEl.value!.scrollTo({
-      top: currentLyrEl[0].offsetTop+top - (lyrEl.value!.clientHeight/2),
-      behavior: 'smooth'
+  // 当用户操作滚动条时，不自动滚动
+  if(!isUserWheel) {
+    nextTick(() => {
+      const top = moveBox.value!.offsetTop / 4 + moveBox.value!.offsetTop
+      lyrEl.value!.scrollTo({
+        top: currentLyrEl[0].offsetTop+top - (lyrEl.value!.clientHeight/2),
+        behavior: 'smooth'
+      })
+      // currentLyrEl[0].scrollIntoView({
+      //   block: 'center',
+      //   behavior: 'smooth',
+      // })
     })
-    // currentLyrEl[0].scrollIntoView({
-    //   block: 'center',
-    //   behavior: 'smooth',
-    // })
-  })
+  }
 }
 
 watch(() => music.currentTime, (currentTime, lastTime) => {
@@ -70,16 +73,13 @@ watch(() => music.currentTime, (currentTime, lastTime) => {
     return
   }
 
+  // 歌词是否到底
   if(!music.lyric[index+1]) return;
-  if(
-    !isUserWheel && currentLyrEl.length
-    && (currentTime >= music.lyric[index+1].time)
-  ) {
+  if(currentLyrEl.length && (currentTime >= music.lyric[index+1].time)) {
     moveLyric(music.lyric[index+1])
     return
   }
 })
-
 
 onMounted(() => {
   currentLyrEl = document.querySelector('.lyric-container')!
@@ -141,7 +141,7 @@ const lyricClick = (time: number) => {
             @wheel="wheelHandler"
             class="lyric-container"
           >
-            <div class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
+            <div v-if="music.lyric.notSupportedScroll" class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
             <div
               ref="moveBox"
               class="move-box"

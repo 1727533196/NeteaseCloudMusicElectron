@@ -10,6 +10,24 @@ class Main {
     init() {
         this.onProcess()
     }
+    onProcess() {
+        app.whenReady().then(() => {
+            this.createWindow();
+            app.on('activate', () => {
+                // On macOS it's common to re-create a window in the app when the
+                // dock icon is clicked and there are no other windows open.
+                if (BrowserWindow.getAllWindows().length === 0) {
+                    this.createWindow()
+                }
+            });
+        });
+        app.on('window-all-closed', () => {
+            // 如果用户不是在 macOS(darwin) 上运行程序，则调用 app.quit()。
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
+        });
+    }
     createWindow() {
         const win = this.win = new BrowserWindow({
             // titleBarStyle: 'hidden',
@@ -39,24 +57,6 @@ class Main {
         this.ipcWindowEvent()
         win.webContents.openDevTools()
     }
-    onProcess() {
-        app.whenReady().then(() => {
-            this.createWindow();
-            app.on('activate', () => {
-                // On macOS it's common to re-create a window in the app when the
-                // dock icon is clicked and there are no other windows open.
-                if (BrowserWindow.getAllWindows().length === 0) {
-                    this.createWindow()
-                }
-            });
-        });
-        app.on('window-all-closed', () => {
-            // 如果用户不是在 macOS(darwin) 上运行程序，则调用 app.quit()。
-            if (process.platform !== 'darwin') {
-                app.quit();
-            }
-        });
-    }
     ipcWindowEvent() {
         ipcMain.on('maximize', (event: any) => {
             this.win.maximize()
@@ -72,6 +72,10 @@ class Main {
         })
         ipcMain.on('close', (event: any) => {
             this.win.close()
+        })
+        ipcMain.on('reset', (event: any) => {
+            app.exit();//退出当前程序
+            app.relaunch();//重新启动
         })
     }
 }

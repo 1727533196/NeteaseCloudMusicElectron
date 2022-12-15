@@ -59,6 +59,11 @@ export const originAsideMenuConfig: MenuConfig[] = [
         icon: '',
         path: '/lately'
       },
+      {
+        name: '我的音乐云盘',
+        icon: '',
+        path: '/cloud'
+      },
     ],
   },
   {

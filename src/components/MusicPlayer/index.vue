@@ -142,6 +142,19 @@ defineExpose({
   play,
   pause,
 })
+
+const keydownHandler = (event: KeyboardEvent) => {
+  if(event.keyCode === 32) {
+    event.preventDefault()
+    if(isPlay.value) {
+      pause()
+    } else {
+      play()
+    }
+  }
+}
+document.body.addEventListener('keydown', keydownHandler)
+
 </script>
 
 <template>
@@ -176,7 +189,7 @@ defineExpose({
       <div class="cut-container">
         <i @click="setOrderHandler" :class="['iconfont', orderStatus[orderStatusVal]]"></i>
         <i @click="emit('cutSong', false)" class="iconfont cut icon-shangyishou"></i>
-        <i v-show="isPlay" @click="audio.pause" class="iconfont operation icon-Pause"></i>
+        <i v-show="isPlay"  @click="audio.pause" class="iconfont operation icon-Pause"></i>
         <i v-show="!isPlay" @click="audio.play(false)" class="iconfont operation icon-kaishi1"></i>
         <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
       </div>

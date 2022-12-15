@@ -29,7 +29,7 @@ const playDetailList = (item: Recommend | typeof recommendSongs) => {
 <template>
   <div class="container">
     <CardChunk @click="playDetailList" :recommend="state.recommend" title="推荐歌单">
-      <Card @click="playDetailList(recommendSongs)" name="每日歌曲推荐" pic-url="/src/assets/test.png"></Card>
+      <Card :is-click="true" @click="playDetailList(recommendSongs)" name="每日歌曲推荐" pic-url="/src/assets/test.png"></Card>
     </CardChunk>
   </div>
 </template>

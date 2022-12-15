@@ -30,6 +30,10 @@ export interface GetPlayListDetailRes {
     playCount: number // 播放量
     trackCount: number //歌单下歌曲总数
     tags: Array<string>
+    trackIds: {
+      id: number
+      uid: number
+    }[]
     tracks: GetMusicDetailData[]
     creator: { // 创建这个歌单的用户信息
       nickname: string
@@ -72,6 +76,7 @@ export type GetMusicDetailData = {
   dt: number
   id: number
   pop: number
+  album: string
 }
 
 interface GetMusicDetailRes {
@@ -110,7 +115,7 @@ export const getPlayListDetail = (id: number) =>
     request<{ id: number }, GetPlayListDetailRes>(`/playlist/detail?id=${id}`, 'get')
 
 // 获取歌曲详情
-export const getMusicDetail = (ids: number) =>
+export const getMusicDetail = (ids: string) =>
     request<string, GetMusicDetailRes>(`/song/detail?ids=${ids}`, 'get')
 
 // 对歌单添加或删除歌曲
@@ -125,3 +130,6 @@ export const likeMusicApi = (id: number, like: boolean = true) =>
 
 // 获取歌词
 export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyric?id=${id}`, 'get')
+
+// 获取云盘歌曲
+export const getUserCloud = (limit?: number, offset?: number) => request('/user/cloud', 'get', {params: {limit, offset}})

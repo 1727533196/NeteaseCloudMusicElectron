@@ -3,7 +3,7 @@ import {formatDate, toggleImg} from "@/utils";
 import {useMusicAction} from "@/store/music";
 import {useUserInfo} from "@/store";
 import BaseButton from '@/components/BaseButton/index.vue'
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 
 const music = useMusicAction()
 const store = useUserInfo()
@@ -15,6 +15,8 @@ watch(() => music.currentItem.coverImgUrl, (val) => {
       left.value!.style.backgroundImage = `url(${img.src})`
     }
   })
+}, {
+  immediate: true,
 })
 
 </script>
@@ -58,7 +60,7 @@ watch(() => music.currentItem.coverImgUrl, (val) => {
   padding: 0 25px;
 
   .left {
-    background-image: url("https://p1.music.126.net/9GAbSb_hlXPu66HWInJOww==/109951162846052486.jpg");
+    //background-image: url("https://p1.music.126.net/9GAbSb_hlXPu66HWInJOww==/109951162846052486.jpg");
     transition: 0.8s background-image;
     .bgSetting();
     width: 180px;

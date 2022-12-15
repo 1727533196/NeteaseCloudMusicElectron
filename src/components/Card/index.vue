@@ -2,6 +2,7 @@
 interface Props {
   picUrl: string
   name: string
+  isClick?: boolean,
 }
 const emit = defineEmits(['click'])
 const props = defineProps<Props>()
@@ -16,9 +17,9 @@ const clickHandler = () => {
     <div
       @click="clickHandler"
       :style="{backgroundImage: `url(${props.picUrl}`}"
-      class="card"
+      :class='["card", {"card-click": isClick}]'
     ></div>
-    <div class="text">{{props.name}}</div>
+    <div :class="['text', {'card-click': isClick}]">{{props.name}}</div>
   </div>
 </template>
 
@@ -36,6 +37,9 @@ const clickHandler = () => {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+  }
+  .card-click {
+    cursor: pointer;
   }
   .text {
     margin-top: 5px;

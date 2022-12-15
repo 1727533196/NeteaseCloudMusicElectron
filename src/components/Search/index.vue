@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import {useRouter} from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import useSearch from "@/components/Search/useSearch";
 import {searchHotDetail} from "@/api/search";
+import List from './List.vue'
+import {useFlags} from "@/store/flags";
 
+const state = reactive({
+  scoreList: []
+})
 const router = useRouter()
 const keywords = ref('');
 const showSuggest = ref(false)
-
 const {search} = useSearch()
+const flags = useFlags()
 
 const searchHandler = () => {
-  router.push('/search')
-  search(keywords.value)
+  router.push(`/search?key=${keywords.value}`)
+  // search(keywords.value)
 }
 
-const focusHandler = () => {
+
+const focusHandler = async () => {
   showSuggest.value = true
-
-}
-const blurHandler = () => {
-  showSuggest.value = false
-}
-
-const init = async () => {
+  flags.isOpenSearch = true
   const res =  await searchHotDetail()
+  state.scoreList = res.data
   console.log('Y---> res', res)
 }
-init()
+const blurHandler = () => {
+  flags.isOpenSearch = false
+  showSuggest.value = false
+}
 </script>
 
 <template>
@@ -49,7 +53,7 @@ init()
       placeholder="搜索内容"
     />
     <div v-show="showSuggest" class="suggest">
-
+      <List :list="state.scoreList"/>
     </div>
   </div>
 </template>
@@ -90,6 +94,7 @@ init()
     left: 50%;
     bottom: -30px;
     z-index: 10;
+    overflow: auto;
   }
 }
 </style>

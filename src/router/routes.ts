@@ -61,4 +61,9 @@ export default [
     name: 'userDetail',
     component: () => import('@/views/UserDetail/index.vue'),
   },
+  {
+    path: '/cloud',
+    name: 'musicCloud',
+    component: () => import('@/views/MusicCloud/index.vue')
+  },
 ]

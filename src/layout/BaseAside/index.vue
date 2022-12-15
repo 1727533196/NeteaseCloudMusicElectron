@@ -1,7 +1,6 @@
-<script setup lang="ts">
-import {onBeforeMount, onMounted, ref, watch} from "vue";
+<script setup lang="ts" name="BaseAside">
+import {ref, watch } from "vue";
 import {useUserInfo} from "@/store";
-import usePlayList from "./usePlayList";
 import {useRoute, useRouter} from "vue-router";
 import {asideMenuConfig, ListItem, paths} from "@/layout/BaseAside/config";
 
@@ -10,9 +9,15 @@ const current = ref<ListItem>()
 
 const router = useRouter()
 const route = useRoute()
-const {getPlayListDetailFn} = usePlayList()
 const init = () => {
-  itemClick(asideMenuConfig[0].list[0])
+  // 这里需要特殊处理的有 【创建的歌单】 和 【收藏的歌单】两个列表
+    if(route.query.id && route.path === '/play-list') {
+      current.value = {
+        id: +route.query.id,
+        path: '/play-list'
+      } as ListItem
+    }
+  // itemClick(asideMenuConfig[0].list[0])
 }
 watch(() => route.path, (value) => {
   paths.includes(value) || (current.value = undefined)
@@ -21,17 +26,30 @@ const itemClick = (item: ListItem) => {
   // current在这里为上一次
   // 有id说明获取的是歌单
   if(item.id && item.id !== current.value?.id) {
-    getPlayListDetailFn(item.id)
+    // 不在使用左侧菜单点击获取，仅传参
+    // getPlayListDetailFn(item.id)
     // 防止上一次current没有id导致下面判断path出问题
     current.value?.id && (current.value = item)
   }
-  if(item.path === current.value?.path) {
-    return
-  }
-  router.push(item.path)
+  // if(item.path === current.value?.path) {
+  //   return
+  // }
+  router.push({
+    path: item.path,
+    query: {
+      id: item.id,
+    }
+  })
   current.value = item
 }
-init()
+let flag = false
+watch(() => route.query.id, () => {
+  if(flag) {
+    return
+  }
+  flag = true
+  init()
+})
 // 列表选中条件，有id优先id，没有id用path
 </script>
 

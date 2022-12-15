@@ -26,6 +26,7 @@ const clickSliderHandler = () => {
       <Card
         @click="emit('click', item)"
         v-for="item in props.recommend"
+        is-click
         :item="item"
         :name="item.name"
         :pic-url="item.picUrl"

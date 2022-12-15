@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    List: typeof import('./src/components/Search/List.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
     MusicDetail: typeof import('./src/components/MusicDetail/index.vue')['default']
     MusicPlayer: typeof import('./src/components/MusicPlayer/index.vue')['default']

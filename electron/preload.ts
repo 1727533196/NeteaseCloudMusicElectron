@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     minimize: () => ipcRenderer.send('minimize'),
     restore: () => ipcRenderer.send('restore'),
     close: () => ipcRenderer.send('close'),
+    reset: () => ipcRenderer.send('reset'),
 });
 
 // 这里导出是为了解决这个ts错误

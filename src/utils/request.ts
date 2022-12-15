@@ -1,5 +1,6 @@
 import axios, {AxiosRequestConfig, Method} from 'axios'
 import {getCookie} from './cookies.js';
+import {ElMessage } from "element-plus";
 
 const http = axios.create({
   timeout: 30000,
@@ -25,10 +26,13 @@ http.interceptors.request.use((config) => {
 
 http.interceptors.response.use((response) => {
   if(response.status !== 200) {
+    ElMessage.error(response.data.message)
     return Promise.reject(response.data)
   }
   return response.data
 }, (error) => {
+  ElMessage.error(error.message)
+
   return Promise.reject(error.response.data)
 })
 

@@ -24,7 +24,6 @@ onMounted(() => {
 })
 getUserAccountFn()
 
-
 </script>
 
 <template>

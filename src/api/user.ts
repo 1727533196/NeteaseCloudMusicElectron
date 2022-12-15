@@ -18,6 +18,39 @@ export interface getUserAccountRes {
   code: number
   profile: profile
 }
+
+export type User = {
+  userId: number
+  signature: string // 签名
+  userName: string
+  nickname: string // 账号昵称
+  vipType: number // vip类型
+  userType: number
+  backgroundUrl: string // 用户背景
+  avatarUrl: string // 用户头像
+}
+export interface getArtistDetailRes {
+  message: string,
+  data: {
+    artist: {
+
+    },
+    blacklist: boolean
+    eventCount: number
+    identify: {
+      actionUrl: string // 请求网易云音乐的链接
+      imageDesc: string // 标签
+      imageUrl: string // 标签图片
+    },
+    preferShow: number
+    secondaryExpertIdentiy: {}[]
+    showPriMsg: boolean
+    user: User
+    videoCount: number
+    vipRights: {}
+  },
+  code: number,
+}
 // 获取用户详情  通过指定的uid获取指定用户详情信息
 export const getUserDetail = (uid: number) => request(`/user/detail?uid=${uid}`, 'get')
 
@@ -25,4 +58,4 @@ export const getUserDetail = (uid: number) => request(`/user/detail?uid=${uid}`,
 export const getUserAccount = () => request<null, getUserAccountRes>('/user/account', 'get');
 
 // 获取歌手详情
-export const getArtistDetail = (id: number) => request(`/artist/detail${id}`, 'get')
+export const getArtistDetail = (id: number) => request<{id: number}, getArtistDetailRes>(`/artist/detail?id=${id}`, 'get')

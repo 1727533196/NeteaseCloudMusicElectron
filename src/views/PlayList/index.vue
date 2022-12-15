@@ -1,11 +1,25 @@
 <script setup lang="ts">
 import SongList from '@/components/SongList/index.vue'
 import SongInfo from '@/components/SongInfo/index.vue'
-import {playListState} from "@/layout/BaseAside/usePlayList"
+import usePlayList,{playListState} from "@/layout/BaseAside/usePlayList"
 import {useMusicAction} from "@/store/music"
 import {header} from "@/views/PlayList/config";
+import {watch} from "vue";
+import {useRoute} from "vue-router";
 
+const route = useRoute()
 const music = useMusicAction()
+const {getPlayListDetailFn} = usePlayList()
+watch(() => route.fullPath, () => {
+  if(route.query.id) {
+    getPlayListDetailFn(+route.query.id!)
+    document.querySelector('.main')!.scrollTop = 0
+  }
+}, {
+  immediate: true,
+})
+
+
 </script>
 
 <template>

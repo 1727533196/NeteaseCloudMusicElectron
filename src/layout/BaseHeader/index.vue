@@ -1,26 +1,36 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Header">
 import {useUserInfo} from "@/store";
 import Search from '@/components/Search/index.vue'
 import {handle} from "@/layout/BaseHeader/handle";
 import {useFlags} from "@/store/flags";
+import {useRouter} from "vue-router";
 
 const flags = useFlags()
 const store = useUserInfo()
+const router = useRouter()
 const {maximize, unmaximize, minimize, restore, close} = handle()
 
 const maximizeOrUnmaximize = () => {
   flags.isMaximize ? unmaximize() : maximize()
 }
+const gotoDetail = () => {
+  router.push({
+    path: '/detail',
+    query: {
+      uid: store.profile.userId,
+    }
+  })
+}
 </script>
 
 <template>
-  <div class="window-container">
+  <div :class="['window-container', {'no-drag':flags.isOpenSearch}]">
     <div class="left no-drag"></div>
     <div class="center no-drag">
       <Search/>
     </div>
     <div class="right no-drag">
-      <div :style="{backgroundImage: `url(${store.profile.avatarUrl})`}" class="head-portraits"></div>
+      <div @click="gotoDetail" :style="{backgroundImage: `url(${store.profile.avatarUrl})`}" class="head-portraits"></div>
       <div class="nickname">{{store.profile.nickname}}</div>
       <div class="operator">
         <div class="handler" @click="minimize">

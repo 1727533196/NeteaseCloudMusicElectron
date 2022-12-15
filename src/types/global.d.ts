@@ -8,6 +8,7 @@ export interface IElectronAPI {
     minimize: () => void,
     restore: () => void,
     close: () => void,
+    reset: () => void,
 }
 
 declare global {

@@ -1,5 +1,12 @@
 import {reactive} from "vue";
-import {CurrentItem, getLikeMusicListIds, GetMusicDetailData, getPlayListDetail, PlayList} from "@/api/musicList";
+import {
+  CurrentItem,
+  getLikeMusicListIds,
+  getMusicDetail,
+  GetMusicDetailData,
+  getPlayListDetail,
+  PlayList
+} from "@/api/musicList";
 import {useUserInfo} from "@/store";
 import {useMusicAction} from "@/store/music";
 import {playListMock} from "@/views/DailyRecommend/dailyRecommendSongsConfig";
@@ -30,8 +37,12 @@ export default () => {
     try {
       // 防止获取的是日推歌曲，因为日推歌曲没有歌单id
       if(id !== playListMock.id) {
+        // 歌单能看到歌单名字, 但看不到具体歌单内容 , 调用此接口 , 传入歌单 id, 可 以获取对应歌单内的所有的音乐(未登录状态只能获取不完整的歌单,登录后是完整的)，
+        //   但是返回的 trackIds 是完整的，tracks 则是不完整的，可拿全部 trackIds 请求一次 song/detail 接口获取所有歌曲的详情
         const {playlist} = await getPlayListDetail(id)
-        updatePlayList(playlist)
+        const ids = playlist.trackIds.map(item => item.id).join(',')
+        const {songs} = await getMusicDetail(ids)
+        updatePlayList({...playlist, tracks: songs})
       } else {
         await getRecommendSongs()
       }

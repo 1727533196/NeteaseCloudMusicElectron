@@ -1,27 +1,42 @@
-<script setup lang="ts">
-import {watch} from "vue"
+<script setup lang="ts" name="detail">
 import {useRoute, useRouter} from 'vue-router'
 import UserDetailCard from '@/components/UserDetailCard/index.vue'
-import {getArtistDetail } from "@/api/user";
+import {getArtistDetail, getUserDetail} from "@/api/user";
+import {reactive, watch} from "vue";
 
 const router = useRouter()
 const route = useRoute()
 
-init()
+watch(() => route.fullPath, () => {
+  if(route.path === '/detail') {
+    init()
+  }
+}, {
+  immediate: true,
+})
+
+const state = reactive({
+  userInfo: {},
+  identify: {},
+})
 
 function init() {
   const {uid} = route.query as {uid: number | null}
   if(uid) {
-    getArtistDetail(uid).then(res => {
-      console.log('Y---> res', res)
-    })
+    getArtistDetailHandler(uid)
   }
+}
+
+async function getArtistDetailHandler(uid: number) {
+  const {data} = await getArtistDetail(uid)
+  state.userInfo = data.user
+  state.identify = data.identify
 }
 
 </script>
 
 <template>
-  <UserDetailCard></UserDetailCard>
+  <UserDetailCard :identify="state.identify" :user-info="state.userInfo"></UserDetailCard>
   <div>userDetail</div>
 </template>
 

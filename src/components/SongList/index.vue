@@ -124,11 +124,11 @@ const userDetail = (id: number) => {
               :class="['item', config.class]"
             >
               <span
-                v-for="item in item.ar"
-                @click="userDetail(item.id)"
+                v-for="ar in item.ar"
+                @click="userDetail(ar.id)"
                 class="name"
                 style="margin-right: 5px"
-              >{{ item.name }}</span>
+              >{{ ar.name }}</span>
             </div>
             <div
               :style="{width: config.width}"

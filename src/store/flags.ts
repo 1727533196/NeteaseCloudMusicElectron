@@ -7,6 +7,7 @@ export const useFlags = defineStore("flagsId", {
       isMaximize: false, // 是否是最大化状态
       isMinimize: false, // 是否是最小化状态
       isOpenDetail: false, // 是否打开歌曲详情页面
+      isOpenSearch: false, // 搜索框是否被打开
     }
   },
 })
