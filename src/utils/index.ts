@@ -29,7 +29,7 @@ export function timeDeserialize(timeFormat: string) {
 
 // 格式化歌词字符串
 export function formatLyric(lyric: string) {
-  const result: Array<{time: number | boolean, text: string, line: number}> = []
+  const result: Array<{time: number | boolean, text: string, line: number, notSupportedScroll?: boolean}> = []
   const lyricArr = lyric.split(/\n/)
   lyricArr.pop() // 删除最后一行多余的
 
@@ -109,7 +109,7 @@ export function varDayim() {
 }
 
 // 嵌套取值
-export function lookup(obj: object, key: string): any {
+export function lookup(obj: object, key: string | undefined): any {
   if(!key) {
     return ''
   }

@@ -25,8 +25,9 @@ http.interceptors.request.use((config) => {
 })
 
 http.interceptors.response.use((response) => {
-  if(response.status !== 200) {
-    ElMessage.error(response.data.message)
+  const {status, data: {code}} = response
+  if(status !== 200 || code !== 200) {
+    ElMessage.error(response.data.message || `请求出现错误，当前状态码为${code}`)
     return Promise.reject(response.data)
   }
   return response.data
@@ -38,7 +39,7 @@ http.interceptors.response.use((response) => {
 
 type Request = {
   <R extends unknown, D>(config: AxiosRequestConfig): Promise<D>;
-  <R extends unknown, D>(url: string, method?: Method, config?: AxiosRequestConfig & {data: R, params: R}): Promise<D>;
+  <R extends unknown, D>(url: string, method?: Method, config?: AxiosRequestConfig | {data: R, params: R}): Promise<D>;
   <R extends unknown, D>(url: string, data: R, method?: Method): Promise<D>;
   <R extends unknown, D>(url: string, data: R, config?: AxiosRequestConfig): Promise<D>;
 }

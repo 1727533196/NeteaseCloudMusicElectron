@@ -11,6 +11,7 @@ import {useMusicAction} from "@/store/music";
 import {useFlags} from "@/store/flags";
 import {useRoute} from "vue-router";
 import MusicDetail from '@/components/MusicDetail/index.vue'
+import '@/utils/shortcutKey'
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()

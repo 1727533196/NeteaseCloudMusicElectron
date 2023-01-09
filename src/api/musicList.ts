@@ -96,6 +96,20 @@ interface GetLyricRes {
   version: 39
 }
 
+export type GetUserCloudSong = {
+  fileName: string // 文件昵称，具有后缀名
+  fileSize: number // 文件大小 kb
+  songId: number // 文件id
+  songName: string // 文件昵称，不具有后缀名
+  simpleSong: GetMusicDetailData
+}
+
+export interface GetUserCloudRes {
+  code: number
+  count: number // total
+  data: GetUserCloudSong[]
+}
+
 // 获取喜欢音乐列表ids
 export const getLikeMusicListIds = (uid: number) =>
     request<{uid: number}, {checkPoint: number, code: number,ids: number[]}>(`/likelist?uid=${uid}`, 'get')
@@ -132,4 +146,6 @@ export const likeMusicApi = (id: number, like: boolean = true) =>
 export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyric?id=${id}`, 'get')
 
 // 获取云盘歌曲
-export const getUserCloud = (limit?: number, offset?: number) => request('/user/cloud', 'get', {params: {limit, offset}})
+export const getUserCloud = (limit?: number, offset?: number) =>
+  request <{ limit: number, offset: number }, GetUserCloudRes>
+  ('/user/cloud', 'get', {params: {limit, offset}})

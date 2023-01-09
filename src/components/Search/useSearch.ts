@@ -12,8 +12,8 @@ export default () => {
     resultList: [],
     songCount: 0,
   })
-  const search = async (key: string, limit = 30) => {
-    const {result} = await cloudSearch(key, limit)
+  const search = async (key: string, offset: number,limit = 30) => {
+    const {result} = await cloudSearch(key, offset, limit)
     state.songCount = result.songCount
     state.resultList = result.songs
   }

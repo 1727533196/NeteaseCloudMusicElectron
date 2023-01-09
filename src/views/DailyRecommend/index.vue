@@ -6,7 +6,7 @@ import {varDayim} from '@/utils'
 import BaseButton from "@/components/BaseButton/index.vue";
 import SongInfo from '@/components/SongInfo/index.vue'
 import SongList from '@/components/SongList/index.vue'
-import {header} from "@/views/PlayList/config"
+import {columns} from "@/views/PlayList/config"
 
 const { getPlayListDetailFn, getRecommendSongs } = usePlayList()
 const route = useRoute()
@@ -46,7 +46,7 @@ init()
   </div>
   <SongList
     @play="music.getMusicUrlHandler"
-    :header="header"
+    :columns="columns"
     :loading="playListState.loading"
     :songs="music.songs"
     :ids="playListState.ids"

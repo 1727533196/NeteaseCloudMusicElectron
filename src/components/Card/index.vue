@@ -19,7 +19,7 @@ const clickHandler = () => {
       :style="{backgroundImage: `url(${props.picUrl}`}"
       :class='["card", {"card-click": isClick}]'
     ></div>
-    <div :class="['text', {'card-click': isClick}]">{{props.name}}</div>
+    <span :class="['text', {'card-click': isClick}]">{{props.name}}</span>
   </div>
 </template>
 

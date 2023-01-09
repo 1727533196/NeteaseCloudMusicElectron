@@ -3,7 +3,7 @@ import SongList from '@/components/SongList/index.vue'
 import SongInfo from '@/components/SongInfo/index.vue'
 import usePlayList,{playListState} from "@/layout/BaseAside/usePlayList"
 import {useMusicAction} from "@/store/music"
-import {header} from "@/views/PlayList/config";
+import {columns} from "@/views/PlayList/config";
 import {watch} from "vue";
 import {useRoute} from "vue-router";
 
@@ -26,7 +26,7 @@ watch(() => route.fullPath, () => {
   <SongInfo></SongInfo>
   <SongList
     @play="music.getMusicUrlHandler"
-    :header="header"
+    :columns="columns"
     :loading="playListState.loading"
     :songs="music.songs"
     :ids="playListState.ids"

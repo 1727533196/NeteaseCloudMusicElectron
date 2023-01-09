@@ -202,7 +202,7 @@ const lyricClick = (time: number) => {
     background-color: @bgColor;
     .bgSetting();
     .shadow {
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
       position: absolute;
       top: 0;
       left: 0;

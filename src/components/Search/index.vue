@@ -10,35 +10,40 @@ import {useFlags} from "@/store/flags";
 const state = reactive({
   scoreList: []
 })
+
+const loading = ref(false)
 const router = useRouter()
 const keywords = ref('');
 const showSuggest = ref(false)
 const {search} = useSearch()
 const flags = useFlags()
 
-const searchHandler = () => {
-  router.push(`/search?key=${keywords.value}`)
-  // search(keywords.value)
+const searchHandler = (keyword: string) => {
+  router.push(`/search?key=${keyword}`)
 }
-
 
 const focusHandler = async () => {
   showSuggest.value = true
   flags.isOpenSearch = true
+  if(!state.scoreList.length) {
+    loading.value = true
+  }
   const res =  await searchHotDetail()
+  loading.value = false
   state.scoreList = res.data
-  console.log('Y---> res', res)
 }
 const blurHandler = () => {
-  flags.isOpenSearch = false
-  showSuggest.value = false
+  setTimeout(() => {
+    flags.isOpenSearch = false
+    showSuggest.value = false
+  },100)
 }
 </script>
 
 <template>
   <div class="search-container">
     <el-icon
-      @click="searchHandler"
+      @click="searchHandler(keywords)"
       class="search-icon"
       size="15px"
       color="white"
@@ -52,8 +57,8 @@ const blurHandler = () => {
       class="search"
       placeholder="搜索内容"
     />
-    <div v-show="showSuggest" class="suggest">
-      <List :list="state.scoreList"/>
+    <div v-loading="loading" v-show="showSuggest" class="suggest">
+      <List @click="searchHandler($event.searchWord)" :list="state.scoreList"/>
     </div>
   </div>
 </template>
@@ -85,7 +90,7 @@ const blurHandler = () => {
     font-size: 12px;
     color: white;
   }
-  .suggest {
+  :deep(.suggest) {
     position: absolute;
     width: 400px;
     height: 80vh;
@@ -95,6 +100,9 @@ const blurHandler = () => {
     bottom: -30px;
     z-index: 10;
     overflow: auto;
+    .el-loading-mask {
+      background: transparent;
+    }
   }
 }
 </style>

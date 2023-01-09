@@ -9,8 +9,8 @@ interface CloudSearch {
     songs: GetMusicDetailData[]
   }
 }
-export const cloudSearch = (keywords: string, limit = 30) =>
-  request<{keywords: string, limit: number}, CloudSearch>('/cloudsearch', {keywords, limit})
+export const cloudSearch = (keywords: string, offset: number, limit = 30) =>
+  request<{keywords: string, limit: number, offset: number}, CloudSearch>('/cloudsearch', {keywords, limit, offset})
 
 // 热搜列表(详细)
 export const searchHotDetail = () => request('/search/hot/detail')

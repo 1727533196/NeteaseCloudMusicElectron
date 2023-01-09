@@ -4,13 +4,15 @@ interface Props {
   list: []
 }
 
+const emit = defineEmits(['click'])
 const props = defineProps<Props>()
+
 
 </script>
 
 <template>
   <div class="list">
-    <div v-for="(item, index) in props.list" class="item">
+    <div @click="emit('click', item)" v-for="(item, index) in props.list" class="item">
       <div class="sort">{{ index+1 }}</div>
       <div class="content">
         <div class="title">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, Ref, UnwrapRef, computed, onMounted} from "vue";
+import {ref, Ref, UnwrapRef, computed, onMounted, toRef} from "vue";
 import {useUserInfo} from "@/store";
 import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
 import {GetMusicDetailData} from "@/api/musicList";
@@ -7,7 +7,6 @@ import {formattingTime} from "@/utils";
 import CurrentTime from './compoents/CurrentTime.vue';
 import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
-import MusicDetail from "@/components/MusicDetail/index.vue";
 import {useFlags} from "@/store/flags";
 import {useMusicAction} from "@/store/music";
 
@@ -24,6 +23,7 @@ export interface MusicPlayerInstanceType {
   reset: (val: boolean) => void
   pause: typeof pause
   play: typeof play
+  time: number
 }
 interface Props {
   src: string
@@ -132,28 +132,27 @@ const flags = useFlags()
 const openMusicDetail = () => {
   flags.isOpenDetail = !flags.isOpenDetail
 }
-// onmouseenter 鼠标移入
-// onmouseleave 鼠标移出
-defineExpose({
+const exposeObj = {
   el: audio,
   orderStatusVal,
   isPlay,
   reset,
   play,
   pause,
-})
-
-const keydownHandler = (event: KeyboardEvent) => {
-  if(event.keyCode === 32) {
-    event.preventDefault()
-    if(isPlay.value) {
-      pause()
-    } else {
-      play()
-    }
-  }
 }
-document.body.addEventListener('keydown', keydownHandler)
+Object.defineProperty(exposeObj, 'time', {
+  get(): number {
+    return audio.value!.currentTime
+  },
+  set(time: number) {
+    audio.value!.currentTime = time
+  },
+})
+// onmouseenter 鼠标移入
+// onmouseleave 鼠标移出
+defineExpose(exposeObj)
+
+
 
 </script>
 
