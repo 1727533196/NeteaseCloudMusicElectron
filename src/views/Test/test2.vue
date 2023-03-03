@@ -5,8 +5,9 @@ import {codeLogin, sendCodePhone} from "@/utils/useLogin";
 import {loginQrCheck, loginQrCreate, loginQrKey, loginStatus} from "@/api/login";
 import { setCookies } from "@/utils/cookies";
 import { ElMessage } from "element-plus/es";
-import request from "@/utils/request";
-import QRCode from 'qrcode'
+import {useUserInfo} from "@/store";
+// import request from "@/utils/request";
+// import QRCode from 'qrcode'
 
 const phone = ref('')
 const code = ref('')
@@ -31,33 +32,32 @@ const init = async () => {
   const { data:{unikey} } = await loginQrKey()
   key.value = unikey
   // 之前
-  // const { data:{qrimg} } = await loginQrCreate(key.value, true)
-  // qrUrl.value = qrimg
+  const { data:{qrimg} } = await loginQrCreate(key.value, true)
+  qrUrl.value = qrimg
   // end 。。。
 
   // 现在
-  QRCode.toString(
-    `https://music.163.com/login?codekey=${unikey}`,
-    {
-      width: 192,
-      margin: 0,
-      // color: {
-      //   dark: '#335eea',
-      //   light: '#00000000',
-      // },
-      type: 'svg',
-    }
-  )
-        .then(svg => {
-          qrUrl.value = `data:image/svg+xml;utf8,${encodeURIComponent(
-            svg
-          )}`;
-        })
-        .catch(err => {
-          console.error(err);
-        })
+  // QRCode.toString(
+  //   `https://music.163.com/login?codekey=${unikey}`,
+  //   {
+  //     width: 192,
+  //     margin: 0,
+  //     // color: {
+  //     //   dark: '#335eea',
+  //     //   light: '#00000000',
+  //     // },
+  //     type: 'svg',
+  //   }
+  // )
+  //       .then(svg => {
+  //         qrUrl.value = `data:image/svg+xml;utf8,${encodeURIComponent(
+  //           svg
+  //         )}`;
+  //       })
+  //       .catch(err => {
+  //         console.error(err);
+  //       })
   // end 。。。
-
 
   timer = setInterval(async () => {
     // 800二维码不存在或已过期 801等待扫码  802授权中 803授权登陆成功
@@ -71,10 +71,11 @@ const init = async () => {
       clearInterval(timer)
       isSucceed.value = true
       console.log('cookie', cookie)
-      const cookies = cookie.replace('HTTPOnly', '')
-      setCookies(cookies);
+      // const cookies = cookie.replace('HTTPOnly', '')
+      // setCookies(cookies);
+      localStorage.setItem(`MUSIC_U`, cookie);
       ElMessage.success('授权登陆成功')
-      loginStatus()
+      getUserAccountFn()
     }
   }, 3000)
   return timer

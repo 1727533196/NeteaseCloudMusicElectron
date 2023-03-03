@@ -11,6 +11,9 @@ import alias from "@rollup/plugin-alias";
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 
 export default defineConfig({
+  server: {
+    port: 3001,
+  },
   plugins: [
     VueSetupExtend(),
     vue(),

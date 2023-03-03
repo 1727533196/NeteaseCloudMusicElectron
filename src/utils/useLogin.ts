@@ -31,5 +31,4 @@ export const codeLogin = async (phone: string, code: string) => {
     console.log('e', e)
     ElMessage.error(e.message)
   }
-
 }

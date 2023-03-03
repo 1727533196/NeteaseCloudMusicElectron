@@ -7,12 +7,17 @@ const http = axios.create({
   baseURL: import.meta.env.VITE_APP_WEB_URL
 })
 
+const ignoreState = ['/login/qr/check']
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if(!config.params) {
     config.params = {};
   }
-  config.params.cookie = `MUSIC_U=${getCookie('MUSIC_U')};`;
+  // const cookie = getCookie('MUSIC_U')
+  const cookie = localStorage.getItem(`MUSIC_U`)
+  if(cookie) {
+    config.params.cookie = `MUSIC_U=${cookie};`;
+  }
   // POST 请求 url 必须添加时间戳,使每次请求 url 不一样,不然请求会被缓存
   /* 由于接口做了缓存处理 ( 缓存 2 分钟,不缓存数据极容易引起网易服务器高频 ip 错误 , 可在 app.js 设置 ,
    可能会导致登录后获取不到 cookie), 相同的 url 会在两分钟内只向网易服务器发一次请求 ,
@@ -26,7 +31,8 @@ http.interceptors.request.use((config) => {
 
 http.interceptors.response.use((response) => {
   const {status, data: {code}} = response
-  if(status !== 200 || code !== 200) {
+  const url = response.config.url?.split('?')[0]!
+  if(!ignoreState.includes(url) && (status !== 200 || code !== 200)) {
     ElMessage.error(response.data.message || `请求出现错误，当前状态码为${code}`)
     return Promise.reject(response.data)
   }
