@@ -149,3 +149,4 @@ export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyr
 export const getUserCloud = (limit?: number, offset?: number) =>
   request <{ limit: number, offset: number }, GetUserCloudRes>
   ('/user/cloud', 'get', {params: {limit, offset}})
+

@@ -15,6 +15,7 @@ declare global {
     interface Window{
         electronAPI: IElectronAPI
         $audio: MusicPlayerInstanceType
+        $login: any
     }
     const $audio: Window['$audio'];
     const electronAPI: Window['electronAPI'];

@@ -21,8 +21,7 @@ const keydownHandler = (event: KeyboardEvent) => {
   }
 
 }
-// 案件配置
+// 按键配置
 document.body.addEventListener('keydown', keydownHandler)
-
 
 export {}

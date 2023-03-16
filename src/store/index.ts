@@ -22,7 +22,8 @@ export const useUserInfo = defineStore('userInfoId', {
   },
   actions: {
     updateProfile(val: profile) {
-      if(!val.userId) {
+      if(!val || !val.userId) {
+        window.$login.show()
         this.$reset()
         return
       }

@@ -2,26 +2,35 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import {onMounted, ref} from 'vue'
+import {useRoute} from "vue-router";
+import {useMusicAction} from "@/store/music";
+import '@/utils/shortcutKey'
+import {getUserAccountFn} from "@/utils/userInfo"
+import {useFlags} from "@/store/flags";
 import Header from '@/layout/BaseHeader/index.vue'
 import Aside from '@/layout/BaseAside/index.vue'
 import Bottom from '@/layout/BaseBottom/index.vue'
-import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
-import {getUserAccountFn} from "@/utils/userInfo"
-import {useMusicAction} from "@/store/music";
-import {useFlags} from "@/store/flags";
-import {useRoute} from "vue-router";
 import MusicDetail from '@/components/MusicDetail/index.vue'
-import '@/utils/shortcutKey'
+import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
+import Login from '@/components/Login/index.vue'
+import {useUserInfo} from "@/store";
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
+const login = ref()
 const music = useMusicAction()
 const flags = useFlags()
 const route = useRoute()
+const store = useUserInfo()
+
+// 初始化全局属性
 onMounted(() => {
   if(audioInstance.value !== undefined) {
     window.$audio = audioInstance.value!
   }
+  console.log('Y---> login', login)
+  window.$login = login.value!
+  console.log('Y---> store.isLogin', store.isLogin)
 })
 getUserAccountFn()
 
@@ -40,7 +49,6 @@ getUserAccountFn()
             <component :is="Component"></component>
           </keep-alive>
         </router-view>
-
       </div>
     </div>
     <div style="height: 20px"></div>
@@ -56,6 +64,7 @@ getUserAccountFn()
       ></MusicPlayer>
     </teleport>
   </Bottom>
+  <Login ref="login"></Login>
 </template>
 
 <style lang="less">
