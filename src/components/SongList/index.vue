@@ -15,7 +15,7 @@ export interface Columns {
   on?: object
   style?: object
   width?: string
-  type?: 'index' | 'handle' | 'singer' | 'title'
+  type?: 'index' | 'handle' | 'singer' | 'title' | 'album'
   class?: string
   processEl?: (createVNode: typeof h, arg: any, index: number) => any
 }
@@ -199,7 +199,7 @@ export default defineComponent({
                       onClick: () => ar.id && userDetail(ar.id),
                       class: [ar.id && 'name'],
                       style: {cursor: ar.id ? 'pointer' : 'default', color: ar.id ? '' : 'rgba(150, 150, 150, 0.60)'}
-                    }, ar.name || data.artist), (index < len ? ' / ' : '')]
+                    }, ar.name || data.artist || '未知艺人'), (index < len ? ' ·/ ' : '')]
                   }))
                 } else if(config.type === 'title') {
                   return indiviEl({
@@ -209,6 +209,8 @@ export default defineComponent({
                       color: activeText(data) ? 'rgb(255,60,60)' : ''
                     }
                   }, 2, lookup(data, config.prop))
+                } else if(config.type === 'album') {
+                  return indiviEl(config, 2, lookup(data, config.prop) || '未知专辑')
                 }
               }
             }))
@@ -228,98 +230,6 @@ export default defineComponent({
   },
 })
 </script>
-
-<template>
-  <div :style="{overflowY: props.scroll ? 'auto' : 'visible'}" class="container">
-    <div class="title-container">
-      <template v-for="config in props.header">
-        <div
-          v-if="!config.type"
-          :style="{width: config.width}"
-          :class="['title-item', config.class]"
-        >{{ config.title }}</div>
-        <div
-          v-else-if="config.type === 'index'"
-          :style="{width: config.width}"
-          :class="['title-item', config.class]"
-        ></div>
-        <div
-          v-else-if="config.type === 'handle'"
-          :style="{width: config.width}"
-          :class="['title-item', config.class]"
-        >{{ config.title }}</div>
-      </template>
-    </div>
-    <!--    设置背景颜色时，一定要用background，不要用backgroundColor-->
-    <div class="list-container">
-      <div
-        @dblclick="playHandler(item, i)"
-        @mousedown="mousedownHandler(item)"
-        :key="item.id"
-        v-for="(item, i) in props.list"
-        class="list"
-        :style="{background: item.id === id ? 'rgba(255, 255, 255, 0.08)' :
-       i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}"
-      >
-        <template v-for="config in props.header">
-          <template v-if="!config.type">
-            <div
-              v-if="config.key === 'title'"
-              :style="{color: activeText(item) ? 'rgb(255,60,60)' : '', width: config.width}"
-              :class="['item', config.class]"
-            >
-              {{ item.name }}
-            </div>
-            <div
-              :style="{width: config.width}"
-              v-else-if="config.key === 'singer'"
-              :class="['item', config.class]"
-            >
-              <span
-                v-for="ar in item.ar"
-                @click="userDetail(ar.id)"
-                class="name"
-                style="margin-right: 5px"
-              >{{ ar.name }}</span>
-            </div>
-            <div
-              :style="{width: config.width}"
-              :class="['item', config.class]"
-              v-else-if="config.slot"
-              v-html="config.slot(item)"/>
-            <div
-              v-else
-              :style="{width: config.width}"
-              :class="['item', config.class]"
-            >
-              <template v-if="config.process">{{ config.process(item[config.prop]) }}</template>
-              <template v-else>{{lookup(item, config.prop) }}</template>
-            </div>
-          </template>
-
-          <div
-            :style="{width: config.width}"
-            v-else-if="config.type === 'index'"
-            :class="['item', config.class]"
-          >{{ formatCount(i + 1) }}</div>
-          <div
-            :style="{width: config.width}"
-            v-else-if="config.type === 'handle'"
-            :class="['item', config.class]"
-          >
-            <i v-if="isLike(item)" @click="likeMusic(item.id, false)"  class="iconfont icon-xihuan1"></i>
-            <i v-else  @click="likeMusic(item.id)"  class="iconfont icon-xihuan"></i>
-          </div>
-        </template>
-      </div>
-    </div>
-
-    <div
-      v-show="props.loading"
-      v-loading="props.loading"
-      class="loading"></div>
-  </div>
-</template>
 
 <style lang="less" scoped>
 .container {

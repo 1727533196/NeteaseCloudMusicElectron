@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton/index.vue'
-import {User} from "@/api/user";
+import {Profile} from "@/api/user";
 
 interface Props {
-  userInfo: User
+  userInfo: Profile
   identify: {
     actionUrl: string // 请求网易云音乐的链接
     imageDesc: string // 标签
     imageUrl: string // 标签图片
+    level: number
   }
+  location: string
 }
 const props = defineProps<Props>()
 
@@ -16,7 +18,7 @@ const props = defineProps<Props>()
 </script>
 
 <template>
-  <div class="padding-container">
+  <div class="user-card-container">
     <div :style="{backgroundImage: `url(${userInfo.avatarUrl})`}" class="avatar"/>
     <div class="detail">
       <div class="top-container">
@@ -29,7 +31,7 @@ const props = defineProps<Props>()
                 <img :src="identify.imageUrl">
                 {{ identify.imageDesc }}
               </div>
-              <div class="rank">Lv7</div>
+              <div class="rank">Lv{{identify.level}}</div>
             </div>
           </div>
         </div>
@@ -44,28 +46,28 @@ const props = defineProps<Props>()
         <div class="info-count">
           <div>
             <div>
-              <div class="count">52</div>
+              <div class="count">{{ userInfo.eventCount }}</div>
               <div class="text">动态</div>
             </div>
             <div class="line"/>
           </div>
           <div>
             <div>
-              <div class="count">9</div>
+              <div class="count">{{ userInfo.newFollows }}</div>
               <div class="text">关注</div>
             </div>
             <div class="line"/>
           </div>
           <div>
             <div>
-              <div class="count">1403916</div>
+              <div class="count">{{ userInfo.followeds }}</div>
               <div class="text">粉丝</div>
             </div>
           </div>
         </div>
         <div class="region personal-details">
           <span class="title">所在地区: </span>
-          <span class="content">福建省 厦门市</span>
+          <span class="content">{{ location }}</span>
         </div>
         <div class="social personal-details">
           <span class="title">社交网络: </span>
@@ -81,8 +83,18 @@ const props = defineProps<Props>()
 </template>
 
 <style lang="less" scoped>
-.padding-container {
+.user-card-container {
   display: flex;
+  align-items: center;
+  background-color: rgba(255,255,255,.05);
+  padding: 20px;
+  border-radius: 20px;
+  width: calc(87vw - 180px);
+  //width: 87%;
+  margin: 0 auto;
+  box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.1);
+  transition: 0.4s;
+  .bgSetting();
 
   .avatar {
     height: 200px;
@@ -115,6 +127,7 @@ const props = defineProps<Props>()
         justify-content: space-between;
         flex-direction: column;
         .vip {
+          display: flex;
           .icon {
 
           }

@@ -35,6 +35,7 @@ export const columns: Columns[] = [
     prop: 'al.name', // 嵌套取值
     width: '20%',
     class: 'album',
+    type: 'album',
   },
   {
     title: '时间',

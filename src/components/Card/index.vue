@@ -37,6 +37,10 @@ const clickHandler = () => {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    transition: 0.3s;
+  }
+  .card:hover {
+    box-shadow: 0 5px 15px 5px rgba(255, 255, 255, 0.1);
   }
   .card-click {
     cursor: pointer;

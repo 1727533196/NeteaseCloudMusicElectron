@@ -119,6 +119,11 @@
   resolved "https://registry.npmmirror.com/@sxzz/popperjs-es/-/popperjs-es-2.11.7.tgz"
   integrity sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==
 
+"@province-city-china/types@8.5.6":
+  version "8.5.6"
+  resolved "https://registry.npmmirror.com/@province-city-china/types/-/types-8.5.6.tgz#a2ba9162767147fd2ed9ba678f73592f8ef40057"
+  integrity sha512-Ii2p24i7z66Fe98sZb1u1FIAN9eZoyaF6+HAcpgZCHVf0PuTVS72E3u0ibSqaLb8ZuMzSNFCtcuilnfMFfAlFQ==
+
 "@rollup/plugin-alias@^3.1.9":
   version "3.1.9"
   resolved "https://registry.npmmirror.com/@rollup/plugin-alias/-/plugin-alias-3.1.9.tgz"
@@ -2394,6 +2399,13 @@ proto-list@~1.2.1:
   version "1.2.4"
   resolved "https://registry.npmjs.org/proto-list/-/proto-list-1.2.4.tgz"
   integrity sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==
+
+province-city-china@^8.5.6:
+  version "8.5.6"
+  resolved "https://registry.npmmirror.com/province-city-china/-/province-city-china-8.5.6.tgz#016a47257cf4d21d6caa9440c9abf96129c67c18"
+  integrity sha512-dGGNzXrQS0wLstCp01+HGPVKL4xnrnB6DlaApEwRkeXZQhnoKbQgQh5rz3Vgg87yUYRlvM3Rtj4UCb9SREcXTg==
+  dependencies:
+    "@province-city-china/types" "8.5.6"
 
 prr@~1.0.1:
   version "1.0.1"

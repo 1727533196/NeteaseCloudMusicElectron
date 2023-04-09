@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {profile} from "@/api/user";
+import {Profile} from "@/api/user";
 import {PlayList} from "@/api/musicList";
 import {asideMenuConfig, ListItem} from "@/layout/BaseAside/config";
 
@@ -21,7 +21,7 @@ export const useUserInfo = defineStore('userInfoId', {
     }
   },
   actions: {
-    updateProfile(val: profile) {
+    updateProfile(val: Profile) {
       if(!val || !val.userId) {
         window.$login.show()
         this.$reset()
