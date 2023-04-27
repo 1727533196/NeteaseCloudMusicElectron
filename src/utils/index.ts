@@ -134,3 +134,12 @@ export function toggleImg(src: string): Promise<HTMLImageElement> {
   })
 }
 
+// 计算出合适的间隙
+export function suitableSpace(el: Element, itemEl: Element, count: number): number {
+  const totalWidth = el.clientWidth
+  const itemWidth = itemEl.clientWidth * count
+  const width = totalWidth - itemWidth
+  const suitableMargin = width / (count - 1)
+
+  return suitableMargin - 1
+}

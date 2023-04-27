@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Card from '@/components/Card/index.vue'
 import {Recommend} from "@/api/home";
+import {nextTick, onMounted, ref, watch} from "vue";
+import {suitableSpace} from "@/utils";
 
 interface Props {
   recommend: Recommend[]
@@ -13,6 +15,7 @@ const emit = defineEmits(['click'])
 const clickSliderHandler = () => {
   emit('click')
 }
+
 </script>
 
 <template>
@@ -22,15 +25,22 @@ const clickSliderHandler = () => {
       <el-icon><ArrowRight /></el-icon>
     </div>
     <div class="subject">
-      <slot></slot>
-      <Card
-        @click="emit('click', item)"
-        v-for="item in props.recommend"
-        is-click
-        :item="item"
-        :name="item.name"
-        :pic-url="item.picUrl"
-      />
+<!--      <div style="margin-right: calc(2vw - 10px)" class="item">-->
+<!--        <slot></slot>-->
+<!--      </div>-->
+      <div
+        class="item"
+        :id="index+2"
+        v-for="(item, index) in props.recommend"
+      >
+        <Card
+          @click="emit('click', item)"
+          is-click
+          :item="item"
+          :name="item.name"
+          :pic-url="item.picUrl"
+        />
+      </div>
     </div>
 <!--    <el-icon @click="clickSliderHandler" :size="50" class="arrow left"><ArrowLeft /></el-icon>-->
 <!--    <el-icon @click="clickSliderHandler" :size="50" class="arrow right"><ArrowRight /></el-icon>-->
@@ -61,10 +71,18 @@ const clickSliderHandler = () => {
 
   .subject {
     padding-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    //第一个属性：行与行间隔，第二个属性列与列间隔
+    grid-gap: 20px 20px;
+    //内容整体平均分布
     justify-content: space-between;
-    //overflow-x: auto;
+    //单元格的大小是固定的，但是容器的大小不确定。如果希望每一行（或每一列）容纳尽可能多的单元格，这时可以使用auto-fill关键字表示自动填充
+    grid-template-columns: repeat(auto-fill, calc(15vw - 20px));
+    .item {
+      //margin-right: 10px;
+      //width: calc((100%) / 5);
+      //padding-right: 10px;
+    }
   }
 }
 </style>

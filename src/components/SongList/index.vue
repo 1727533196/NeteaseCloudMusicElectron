@@ -79,7 +79,7 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['play', 'current-change'], // 播放歌曲
+  emits: ['play', 'current-change', 'update:modelValue'], // 播放歌曲
   setup(props, {emit, attrs}) {
     const store = useUserInfo()
     const music = useMusicAction()
@@ -145,6 +145,8 @@ export default defineComponent({
     })
 
     const loadingDiretive = resolveDirective('loading')!
+    const input = resolveComponent('ElInput')
+    const val = ref('')
 
     return () => {
       return h('div', {
@@ -154,6 +156,10 @@ export default defineComponent({
           class: 'container',
         },
         [
+          h(input, {
+            modelValue: val.value,
+            'onUpdate:modelValue': (value: string) => emit('update:modelValue', value)
+          }),
           h('div', {class:'title-container', style: {}}, props.columns.map(config => {
             return indiviEl(config, 1, config.title)
           })),

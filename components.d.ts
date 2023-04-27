@@ -27,7 +27,10 @@ declare module '@vue/runtime-core' {
     Search: typeof import('./src/components/Search/index.vue')['default']
     SongInfo: typeof import('./src/components/SongInfo/index.vue')['default']
     SongList: typeof import('./src/components/SongList/index.vue')['default']
+    TabPane: typeof import('./src/components/Tabs/TabPane.vue')['default']
+    Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     UserDetailCard: typeof import('./src/components/UserDetailCard/index.vue')['default']
+    UserDetailList: typeof import('./src/components/UserDetailList/index.vue')['default']
     Volume: typeof import('./src/components/MusicPlayer/compoents/Volume.vue')['default']
   }
 }

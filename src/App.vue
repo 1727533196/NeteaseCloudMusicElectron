@@ -28,9 +28,7 @@ onMounted(() => {
   if(audioInstance.value !== undefined) {
     window.$audio = audioInstance.value!
   }
-  console.log('Y---> login', login)
   window.$login = login.value!
-  console.log('Y---> store.isLogin', store.isLogin)
 })
 getUserAccountFn()
 

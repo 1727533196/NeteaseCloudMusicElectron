@@ -35,8 +35,8 @@ class Main {
             //     color: '#222225',
             //     symbolColor: '#ADAFB2FF'
             // },
-            minHeight: 690,
-            minWidth: 1041,
+            minHeight: 750,
+            minWidth: 1150,
             height: 750,
             width: 1150,
             webPreferences: {

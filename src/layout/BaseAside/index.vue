@@ -20,6 +20,10 @@ const init = () => {
   // itemClick(asideMenuConfig[0].list[0])
 }
 watch(() => route.path, (value) => {
+  if(route.query.id) {
+    const id = +route.query.id
+    current.value = store.userPlayListInfo.find(item => item.id === id) as ListItem
+  }
   paths.includes(value) || (current.value = undefined)
 })
 const itemClick = (item: ListItem) => {
@@ -63,7 +67,7 @@ watch(() => route.query.id, () => {
             @click="itemClick(item)"
             v-for="item in menuItem.list"
             :style="{fontSize: item.fontSize+'px' || ''}"
-            :class="['play-list-item', {current: current?.id ? current.id === item.id : item.path === route.path}]"
+            :class="['play-list-item', {current: current && current?.id ? current.id === item.id : item.path === route.path}]"
           >
             <i :class="['iconfont', item.icon || '']"></i>
             <span>{{item.name}}</span>

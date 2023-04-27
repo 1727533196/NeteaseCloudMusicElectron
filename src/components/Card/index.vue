@@ -25,14 +25,16 @@ const clickHandler = () => {
 
 <style lang="less" scoped>
 .card-box {
-  width: calc(15vw - 10px);
+  display: inline-block;
+  width: calc(15vw - 20px);
   margin-bottom: 20px;
+  box-sizing: content-box;
   //& + & {
-  //  margin-left: 20px;
+  //  margin-left: calc(10% - 90px);
   //}
   .card {
-    width: calc(15vw - 10px);
-    height: calc(15vw - 10px);
+    width: calc(15vw - 20px);
+    height: calc(15vw - 20px);
     border-radius: 5px;
     background-size: cover;
     background-position: center;
@@ -40,7 +42,7 @@ const clickHandler = () => {
     transition: 0.3s;
   }
   .card:hover {
-    box-shadow: 0 5px 15px 5px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.1);
   }
   .card-click {
     cursor: pointer;

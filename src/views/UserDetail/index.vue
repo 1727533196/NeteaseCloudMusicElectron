@@ -4,36 +4,43 @@ import UserDetailCard from '@/components/UserDetailCard/index.vue'
 import {getUserDetail, Profile} from "@/api/user";
 import {reactive, ref, watch} from "vue";
 import {province} from 'province-city-china/data'
-
-const router = useRouter()
-const route = useRoute()
-
-watch(() => route.fullPath, () => {
-  if(route.path === '/detail') {
-    init()
-  }
-}, {
-  immediate: true,
-})
+import UserDetailList from '@/components/UserDetailList/index.vue'
+import {list} from "@/views/UserDetail/config";
+import {getUserPlayList, PlayList} from "@/api/musicList";
 
 interface State {
   userInfo: Profile
   identify: {
     level: number
   }
+  playList: PlayList[]
 }
+
+const router = useRouter()
+const route = useRoute()
 const state = reactive<State>({
   userInfo: {} as Profile,
   identify: {} as {
     level: number
   },
+  playList: [],
 })
 const location = ref<string>()
+const activeName = ref<string>(list[0].name)
 
+
+  watch(() => route.fullPath, () => {
+  if(route.path === '/detail') {
+    init()
+  }
+}, {
+  immediate: true,
+})
 function init() {
   const {uid} = route.query as {uid: number | null}
   if(uid) {
     getUserDetailHandler(uid)
+    getUserSongListHandler(uid)
   }
 }
 
@@ -47,17 +54,26 @@ async function getUserDetailHandler(uid: number) {
   location.value = province.find(item => +item.code === state.userInfo.province)!.name
 }
 
+// 获取指定用户歌单
+async function getUserSongListHandler(uid: number) {
+  const {playlist} = await getUserPlayList(uid)
+  state.playList = playlist
+}
+
 
 </script>
 
 <template>
   <div class="user-detail-container">
     <UserDetailCard
-        :location="location"
-        :identify="state.identify"
-        :user-info="state.userInfo"
+      :location="location"
+      :identify="state.identify"
+      :user-info="state.userInfo"
     ></UserDetailCard>
-    <div class="list-container"></div>
+    <UserDetailList
+      v-model="activeName"
+      :playList="state.playList"
+      :list="list"></UserDetailList>
   </div>
 
 </template>
@@ -65,16 +81,6 @@ async function getUserDetailHandler(uid: number) {
 <style lang="less" scoped>
 .user-detail-container {
   height: 100%;
-  .list-container {
-    padding: 20px;
-    border-radius: 20px;
-    width: calc(93vw - 180px);
-    //width: 95%;
-    background-color: rgba(255,255,255,.05);
-    margin: 30px auto;
-    min-height: 500px;
-    box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.1);
-    transition: 0.3s;
-  }
+
 }
 </style>

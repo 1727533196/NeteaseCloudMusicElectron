@@ -57,6 +57,7 @@ export const useUserInfo = defineStore('userInfoId', {
       let subscribedListItem = asideMenuConfig.find(item => item.mark === 'subscribedList')
       myList.length && (playItem!.list = myList)
       subscribedList.length && (subscribedListItem!.list = subscribedList)
+      console.log(asideMenuConfig)
     },
     updateUserLikeIds(ids: number[]) {
       this.userLikeIds = ids

@@ -6,10 +6,12 @@ import router from "./router";
 import {createPinia} from "pinia";
 import './assets/iconfont/iconfont.css'
 import ElementIcon from "@/plugins/element-icon";
+import InitComponent from '@/plugins/component'
 
 createApp(App)
     .use(createPinia())
     .use(router)
     .use(ElementPlus, { zIndex: 3000 })
     .use(ElementIcon)
+    .use(InitComponent)
     .mount('#app')
