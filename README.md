@@ -2,7 +2,17 @@
 
 ## 安装
 
+### 1. 克隆本地服务器
+在github上拉取node服务
+https://github.com/Binaryify/NeteaseCloudMusicApi
+```
+1. 安装依赖
+npm/yarn install
+2. 启动服务
+npm/yarn start
+```
 
+### 2. 启动 cloud
 ```
 1. node版本至少大于15
 
@@ -23,6 +33,7 @@ web: yarn build
 2. 首页部分推荐歌单已完成
 3. 搜索歌曲
 4. 歌曲详情
+5. 用户详情
 
 
 # 请求器
@@ -55,6 +66,7 @@ console.log(import.meta.env.VITE_APP_WEB_URL)
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 ![img_2.png](img_2.png)
+![img_2.png](img_3.png)
 
 # Electron API
 ```
