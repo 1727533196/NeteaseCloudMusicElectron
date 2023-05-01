@@ -26,10 +26,10 @@ export function timeDeserialize(timeFormat: string) {
   }
   return result
 }
-
+const test: {notSupportedScroll?: boolean} = {}
 // 格式化歌词字符串
 export function formatLyric(lyric: string) {
-  const result: Array<{time: number | boolean, text: string, line: number, notSupportedScroll?: boolean}> = []
+  const result: Array<{time: number | boolean, text: string, line: number}> & {notSupportedScroll?: boolean} = []
   const lyricArr = lyric.split(/\n/)
   lyricArr.pop() // 删除最后一行多余的
 

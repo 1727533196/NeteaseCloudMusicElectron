@@ -57,3 +57,42 @@ export const columns: Columns[] = [
     },
   },
 ]
+
+export const tabsConfig = [
+  {
+    name: 'song',
+    label: '单曲',
+  },
+  {
+    name: 'singer',
+    label: '歌手',
+  },
+  {
+    name: 'album',
+    label: '专辑',
+  },
+  {
+    name: 'video',
+    label: '视频',
+  },
+  {
+    name: 'songList',
+    label: '歌单',
+  },
+  {
+    name: 'lyric',
+    label: '歌词',
+  },
+  {
+    name: 'podcast',
+    label: '播客',
+  },
+  {
+    name: 'voice',
+    label: '声音',
+  },
+  {
+    name: 'user',
+    label: '用户',
+  },
+]

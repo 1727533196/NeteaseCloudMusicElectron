@@ -1,7 +1,7 @@
 <script setup lang="ts" name="SearchList">
 import SongList from '@/components/SongList/index.vue'
 import {useMusicAction} from "@/store/music";
-import {columns} from './config'
+import {columns, tabsConfig} from './config'
 import {useRoute} from "vue-router";
 import {cloudSearch} from "@/api/search";
 import {reactive, ref, watch} from "vue";
@@ -20,6 +20,7 @@ const state = reactive<State>({
   result: [],
   songCount: 0,
 })
+const activeName = ref<string>(tabsConfig[0].name)
 
 function init() {
   const {key} = route.query as {key: string}
@@ -49,6 +50,13 @@ watch(() => route.fullPath, (val) => {
 </script>
 
 <template>
+  <tabs v-model="activeName">
+    <tab-pane
+      v-for="item in tabsConfig"
+      :name="item.name"
+      :label="item.label"
+    ></tab-pane>
+  </tabs>
   <SongList
     @current-change="currentChange"
     @play="music.getMusicUrlHandler"

@@ -43,7 +43,7 @@ export const useMusicAction = defineStore('musicActionId', {
     // 获取音乐url
     async getMusicUrlHandler(id: number, i?: number) {
       this.getLyricHandler(id)
-      const [{data}, {songs}] = await Promise.all([getMusicUrl(id), getMusicDetail(id)])
+      const [{data}, {songs}] = await Promise.all([getMusicUrl(id), getMusicDetail(id.toString())])
       this.songs = songs[0]
       index.value = i === undefined ? index.value : i
       $audio.reset(true)
@@ -80,13 +80,13 @@ export const useMusicAction = defineStore('musicActionId', {
           index.value = this.runtimeIds.length - 1
         }
         target ?
-          this.getMusicUrlHandler(this.runtimeIds[index.value]) :
-          this.getMusicUrlHandler(this.runtimeIds[index.value])
+            this.getMusicUrlHandler(this.runtimeIds[index.value]) :
+            this.getMusicUrlHandler(this.runtimeIds[index.value])
         return
       }
       if (!target) {
         const i = (lastIndexList.value[lastIndexList.value.length - 1] as number | undefined) ||
-          this.orderTarget($audio?.orderStatusVal!)
+            this.orderTarget($audio?.orderStatusVal!)
         this.getMusicUrlHandler(this.runtimeIds[i])
         lastIndexList.value.splice(lastIndexList.value.length - 1)
         return;

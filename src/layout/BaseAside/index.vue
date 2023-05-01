@@ -54,7 +54,7 @@ watch(() => route.query.id, () => {
   flag = true
   init()
 })
-// 列表选中条件，有id优先id，没有id用path
+// 列表选中条件，有id优先id，没有id用path 1
 </script>
 
 <template>

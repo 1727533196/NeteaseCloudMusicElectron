@@ -1,8 +1,9 @@
 <script setup lang="ts">
 interface Props {
-  picUrl: string
-  name: string
+  picUrl?: string
+  name?: string
   isClick?: boolean,
+  isStartIcon?: boolean
 }
 const emit = defineEmits(['click'])
 const props = defineProps<Props>()
@@ -18,7 +19,12 @@ const clickHandler = () => {
       @click="clickHandler"
       :style="{backgroundImage: `url(${props.picUrl}`}"
       :class='["card", {"card-click": isClick}]'
-    ></div>
+    >
+      <slot></slot>
+      <div v-if="isStartIcon" class="start-icon-box">
+        <i class="iconfont operation icon-kaishi1"></i>
+      </div>
+    </div>
     <span :class="['text', {'card-click': isClick}]">{{props.name}}</span>
   </div>
 </template>
@@ -40,8 +46,36 @@ const clickHandler = () => {
     background-position: center;
     background-repeat: no-repeat;
     transition: 0.3s;
+    position: relative;
+    .start-icon-box {
+      position: absolute;
+      bottom: 10px;
+      width: calc(5vw - 25px);
+      height: calc(5vw - 25px);
+      right: 10px;
+      //width: 35px;
+      //height: 35px;
+      border-radius: 50%;
+      background-color: rgb(255,255,255);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.5s;
+      visibility: hidden;
+
+      .icon-kaishi1 {
+        color: @subject;
+        font-size: calc(2vw - 5px);
+      }
+    }
+
   }
   .card:hover {
+    .start-icon-box {
+      visibility: visible;
+      opacity: .8;
+    }
     box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.1);
   }
   .card-click {

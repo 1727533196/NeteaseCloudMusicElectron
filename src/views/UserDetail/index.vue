@@ -2,7 +2,7 @@
 import {useRoute, useRouter} from 'vue-router'
 import UserDetailCard from '@/components/UserDetailCard/index.vue'
 import {getUserDetail, Profile} from "@/api/user";
-import {reactive, ref, watch} from "vue";
+import {onUnmounted, reactive, ref, watch} from "vue";
 import {province} from 'province-city-china/data'
 import UserDetailList from '@/components/UserDetailList/index.vue'
 import {list} from "@/views/UserDetail/config";
@@ -14,6 +14,7 @@ interface State {
     level: number
   }
   playList: PlayList[]
+  allPlayList: PlayList[]
 }
 
 const router = useRouter()
@@ -24,12 +25,13 @@ const state = reactive<State>({
     level: number
   },
   playList: [],
+  allPlayList: [],
 })
 const location = ref<string>()
-const activeName = ref<string>(list[0].name)
+const activeName = ref<TabsName>(list[0].name as TabsName)
+let timer: NodeJS.Timer
 
-
-  watch(() => route.fullPath, () => {
+watch(() => route.fullPath, () => {
   if(route.path === '/detail') {
     init()
   }
@@ -41,8 +43,14 @@ function init() {
   if(uid) {
     getUserDetailHandler(uid)
     getUserSongListHandler(uid)
+    timer = setInterval(() => {
+      getUserSongListHandler(uid)
+    }, 3000)
   }
 }
+onUnmounted(() => {
+  clearInterval(timer)
+})
 
 // 获取用户详情
 async function getUserDetailHandler(uid: number) {
@@ -57,7 +65,24 @@ async function getUserDetailHandler(uid: number) {
 // 获取指定用户歌单
 async function getUserSongListHandler(uid: number) {
   const {playlist} = await getUserPlayList(uid)
-  state.playList = playlist
+  state.allPlayList = playlist
+  state.playList = getCurrentTabsList(activeName.value)
+}
+type TabsName = 'createSongList' | 'collectSongList' | 'createSpecial'
+const getCurrentTabsList = (name: TabsName) => {
+  return state.allPlayList.filter(item => {
+    if(name === 'createSongList') {
+      return !item.subscribed
+    } else if(name === 'collectSongList') {
+      return item.subscribed
+    }
+    return false
+  })
+}
+
+const tabChange = (name: TabsName) => {
+  activeName.value = name
+  state.playList = getCurrentTabsList(name)
 }
 
 
@@ -72,6 +97,7 @@ async function getUserSongListHandler(uid: number) {
     ></UserDetailCard>
     <UserDetailList
       v-model="activeName"
+      @tabChange="tabChange"
       :playList="state.playList"
       :list="list"></UserDetailList>
   </div>

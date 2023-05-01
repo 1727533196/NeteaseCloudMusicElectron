@@ -2,6 +2,8 @@
 import {useRouter} from "vue-router";
 import {PlayList} from "@/api/musicList";
 import Card from '@/components/Card/index.vue'
+import img from '@/assets/img.jpg'
+import {computed} from "vue";
 
 type List = {label: string, name: string}[]
 interface Props {
@@ -9,6 +11,7 @@ interface Props {
   modelValue: string
   playList: PlayList[]
 }
+const emit = defineEmits(['tabChange', 'update:modelValue'])
 const props = defineProps<Props>()
 const router = useRouter()
 
@@ -22,11 +25,23 @@ const cardClickHandler = (item: PlayList) => {
   })
 }
 
+const val = computed({
+  get() {
+    return props.modelValue
+  },
+  set(val) {
+    emit('update:modelValue', val)
+  },
+})
+
 </script>
 
 <template>
   <div class="list-container">
-    <tabs v-model="modelValue">
+    <tabs
+      @tabChange="emit('tabChange', $event)"
+      v-model="val"
+    >
       <tab-pane
         v-for="item in props.list"
         :label="item.label"
@@ -34,12 +49,21 @@ const cardClickHandler = (item: PlayList) => {
       >
         <div class="play-list">
           <card
+            v-if="val === 'createSongList'"
+            :picUrl="img"
+            class="item"
+            name="我的听歌排行"
+            is-click
+            is-start-icon
+          ></card>
+          <card
             v-for="playItem in playList"
             @click="cardClickHandler(playItem)"
             class="item"
             :pic-url="playItem.coverImgUrl"
             :name="playItem.name"
             is-click
+            is-start-icon
           ></card>
         </div>
       </tab-pane>

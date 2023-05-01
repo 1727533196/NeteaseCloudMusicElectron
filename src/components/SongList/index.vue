@@ -156,10 +156,10 @@ export default defineComponent({
           class: 'container',
         },
         [
-          h(input, {
-            modelValue: val.value,
-            'onUpdate:modelValue': (value: string) => emit('update:modelValue', value)
-          }),
+          // h(input, {
+          //   modelValue: val.value,
+          //   'onUpdate:modelValue': (value: string) => emit('update:modelValue', value)
+          // }),
           h('div', {class:'title-container', style: {}}, props.columns.map(config => {
             return indiviEl(config, 1, config.title)
           })),
