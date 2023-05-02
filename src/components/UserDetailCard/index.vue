@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import BaseButton from '@/components/BaseButton/index.vue'
 import {Profile} from "@/api/user";
 
 interface Props {

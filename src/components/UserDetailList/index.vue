@@ -4,16 +4,19 @@ import {PlayList} from "@/api/musicList";
 import Card from '@/components/Card/index.vue'
 import img from '@/assets/img.jpg'
 import {computed} from "vue";
+import {useUserInfo} from "@/store";
 
 type List = {label: string, name: string}[]
 interface Props {
   list: List
   modelValue: string
   playList: PlayList[]
+  userId: number
 }
 const emit = defineEmits(['tabChange', 'update:modelValue'])
 const props = defineProps<Props>()
 const router = useRouter()
+const store = useUserInfo()
 
 const cardClickHandler = (item: PlayList) => {
   console.log(item)
@@ -49,7 +52,7 @@ const val = computed({
       >
         <div class="play-list">
           <card
-            v-if="val === 'createSongList'"
+            v-if="store.profile.userId === props.userId && val === 'createSongList'"
             :picUrl="img"
             class="item"
             name="我的听歌排行"

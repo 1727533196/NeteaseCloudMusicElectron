@@ -40,7 +40,19 @@ export interface getArtistDetailRes {
   message: string,
   data: {
     artist: {
-
+      albumSize: number
+      alias: string[] // 歌手化名
+      avatar: string // 歌手头像
+      briefDesc: string
+      cover: string
+      id: number
+      identifyTag: null | any
+      identities: string[]
+      musicSize: number
+      mvSize: number
+      name: string
+      rank: {rank: number, type: number}
+      transNames: any[]
     },
     blacklist: boolean
     eventCount: number
@@ -52,7 +64,7 @@ export interface getArtistDetailRes {
     preferShow: number
     secondaryExpertIdentiy: {}[]
     showPriMsg: boolean
-    user: User
+    user: undefined | User
     videoCount: number
     vipRights: {}
   },

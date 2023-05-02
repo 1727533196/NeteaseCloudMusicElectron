@@ -125,8 +125,8 @@ export default defineComponent({
 
 
     const router = useRouter()
-    const userDetail = (id: number) => {
-      router.push(`/detail?uid=${id}`)
+    const singerDetail = (id: number) => {
+      router.push(`/singer-page?id=${id}`)
     }
     const renderPagination = () => {
       return props.isPaging && props.total ? h(Pagination, {
@@ -202,7 +202,7 @@ export default defineComponent({
                   const len = data.ar.length - 1
                   return indiviEl(config, 2, data.ar.map((ar, index) => {
                     return [h('span', {
-                      onClick: () => ar.id && userDetail(ar.id),
+                      onClick: () => ar.id && singerDetail(ar.id),
                       class: [ar.id && 'name'],
                       style: {cursor: ar.id ? 'pointer' : 'default', color: ar.id ? '' : 'rgba(150, 150, 150, 0.60)'}
                     }, ar.name || data.artist || '未知艺人'), (index < len ? ' ·/ ' : '')]

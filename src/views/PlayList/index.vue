@@ -11,7 +11,7 @@ const route = useRoute()
 const music = useMusicAction()
 const {getPlayListDetailFn} = usePlayList()
 watch(() => route.fullPath, () => {
-  if(route.query.id) {
+  if(route.query.id && route.path === '/play-list') {
     getPlayListDetailFn(+route.query.id!)
     document.querySelector('.main')!.scrollTop = 0
   }

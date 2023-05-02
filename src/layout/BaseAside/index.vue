@@ -46,15 +46,18 @@ const itemClick = (item: ListItem) => {
   })
   current.value = item
 }
-let flag = false
-watch(() => route.query.id, () => {
-  if(flag) {
-    return
+watch(() => route.fullPath, () => {
+  if(route.path === '/play-list') {
+    init()
   }
-  flag = true
-  init()
 })
-// 列表选中条件，有id优先id，没有id用path 1
+// 列表选中条件，有id优先id，没有id用path
+const isCurrent = (path: string, id: number) => {
+  if(!current.value) {
+    return false
+  }
+  return current.value.id === id
+}
 </script>
 
 <template>
@@ -67,7 +70,7 @@ watch(() => route.query.id, () => {
             @click="itemClick(item)"
             v-for="item in menuItem.list"
             :style="{fontSize: item.fontSize+'px' || ''}"
-            :class="['play-list-item', {current: current && current?.id ? current.id === item.id : item.path === route.path}]"
+            :class="['play-list-item', {current: isCurrent(item.path, item.id)}]"
           >
             <i :class="['iconfont', item.icon || '']"></i>
             <span>{{item.name}}</span>

@@ -66,4 +66,9 @@ export default [
     name: 'musicCloud',
     component: () => import('@/views/MusicCloud/index.vue')
   },
+  {
+    path: '/singer-page',
+    name: 'singerPage',
+    component: () => import('@/views/SingerPage/index.vue')
+  },
 ]

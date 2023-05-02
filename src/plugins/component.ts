@@ -1,8 +1,9 @@
 import Tabs from '@/components/Tabs/index.vue'
 import TabPane from '@/components/Tabs/TabPane.vue'
+import BaseButton from '@/components/BaseButton/index.vue'
 import {App} from "vue";
 
-const componentArr = [Tabs, TabPane]
+const componentArr = [Tabs, TabPane, BaseButton]
 
 export default (app: App) => {
   componentArr.forEach(component => {

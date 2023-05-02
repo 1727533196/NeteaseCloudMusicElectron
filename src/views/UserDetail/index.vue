@@ -7,6 +7,7 @@ import {province} from 'province-city-china/data'
 import UserDetailList from '@/components/UserDetailList/index.vue'
 import {list} from "@/views/UserDetail/config";
 import {getUserPlayList, PlayList} from "@/api/musicList";
+import {useUserInfo} from "@/store";
 
 interface State {
   userInfo: Profile
@@ -19,6 +20,7 @@ interface State {
 
 const router = useRouter()
 const route = useRoute()
+const store = useUserInfo()
 const state = reactive<State>({
   userInfo: {} as Profile,
   identify: {} as {
@@ -27,6 +29,7 @@ const state = reactive<State>({
   playList: [],
   allPlayList: [],
 })
+const userId = ref<number>()
 const location = ref<string>()
 const activeName = ref<TabsName>(list[0].name as TabsName)
 let timer: NodeJS.Timer
@@ -41,8 +44,10 @@ watch(() => route.fullPath, () => {
 function init() {
   const {uid} = route.query as {uid: number | null}
   if(uid) {
+    userId.value = +uid
     getUserDetailHandler(uid)
     getUserSongListHandler(uid)
+    clearInterval(timer)
     timer = setInterval(() => {
       getUserSongListHandler(uid)
     }, 3000)
@@ -72,9 +77,9 @@ type TabsName = 'createSongList' | 'collectSongList' | 'createSpecial'
 const getCurrentTabsList = (name: TabsName) => {
   return state.allPlayList.filter(item => {
     if(name === 'createSongList') {
-      return !item.subscribed
+      return userId.value === store.profile.userId ? !item.subscribed : !item.ordered
     } else if(name === 'collectSongList') {
-      return item.subscribed
+      return userId.value === store.profile.userId ? item.subscribed : item.ordered
     }
     return false
   })
@@ -94,12 +99,14 @@ const tabChange = (name: TabsName) => {
       :location="location"
       :identify="state.identify"
       :user-info="state.userInfo"
-    ></UserDetailCard>
+    />
     <UserDetailList
       v-model="activeName"
       @tabChange="tabChange"
       :playList="state.playList"
-      :list="list"></UserDetailList>
+      :list="list"
+      :userId="userId"
+    />
   </div>
 
 </template>

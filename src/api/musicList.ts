@@ -43,6 +43,7 @@ export interface GetPlayListDetailRes {
       vipType: 11
     }
     subscribed: boolean // 是否收藏
+    ordered: boolean
     subscribedCount: number // 收藏总数
   }
 }
