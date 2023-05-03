@@ -2,7 +2,6 @@
 import {reactive} from "vue";
 import {Recommend, recommendSongList} from "@/api/home";
 import CardChunk from '@/components/CardChunk/index.vue'
-import Card from '@/components/Card/index.vue'
 import {useRouter} from "vue-router";
 
 const recommendSongs = 'recommendSongs'

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Card from '@/components/Card/index.vue'
 import {Recommend} from "@/api/home";
 import {nextTick, onMounted, ref, watch} from "vue";
 import {suitableSpace} from "@/utils";

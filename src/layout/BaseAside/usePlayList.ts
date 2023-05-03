@@ -1,6 +1,6 @@
 import {reactive} from "vue";
 import {
-  CurrentItem,
+  CurrentItem, getAlbumContent,
   getLikeMusicListIds,
   getMusicDetail,
   GetMusicDetailData,
@@ -25,12 +25,13 @@ export const playListState = reactive<State>({
   ids: [],
   loading: false,
 })
+//
 
 export default () => {
   const store = useUserInfo()
   const music = useMusicAction()
   // 获取用户指定歌单列表
-  const getPlayListDetailFn = async (id: number) => {
+  const getPlayListDetailFn = async (id: number, type: 'album') => {
     playListState.loading = true
 
     music.oldList = {tracks: playListState.playList, ...playListState.listInfo}
@@ -39,11 +40,21 @@ export default () => {
       if(id !== playListMock.id) {
         // 歌单能看到歌单名字, 但看不到具体歌单内容 , 调用此接口 , 传入歌单 id, 可 以获取对应歌单内的所有的音乐(未登录状态只能获取不完整的歌单,登录后是完整的)，
         //   但是返回的 trackIds 是完整的，tracks 则是不完整的，可拿全部 trackIds 请求一次 song/detail 接口获取所有歌曲的详情
-        const {playlist} = await getPlayListDetail(id)
-        music.updateCurrentItem(playlist)
-        const ids = playlist.trackIds.map(item => item.id).join(',')
+        let playList;
+        let ids: string
+        if(type === 'album') {
+          const {songs} = await getAlbumContent(id)
+          playList = songs
+          ids = playList.map(item => item.id).join(',')
+        } else {
+          const {playlist} = await getPlayListDetail(id)
+          playList = playlist
+          ids = playList.trackIds.map(item => item.id).join(',')
+        }
+        music.updateCurrentItem(playList)
         const {songs} = await getMusicDetail(ids)
-        updatePlayList({...playlist, tracks: songs})
+        console.log(songs)
+        updatePlayList({...playList, tracks: songs})
       } else {
         await getRecommendSongs()
       }

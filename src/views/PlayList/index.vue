@@ -12,7 +12,7 @@ const music = useMusicAction()
 const {getPlayListDetailFn} = usePlayList()
 watch(() => route.fullPath, () => {
   if(route.query.id && route.path === '/play-list') {
-    getPlayListDetailFn(+route.query.id!)
+    getPlayListDetailFn(+route.query.id!, route.query.type! as 'album')
     document.querySelector('.main')!.scrollTop = 0
   }
 }, {

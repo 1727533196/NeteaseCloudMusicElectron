@@ -111,6 +111,32 @@ export interface GetUserCloudRes {
   data: GetUserCloudSong[]
 }
 
+type Artist = {
+  picUrl: string
+  id: number // 歌手id
+  name: string
+  albumSize: number // 专辑数量
+  musicSize: number // 单曲数量
+}
+export interface GetArtistAlbumRes {
+  artist: Artist
+  code: number
+  hotAlbums: Array<{
+    alias: string[]
+    artist: Artist
+    artists: Array<Artist>
+    awardTags: string[]
+    blurPicUrl: string
+    company: string // 公司
+    companyId: number
+    description: string
+    id: number // 专辑id
+    name: string
+    picUrl: string // 封面图片
+  }>
+  more: boolean
+}
+
 // 获取喜欢音乐列表ids
 export const getLikeMusicListIds = (uid: number) =>
     request<{uid: number}, {checkPoint: number, code: number,ids: number[]}>(`/likelist?uid=${uid}`, 'get')
@@ -150,4 +176,14 @@ export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyr
 export const getUserCloud = (limit?: number, offset?: number) =>
   request <{ limit: number, offset: number }, GetUserCloudRes>
   ('/user/cloud', 'get', {params: {limit, offset}})
+
+// 获取歌手专辑
+export const getArtistAlbum = (id: number, limit?: number) =>
+    request<{id: number, limit: number}, GetArtistAlbumRes>('/artist/album', 'get', {params: {id, limit}})
+
+// 获取专辑内容
+export const getAlbumContent = (id: number) => request(`/album?id=${id}`, 'get')
+
+
+
 

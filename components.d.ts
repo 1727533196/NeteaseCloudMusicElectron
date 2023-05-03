@@ -5,6 +5,8 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AdaptiveList: typeof import('./src/components/AdaptiveList/index.vue')['default']
+    AdaptiveListBox: typeof import('./src/components/AdaptiveListBox/index.vue')['default']
     BaseButton: typeof import('./src/components/BaseButton/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     CardChunk: typeof import('./src/components/CardChunk/index.vue')['default']

@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import {computed, reactive, watch} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {getArtistDetail, getArtistDetailRes} from "@/api/user";
+import {getAlbumContent, getArtistAlbum, GetArtistAlbumRes} from "@/api/musicList";
+import AdaptiveListBox from '@/components/AdaptiveListBox/index.vue'
+import AdaptiveList from '@/components/AdaptiveList/index.vue'
+import {tabsConfig} from "@/views/SingerPage/config";
 
 interface State {
   singerDetail: getArtistDetailRes['data']
   artist: getArtistDetailRes['data']['artist']
+  albums: GetArtistAlbumRes['hotAlbums']
 }
 const state = reactive<State>({
   singerDetail: {} as getArtistDetailRes['data'],
   artist: {} as getArtistDetailRes['data']['artist'],
+  albums: [],
 })
+type LabelType = 1 | 2 | 3 | 4
+const activeTab = ref<LabelType>(tabsConfig[0].name as LabelType)
 const route = useRoute()
 const router = useRouter()
 watch(() => route.fullPath, () => {
@@ -25,24 +33,41 @@ function init() {
   const {id} = route.query as {id: number | null}
   if(id) {
     getSingerDetail(id)
+    getSingerAlbum(id)
   }
 }
 
 async function getSingerDetail(id: number) {
-  console.log(id)
   const {data} = await getArtistDetail(id)
   console.log(data)
   state.singerDetail = data
   state.artist = data.artist
 }
+async function getSingerAlbum(id: number) {
+  const {hotAlbums} = await getArtistAlbum(id)
+  state.albums = hotAlbums
+  console.log(hotAlbums)
+}
 const alias = computed(() => {
   return state.artist.alias?.join('；')
 })
+
 const gotoUserDetail = () => {
   router.push({
     path: '/detail',
     query: {
       uid: state.singerDetail.user!.userId
+    }
+  })
+}
+const getAlbumContentHandler = async (id: number) => {
+  // const data = await getAlbumContent(id)
+  // console.log(data)
+  router.push({
+    path: '/play-list',
+    query: {
+      id,
+      type: 'album',
     }
   })
 }
@@ -65,6 +90,26 @@ const gotoUserDetail = () => {
       </div>
     </div>
   </div>
+  <adaptive-list-box>
+    <tabs v-model="activeTab">
+      <tab-pane
+        v-for="item in tabsConfig"
+        :name="item.name"
+        :label="item.label"
+      >
+        <adaptive-list>
+          <card
+            v-for="item in state.albums"
+            @click="getAlbumContentHandler(item.id)"
+            :name="item.name"
+            :picUrl="item.picUrl"
+            is-click
+            is-start-icon
+          ></card>
+        </adaptive-list>
+      </tab-pane>
+    </tabs>
+  </adaptive-list-box>
 </template>
 
 <style lang="less" scoped>
