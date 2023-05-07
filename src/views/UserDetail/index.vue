@@ -29,6 +29,9 @@ const state = reactive<State>({
   playList: [],
   allPlayList: [],
 })
+const loading = ref(false)
+let oldUid: number
+let isFirstEnter = true
 const userId = ref<number>()
 const location = ref<string>()
 const activeName = ref<TabsName>(list[0].name as TabsName)
@@ -45,6 +48,9 @@ function init() {
   const {uid} = route.query as {uid: number | null}
   if(uid) {
     userId.value = +uid
+    isFirstEnter = userId.value !== oldUid
+    oldUid = +uid
+    console.log(isFirstEnter)
     getUserDetailHandler(uid)
     getUserSongListHandler(uid)
     clearInterval(timer)
@@ -64,12 +70,17 @@ async function getUserDetailHandler(uid: number) {
   state.identify = {
     level,
   }
-  location.value = province.find(item => +item.code === state.userInfo.province)!.name
+  location.value = (province.find(item => +item.code === state.userInfo.province) || {}).name || '未知'
 }
 
 // 获取指定用户歌单
 async function getUserSongListHandler(uid: number) {
+  isFirstEnter && (loading.value = true)
   const {playlist} = await getUserPlayList(uid)
+  if(isFirstEnter) {
+    loading.value = false
+    isFirstEnter = false
+  }
   state.allPlayList = playlist
   state.playList = getCurrentTabsList(activeName.value)
 }
@@ -96,7 +107,7 @@ const tabChange = (name: TabsName) => {
 <template>
   <div class="user-detail-container">
     <UserDetailCard
-      :location="location"
+      :location="location!"
       :identify="state.identify"
       :user-info="state.userInfo"
     />
@@ -105,7 +116,8 @@ const tabChange = (name: TabsName) => {
       @tabChange="tabChange"
       :playList="state.playList"
       :list="list"
-      :userId="userId"
+      :userId="userId!"
+      :loading="loading"
     />
   </div>
 

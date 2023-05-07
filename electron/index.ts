@@ -41,20 +41,21 @@ class Main {
             width: 1150,
             webPreferences: {
                 nodeIntegration: true,
-                contextIsolation: true,
+                contextIsolation: false,
                 preload: path.join(__dirname, './preload.js'),
             },
             frame: false,
+            icon: path.join(__dirname, '../src/assets/logo.ico'),
         });
         if (app.isPackaged) {
             win.loadFile(path.join(__dirname, '../index.html'));
+            // win.loadURL(`file://${__dirname}/index.html`);
         } else {
             // Use ['ENV_NAME'] avoid vite:define plugin
             const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
-
             win.loadURL(url);
         }
-        this.ipcWindowEvent()
+        // this.ipcWindowEvent()
         win.webContents.openDevTools()
     }
     ipcWindowEvent() {

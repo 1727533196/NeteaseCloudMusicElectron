@@ -13,6 +13,7 @@ interface Props {
   modelValue: string
   playList: PlayList[]
   userId: number
+  loading: boolean
 }
 const emit = defineEmits(['tabChange', 'update:modelValue'])
 const props = defineProps<Props>()
@@ -20,7 +21,6 @@ const router = useRouter()
 const store = useUserInfo()
 
 const cardClickHandler = (item: PlayList) => {
-  console.log(item)
   router.push({
     path: '/play-list',
     query: {
@@ -51,7 +51,7 @@ const val = computed({
         :label="item.label"
         :name="item.name"
       >
-        <AdaptiveList>
+        <AdaptiveList :loading="props.loading">
           <card
             v-if="store.profile.userId === props.userId && val === 'createSongList'"
             :picUrl="img"

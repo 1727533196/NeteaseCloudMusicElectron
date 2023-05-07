@@ -4,9 +4,9 @@ import {Profile} from "@/api/user";
 interface Props {
   userInfo: Profile
   identify: {
-    actionUrl: string // 请求网易云音乐的链接
-    imageDesc: string // 标签
-    imageUrl: string // 标签图片
+    actionUrl?: string // 请求网易云音乐的链接
+    imageDesc?: string // 标签
+    imageUrl?: string // 标签图片
     level: number
   }
   location: string

@@ -40,7 +40,7 @@ const login = () => {
         <div class="nickname">{{store.profile.nickname}}</div>
       </template>
       <div v-else @click="login" class="not-login">
-        <el-icon :size="22"><User /></el-icon>
+        <el-icon :size="22"><User/></el-icon>
         <span>未登录</span>
       </div>
       <div class="operator">
@@ -91,6 +91,7 @@ const login = () => {
       background: url("https://p1.music.126.net/siSjcSLr8ybRZ3VUpC-9hg==/109951165504329717.jpg");
       .bgSetting();
       margin-right: 6px;
+      cursor: pointer;
     }
     .not-login {
       display: flex;
