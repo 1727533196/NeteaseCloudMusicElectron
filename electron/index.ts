@@ -40,8 +40,10 @@ class Main {
             height: 750,
             width: 1150,
             webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
+                nodeIntegration: true, // 为了解决required识别问题
+                // 需要设置contextIsolation属性为false。
+                // 但是使用某些api，比如拖拽开发功能的contextBridge需要contextIsolation为true。
+                contextIsolation: true,
                 preload: path.join(__dirname, './preload.js'),
             },
             frame: false,
@@ -55,7 +57,7 @@ class Main {
             const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
             win.loadURL(url);
         }
-        // this.ipcWindowEvent()
+        this.ipcWindowEvent()
         win.webContents.openDevTools()
     }
     ipcWindowEvent() {
