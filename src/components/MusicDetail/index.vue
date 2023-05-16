@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
-import {useFlags} from "@/store/flags";
 import {formattingTime, toggleImg} from "@/utils";
+import Comment from "@/components/MusicDetail/Comment.vue";
 
 interface Props {
   modelValue: boolean
@@ -11,7 +11,6 @@ const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 const music = useMusicAction()
 const defaultImg = '/src/assets/defaultBg.png'
-const flags = useFlags()
 const cntrEl = ref<HTMLDivElement>()
 const lyrEl = ref<HTMLDivElement>()
 let currentLyrEl: HTMLCollectionOf<HTMLDivElement>
@@ -63,7 +62,6 @@ function moveLyric(currentLyr: Lyric) {
     })
   }
 }
-
 watch(() => music.currentTime, (currentTime, lastTime) => {
   if(!lyrEl.value || !moveBox.value || music.lyric.notSupportedScroll) return
 
@@ -80,10 +78,16 @@ watch(() => music.currentTime, (currentTime, lastTime) => {
     return
   }
 })
-
+const containerEl = ref<HTMLDivElement>()
+const correctHeight = ref<number>(0)
+const scrollEl = ref<HTMLDivElement>()
+const top = ref<number>(0)
+let direction = false
+let isTransition = ref(true)
 onMounted(() => {
   currentLyrEl = document.querySelector('.lyric-container')!
     .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
+  correctHeight.value = document.body.clientHeight
 
   // 解决切换图片闪烁问题
   watch(bg, (val) => {
@@ -94,7 +98,28 @@ onMounted(() => {
       }
     })
   })
+  containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
+    isTransition.value = true
+    // event.wheelDelta 值为负则向下滚动，值为正则向上
+    if(event.wheelDelta > 0) {
+      top.value = 0
+      direction = false
+    } else {
+      // 这里加上1像素的偏移量是为了防止出现高度小数点的情况
+      direction = true
+      top.value = -correctHeight.value - 1
+      console.log(top.value)
+    }
+  })
 })
+
+window.onresize = () => {
+  correctHeight.value = document.body.clientHeight
+  if(direction) {
+    isTransition.value = false
+    top.value = -correctHeight.value - 1
+  }
+}
 const mouseenter = (e: Event, lyric: Lyric) => {
   isEnterLyric.value = true
   // 文本定位
@@ -118,7 +143,7 @@ const wheelHandler = () => {
   },3000)
 }
 const closeDetail = () => {
-  flags.isOpenDetail = setModelValue.value = false
+  setModelValue.value = false
 }
 const lyricClick = (time: number) => {
   if (music.lyric.notSupportedScroll) {
@@ -127,62 +152,86 @@ const lyricClick = (time: number) => {
   $audio.el.currentTime = time
 }
 
+
 </script>
 
 <template>
-  <div :class="['container', {open: setModelValue}]">
+  <div ref="containerEl" :class="['container', {open: setModelValue}]">
     <el-icon :size="45" @click="closeDetail" class="close np-drag"><ArrowDown /></el-icon>
-    <div ref="cntrEl" class="music-detail-container">
-      <div class="shadow">
-        <div class="lyric-and-bg-container">
-          <div class="bg-img"></div>
-          <div
-            ref="lyrEl"
-            @wheel="wheelHandler"
-            class="lyric-container"
-          >
-            <div v-if="music.lyric.notSupportedScroll" class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
-            <div
-              ref="moveBox"
-              class="move-box"
-            >
-              <template v-for="item in music.lyric">
+    <div class="box" :style="{height: correctHeight +'px'}">
+      <div
+        ref="scrollEl"
+        class="scroll-box"
+        :style="{height: correctHeight * 2 + 'px', top: top +'px',
+        transition: isTransition ? '0.5s' : 'none'}"
+      >
+        <div ref="cntrEl" class="music-detail-container">
+          <div class="shadow">
+            <div class="lyric-and-bg-container">
+              <div class="bg-img"></div>
+              <div
+                ref="lyrEl"
+                @wheel="wheelHandler"
+                class="lyric-container"
+              >
+                <div v-if="music.lyric.notSupportedScroll" class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
                 <div
-                  v-if="item.text"
-                  @mouseenter="mouseenter($event, item)"
-                  @mouseleave="mouseleave"
-                  @click="lyricClick(item.time)"
-                  :class="['lyric-item', {'current-lyric-item': currentLyrLine.line === item.line}]"
-                >{{item.text}}</div>
-                <div :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]" v-else-if="!music.lyric.notSupportedScroll"></div>
-              </template>
-              <span
-                style="position: absolute; font-size: 12px"
-                v-show="!music.lyric.notSupportedScroll && isEnterLyric"
-                ref="targetTime"
-              >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
+                  ref="moveBox"
+                  class="move-box"
+                >
+                  <template v-for="item in music.lyric">
+                    <div
+                      v-if="item.text"
+                      @mouseenter="mouseenter($event, item)"
+                      @mouseleave="mouseleave"
+                      @click="lyricClick(item.time)"
+                      :class="['lyric-item', {'current-lyric-item': currentLyrLine.line === item.line}]"
+                    >{{item.text}}</div>
+                    <div :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]" v-else-if="!music.lyric.notSupportedScroll"></div>
+                  </template>
+                  <span
+                    style="position: absolute; font-size: 12px"
+                    v-show="!music.lyric.notSupportedScroll && isEnterLyric"
+                    ref="targetTime"
+                  >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
+                </div>
+              </div>
             </div>
+            <div
+              class="test"
+              style="height: 80px; position: absolute;bottom: 0;width: 100%;"
+            ></div>
           </div>
         </div>
-        <div
-          class="test"
-          style="height: 80px; position: absolute;bottom: 0;width: 100%;"
-        ></div>
+        <comment/>
       </div>
     </div>
+
   </div>
 </template>
 
 <style lang="less" scoped>
 .container {
+  visibility: hidden;
   position: fixed;
-  height: 0;
+  height: 100%;
   width: 100%;
   bottom: 0;
   left: 0;
-  transition: height 0.4s;
+  transition: 0.4s;
   z-index: 2005;
   overflow: hidden;
+  transform: translateY(100%);
+  .box {
+    overflow: hidden;
+    width: 100%;
+    .scroll-box {
+      position: relative;
+      transition: 0.5s;
+      overflow: hidden;
+    }
+  }
+
   .close {
     z-index: 1;
     position: absolute;
@@ -285,7 +334,9 @@ const lyricClick = (time: number) => {
   }
 }
 .container.open {
-  height: calc(100%) !important;
+  transform: translateY(0) !important;
+  visibility: visible;
+  //height: calc(100%) !important;
 }
 
 </style>

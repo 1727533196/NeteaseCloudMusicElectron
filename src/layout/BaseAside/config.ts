@@ -1,7 +1,7 @@
 import {reactive} from "vue";
 import {PlayList} from "@/api/musicList";
 
-export const paths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/play-list']
+export const paths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/play-list', '/cloud']
 export type ListItem = {
   name: string,
   icon: string,
@@ -14,6 +14,7 @@ interface MenuConfig {
   list: ListItem[]
 }
 const fontSize = 15
+export const needUseComparisonPaths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/cloud']
 export const originAsideMenuConfig: MenuConfig[] = [
   {
     title: false,
@@ -41,7 +42,7 @@ export const originAsideMenuConfig: MenuConfig[] = [
         name: '关注',
         icon: '',
         path: '/follow',
-        fontSize
+        fontSize,
       },
     ],
   },
@@ -52,17 +53,17 @@ export const originAsideMenuConfig: MenuConfig[] = [
       {
         name: '本地与下载',
         icon: '',
-        path: '/local'
+        path: '/local',
       },
       {
         name: '最近播放',
         icon: '',
-        path: '/lately'
+        path: '/lately',
       },
       {
         name: '我的音乐云盘',
         icon: '',
-        path: '/cloud'
+        path: '/cloud',
       },
     ],
   },

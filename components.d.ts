@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     BaseButton: typeof import('./src/components/BaseButton/index.vue')['default']
     Card: typeof import('./src/components/Card/index.vue')['default']
     CardChunk: typeof import('./src/components/CardChunk/index.vue')['default']
+    Comment: typeof import('./src/components/MusicDetail/Comment.vue')['default']
     CurrentTime: typeof import('./src/components/MusicPlayer/compoents/CurrentTime.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDialog: typeof import('element-plus/es')['ElDialog']

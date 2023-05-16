@@ -2,7 +2,7 @@
 import {ref, watch } from "vue";
 import {useUserInfo} from "@/store";
 import {useRoute, useRouter} from "vue-router";
-import {asideMenuConfig, ListItem, paths} from "@/layout/BaseAside/config";
+import {asideMenuConfig, ListItem, needUseComparisonPaths, paths} from "@/layout/BaseAside/config";
 
 const store = useUserInfo()
 const current = ref<ListItem>()
@@ -55,6 +55,9 @@ watch(() => route.fullPath, () => {
 const isCurrent = (path: string, id: number) => {
   if(!current.value) {
     return false
+  }
+  if(needUseComparisonPaths.includes(path)) {
+    return current.value.path === path
   }
   return current.value.id === id
 }

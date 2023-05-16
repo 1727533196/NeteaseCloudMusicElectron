@@ -132,6 +132,9 @@ const flags = useFlags()
 const openMusicDetail = () => {
   flags.isOpenDetail = !flags.isOpenDetail
 }
+const closeMusicDetail = () => {
+  flags.isOpenDetail = false
+}
 const exposeObj = {
   el: audio,
   orderStatusVal,
@@ -166,12 +169,19 @@ defineExpose(exposeObj)
       class="plyr-audio"
       :src="props.src"
     ></audio>
-    <div class="left">
+    <div v-show="!flags.isOpenDetail" class="left">
       <div
         @click="openMusicDetail"
-        :style="{backgroundImage: `url(${props.songs.al?.picUrl})`}"
-        class="picture"
-      ></div>
+        class="picture-box"
+      >
+        <div
+          :style="{backgroundImage: `url(${props.songs.al?.picUrl})`}"
+          class="picture"
+        ></div>
+        <div class="shade-box"></div>
+        <el-icon :size="25" @click="closeMusicDetail" class="close np-drag"><ArrowDown /></el-icon>
+      </div>
+
       <div class="name-info">
         <span class="song-name">{{ props.songs.name }}</span>
         <div class="name-container">
@@ -183,6 +193,15 @@ defineExpose(exposeObj)
       </div>
       <i v-if="isLike" @click="likeMusic(id, false)"  class="iconfont icon-xihuan1"></i>
       <i v-else  @click="likeMusic(id)"  class="iconfont icon-xihuan"></i>
+    </div>
+    <div v-show="flags.isOpenDetail" class="left detail-left">
+      <el-icon :size="25" @click="closeMusicDetail" class="close np-drag"><ArrowDown /></el-icon>
+      <i v-if="isLike" @click="likeMusic(id, false)"  class="iconfont icon-xihuan1"></i>
+      <i v-else  @click="likeMusic(id)"  class="iconfont icon-xihuan"></i>
+      <el-icon :size="20"><ChatDotSquare /></el-icon>
+      <div class="more">
+        <el-icon :size="10"><MoreFilled /></el-icon>
+      </div>
     </div>
     <div class="center">
       <div class="cut-container">
@@ -263,16 +282,52 @@ defineExpose(exposeObj)
       color: rgb(235, 65, 65);
     }
 
-    .picture {
-      .bgSetting();
+    .picture-box {
+      position: relative;
+      cursor: pointer;
       width: 50px;
       height: 50px;
       border-radius: 5px;
+      overflow: hidden;
+      .picture {
+        .bgSetting();
+        width: 100%;
+        height: 100%;
+        transition: 0.5s;
+      }
+      .shade-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0);
+        transition: 0.5s;
+      }
+      .close {
+        visibility: hidden;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transition: 0.5s;
+        opacity: 0;
+        transform: rotateX(-180deg) translateY(50%) translateX(-50%);
+      }
+      &:hover {
+        .picture {
+          filter:blur(1.5px);
+        }
+        .shade-box {
+          background-color: rgba(0,0,0,.3);
+        }
+        .close {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
 
     }
-    .picture:hover {
-      filter:blur(2px);
-    }
+
 
     .name-info {
       font-size: 14px;
@@ -291,6 +346,31 @@ defineExpose(exposeObj)
       .name-container {
         max-width: 140px;
         .textOverflow();;
+      }
+    }
+  }
+  .detail-left {
+    .icon-xihuan1,.icon-xihuan {
+      position: relative;
+      top: 0px;
+    }
+    > * + * {
+      margin-left: 20px;
+    }
+    .close {
+      cursor: pointer;
+    }
+    .more {
+      border: 0.5px solid rgba(255, 255, 255, .9);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      > i{
+        position: relative;
+        top: 0px;
       }
     }
   }

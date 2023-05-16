@@ -205,7 +205,7 @@ export default defineComponent({
                       onClick: () => ar.id && singerDetail(ar.id),
                       class: [ar.id && 'name'],
                       style: {cursor: ar.id ? 'pointer' : 'default', color: ar.id ? '' : 'rgba(150, 150, 150, 0.60)'}
-                    }, ar.name || data.artist || '未知艺人'), (index < len ? ' ·/ ' : '')]
+                    }, ar.name || data.artist || '未知艺人'), (index < len ? ' / ' : '')]
                   }))
                 } else if(config.type === 'title') {
                   return indiviEl({
