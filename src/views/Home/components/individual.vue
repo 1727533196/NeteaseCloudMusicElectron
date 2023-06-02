@@ -6,14 +6,18 @@ import {useRouter} from "vue-router";
 
 const recommendSongs = 'recommendSongs'
 interface State {
-  recommend: Recommend[],
+  recommend: Recommend[]
+  loading: boolean
 }
 const state = reactive<State>({
   recommend: [],
+  loading: false,
 })
 const router = useRouter()
 async function init() {
+  state.loading = true
   const {recommend} = await recommendSongList()
+  state.loading = false
   state.recommend = recommend
 }
 init()
@@ -26,7 +30,7 @@ const playDetailList = (item: Recommend | typeof recommendSongs) => {
 </script>
 
 <template>
-  <div class="container">
+  <div v-loading="state.loading" class="container">
     <CardChunk @click="playDetailList" :recommend="state.recommend" title="推荐歌单">
       <Card :is-click="true" @click="playDetailList(recommendSongs)" name="每日歌曲推荐" pic-url="/src/assets/test.png"></Card>
     </CardChunk>

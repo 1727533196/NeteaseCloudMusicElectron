@@ -1,29 +1,27 @@
 <script setup lang="ts">
 import {calculateIsToday, formatDate, toggleImg} from "@/utils";
 import {computed, onMounted, reactive, ref, watch} from "vue";
-import {useMusicAction} from "@/store/music";
-import {getCommentMusic} from "@/api/musicList";
-import {useRouter} from "vue-router";
+import {getCommentMusic, getMusicDetail, GetMusicDetailData} from "@/api/musicList";
+import {useRoute, useRouter} from "vue-router";
 import {useFlags} from "@/store/flags";
 
-interface Props {
-
+interface State {
+  comments: any[]
+  song: GetMusicDetailData | null
 }
-const props = defineProps<Props>()
-const defaultImg = '/src/assets/defaultBg.png'
-const music = useMusicAction()
 const flags = useFlags()
 const router = useRouter()
-const imgEl = ref<HTMLDivElement>()
+const route = useRoute()
 const page = ref(1)
-const state = reactive({
+const state = reactive<State>({
   comments: [],
+  song: null
 })
-
-const bg = computed(() => {
-  return music.songs.al?.picUrl || defaultImg
-})
+let id = +route.query.id!
 const currentTab = ref<string>()
+const imgEl = ref<HTMLDivElement>()
+const bg = ref<string>('')
+
 onMounted(() => {
   console.log(imgEl)
   watch(bg, (val) => {
@@ -38,9 +36,16 @@ const getCommentMusicFn = async (id: number, page: number) => {
     state.comments = comments
   }
 }
-watch(() => music.songs.id, (value) => {
-  getCommentMusicFn(value, page.value)
-})
+const getMusicDetailFn = async (id: number) => {
+  const {songs} = await getMusicDetail(String(id))
+  state.song = songs[0]
+  bg.value = state.song.al.picUrl
+}
+function init() {
+  getCommentMusicFn(id, page.value)
+  getMusicDetailFn(id)
+}
+init()
 const gotoUserDetail = (uid: number) => {
   flags.isOpenDetail = false
   router.push({
@@ -50,21 +55,26 @@ const gotoUserDetail = (uid: number) => {
     }
   })
 }
+watch(() => +route.query.id!, (value) => {
+  console.log(value)
+  id = value
+  init()
+})
 
 </script>
 
 <template>
   <div class="comment">
-    <div class="comment-box">
+    <div v-if="state.song !== null" class="comment-box">
       <div class="info">
         <div ref="imgEl" class="bg-img"></div>
         <div class="song-info">
-          <div class="song-name">{{music.songs.name}}</div>
+          <div class="song-name">{{(state.song as GetMusicDetailData).name}}</div>
           <div class="singers">
             <div class="singer-info">
-              <span v-for="(item, index) in music.songs.ar">歌手: {{item.name + (index < music.songs.ar.length-1? '/' : '')}}</span>
+              <span v-for="(item, index) in state.song.ar">歌手: {{item.name + (index < (state.song as GetMusicDetailData).ar.length-1? '/' : '')}}</span>
             </div>
-            <div class="album">专辑: {{(music.songs.al || {}).name}}</div>
+            <div class="album">专辑: {{(state.song as GetMusicDetailData).al.name}}</div>
           </div>
         </div>
       </div>
@@ -110,11 +120,11 @@ const gotoUserDetail = (uid: number) => {
 .comment {
   height: 100%;
   width: 100%;
-  position: fixed;
-  transform: translateY(100%);
+  //position: fixed;
+  //transform: translateY(100%);
   background-color: @bgColor;
   .comment-box {
-    padding: 80px 0 0 50px;
+    padding: 0 0 0 35px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -128,7 +138,7 @@ const gotoUserDetail = (uid: number) => {
         flex-direction: column;
         font-size: 13px;
         .song-name {
-          font-size: 36px;
+          font-size: 30px;
           margin-bottom: 20px;
           //margin-top: 10px;
         }
@@ -166,9 +176,7 @@ const gotoUserDetail = (uid: number) => {
           margin-bottom: 20px;
         }
         .content {
-          overflow: auto;
-          max-height: 100%;
-          padding-right: 40px;
+          padding-right: 35px;
           //flex: 1;
           .content-line {
             display: flex;
@@ -189,6 +197,8 @@ const gotoUserDetail = (uid: number) => {
               cursor: pointer;
               width: 40px;
               height: 40px;
+              min-width: 40px;
+              min-height: 40px;
               border-radius: 50%;
               background-color: #42b983;
               margin-right: 20px;

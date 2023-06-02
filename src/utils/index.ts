@@ -82,8 +82,8 @@ export function randomNum(minNum: number,maxNum: number){
 
   +'1' 可以使string转为number
 * */
-// 格式化时间戳 YY-MM-DD hh:mm:ss = 2016-06-19 10:05:44
-export function formatDate(timestamp: number, format: 'YY-MM-DD hh:mm:ss' | 'YY-MM-DD') {
+// 格式化时间戳 YY-MM-DD hh:mm:ss = 2016-06-19 10:05:44    'YY-MM-DD hh:mm:ss' | 'YY-MM-DD'
+export function formatDate(timestamp: number, format: string) {
   const date = new Date(timestamp)
   const year = date.getFullYear(),
     month = date.getMonth() + 1, // 月份是从0开始的
@@ -142,4 +142,36 @@ export function suitableSpace(el: Element, itemEl: Element, count: number): numb
   const suitableMargin = width / (count - 1)
 
   return suitableMargin - 1
+}
+
+// 是否处于今天
+export function calculateIsToday(timestamp: number): boolean {
+  // 把今天的日期时分秒设置为00:00:00, 返回一个时间戳
+  const todayDate = new Date().setHours(0,0,0,0)
+  const paramsDate = new Date(timestamp).setHours(0,0,0,0)
+
+  return todayDate === paramsDate
+}
+
+// 解析路径参数
+export function parsePathQuery(path: string) {
+  const result = {
+    path: path,
+    query: {
+
+    } as {[key:string]: any}
+  }
+  const index = path.indexOf('?')
+  if(index === -1) {
+    return result
+  }
+  result.path = path.slice(0,index)
+  const queryArr = path.slice(index+1).split('&')
+  queryArr.forEach(item => {
+    const index = item.indexOf('=')
+    const key = item.slice(0, index)
+    const value = item.slice(index + 1)
+    result.query[key] = value
+  })
+  return result
 }

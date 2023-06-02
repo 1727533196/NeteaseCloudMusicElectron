@@ -9,47 +9,47 @@ export default [
     // route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import('@/views/Test/test2.vue')
+    component: () => import('@/views/Test/test2.vue'),
   },
   {
     path: '/play-list',
     name: 'playList',
-    component: () => import('@/views/PlayList/index.vue')
+    component: () => import('@/views/PlayList/index.vue'),
   },
   {
     path: '/search',
     name: 'search',
-    component: () => import('@/views/SearchList/index.vue')
+    component: () => import('@/views/SearchList/index.vue'),
   },
   {
     path: '/home',
     name: 'home',
-    component: () => import('@/views/Home/index.vue')
+    component: () => import('@/views/Home/index.vue'),
   },
   {
     path: '/fm',
     name: 'fm',
-    component: () => import('@/views/PrivateFm/index.vue')
+    component: () => import('@/views/PrivateFm/index.vue'),
   },
   {
     path: '/video',
     name: 'video',
-    component: () => import('@/views/Video/index.vue')
+    component: () => import('@/views/Video/index.vue'),
   },
   {
     path: '/follow',
     name: 'follow',
-    component: () => import('@/views/Follow/index.vue')
+    component: () => import('@/views/Follow/index.vue'),
   },
   {
     path: '/local',
     name: 'local',
-    component: () => import('@/views/Local/index.vue')
+    component: () => import('@/views/Local/index.vue'),
   },
   {
     path: '/lately',
     name: 'lately',
-    component: () => import('@/views/LatelyPlay/index.vue')
+    component: () => import('@/views/LatelyPlay/index.vue'),
   },
   {
     path: '/daily-recommend',
@@ -64,11 +64,16 @@ export default [
   {
     path: '/cloud',
     name: 'musicCloud',
-    component: () => import('@/views/MusicCloud/index.vue')
+    component: () => import('@/views/MusicCloud/index.vue'),
   },
   {
     path: '/singer-page',
     name: 'singerPage',
-    component: () => import('@/views/SingerPage/index.vue')
+    component: () => import('@/views/SingerPage/index.vue'),
   },
+  {
+    path: '/comment',
+    name: 'comment',
+    component: () => import('@/views/Comment/index.vue'),
+  }
 ]

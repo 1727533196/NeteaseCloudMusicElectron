@@ -8,7 +8,6 @@ const componentArr = [Tabs, TabPane, BaseButton, Card]
 
 export default (app: App) => {
   componentArr.forEach(component => {
-    console.log(component)
     app.component(component.name, component)
   })
 }

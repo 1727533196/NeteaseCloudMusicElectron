@@ -28,7 +28,7 @@ const activeName = computed({
 .el-tabs {
   .el-tabs__active-bar {
     background-color: @subject;
-    transition: 0.3s !important;
+    transition: 0.3s ease !important;
   }
   .el-tabs__content {
     overflow: inherit;

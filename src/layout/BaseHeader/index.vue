@@ -3,11 +3,13 @@ import {useUserInfo} from "@/store";
 import Search from '@/components/Search/index.vue'
 import {handle} from "@/layout/BaseHeader/handle";
 import {useFlags} from "@/store/flags";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
+import {computed} from "vue";
 
 const flags = useFlags()
 const store = useUserInfo()
 const router = useRouter()
+const route = useRoute()
 const {maximize, unmaximize, minimize, restore, close} = handle()
 
 const maximizeOrUnmaximize = () => {
@@ -25,13 +27,34 @@ const gotoDetail = () => {
 const login = () => {
   window.$login.show()
 }
-
+const back = () => {
+  if(backIsDisable.value) {
+    return
+  }
+  router.back()
+}
+const go = () => {
+  if(goIsDisable.value) {
+    return
+  }
+  router.go(1)
+}
+const backIsDisable = computed(() => {
+  return +route.query.count! === 1
+})
+const goIsDisable = computed(() => {
+  return +route.query.count! === flags.maxCount
+})
 </script>
 
 <template>
   <div :class="['window-container', {'no-drag':flags.isOpenSearch}]">
     <div class="left no-drag"></div>
     <div class="center no-drag">
+      <div class="flip">
+        <el-icon :class="{disable: backIsDisable}" @click="back"><ArrowLeft /></el-icon>
+        <el-icon :class="{disable: goIsDisable}" @click="go"><ArrowRight /></el-icon>
+      </div>
       <Search/>
     </div>
     <div class="right no-drag">
@@ -79,6 +102,27 @@ const login = () => {
     margin-left: 15px;
   }
   .center {
+    margin-right: 20%;
+    display: flex;
+    align-items: center;
+    .flip {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      justify-content: space-between;
+      width: 60px;
+      .el-icon {
+        cursor: pointer;
+        background-color: rgba(255,255,255,0.01);
+        border-radius: 50%;
+        height: 25px;
+        width: 25px;
+      }
+      .disable.el-icon {
+        cursor: default;
+        color: @moreDark;
+      }
+    }
   }
   .right {
     margin-right: 15px;

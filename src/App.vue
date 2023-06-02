@@ -43,9 +43,9 @@ getUserAccountFn()
       <div class="main">
         <div class="top"></div>
         <router-view v-slot="{Component}">
-          <keep-alive include="Home">
+<!--          <keep-alive>-->
             <component :is="Component"></component>
-          </keep-alive>
+<!--          </keep-alive>-->
         </router-view>
       </div>
     </div>

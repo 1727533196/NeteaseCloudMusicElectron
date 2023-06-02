@@ -4,12 +4,13 @@ import RankingList from './components/RankingList.vue'
 import SongMenu from './components/SongMenu.vue'
 import Singer from './components/Singer.vue'
 import NewestMusic from './components/NewestMusic.vue'
+import {Component} from "vue";
 
 export const tabsConfig = [
   {
     label: '个性推荐',
     name: 'individual',
-    component: Individual,
+    component: Individual
   },
   {
     label: '专属定制',

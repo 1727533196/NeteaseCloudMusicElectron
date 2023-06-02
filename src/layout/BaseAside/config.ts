@@ -25,24 +25,28 @@ export const originAsideMenuConfig: MenuConfig[] = [
         icon: '',
         path: '/home',
         fontSize,
+        id: 1,
       },
       {
         name: '私人FM',
         icon: '',
         path: '/fm',
         fontSize,
+        id: 2,
       },
       {
         name: '视频',
         icon: '',
         path: '/video',
         fontSize,
+        id: 3,
       },
       {
         name: '关注',
         icon: '',
         path: '/follow',
         fontSize,
+        id: 4,
       },
     ],
   },
@@ -54,16 +58,19 @@ export const originAsideMenuConfig: MenuConfig[] = [
         name: '本地与下载',
         icon: '',
         path: '/local',
+        id: 5,
       },
       {
         name: '最近播放',
         icon: '',
         path: '/lately',
+        id: 6,
       },
       {
         name: '我的音乐云盘',
         icon: '',
         path: '/cloud',
+        id: 7,
       },
     ],
   },
@@ -74,7 +81,8 @@ export const originAsideMenuConfig: MenuConfig[] = [
       {
         name: '我喜欢的音乐',
         icon: '',
-        path: '/play-list'
+        path: '/play-list',
+        id: 8,
       },
     ]
   },

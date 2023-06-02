@@ -14,7 +14,7 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   <div class="padding-container">
     <tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
       <tab-pane :name="item.name" :label="item.label" v-for="item in tabsConfig">
-        <component :is="item.component"></component>
+        <component v-if="item.name === activeName" :is="item.component"></component>
       </tab-pane>
     </tabs>
   </div>

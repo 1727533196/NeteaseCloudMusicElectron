@@ -20,6 +20,12 @@ const init = () => {
   // itemClick(asideMenuConfig[0].list[0])
 }
 watch(() => route.path, (value) => {
+  if(needUseComparisonPaths.includes(value)) {
+    current.value = {
+      path: value,
+    } as ListItem
+    return
+  }
   if(route.query.id) {
     const id = +route.query.id
     current.value = store.userPlayListInfo.find(item => item.id === id) as ListItem

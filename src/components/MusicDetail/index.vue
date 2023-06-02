@@ -171,7 +171,7 @@ const lyricClick = (time: number) => {
               <div class="bg-img"></div>
               <div
                 ref="lyrEl"
-                @wheel="wheelHandler"
+                @wheel.stop="wheelHandler"
                 class="lyric-container"
               >
                 <div v-if="music.lyric.notSupportedScroll" class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>

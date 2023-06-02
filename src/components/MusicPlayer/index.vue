@@ -9,6 +9,7 @@ import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
 import {useFlags} from "@/store/flags";
 import {useMusicAction} from "@/store/music";
+import {useRouter} from "vue-router";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -32,6 +33,7 @@ interface Props {
 }
 const {likeMusic} = useMusic()
 const store = useUserInfo()
+const router = useRouter()
 const props = defineProps<Props>()
 const emit = defineEmits(['playEnd', 'cutSong'])
 const isPlay = ref(false)
@@ -41,6 +43,7 @@ const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
 const volume = ref<InstanceType<typeof Volume>>() // 音量组件实例
 const music = useMusicAction()
+
 
 let originPlay: HTMLMediaElement["play"]
 let originPause: HTMLMediaElement["pause"]
@@ -135,6 +138,15 @@ const openMusicDetail = () => {
 const closeMusicDetail = () => {
   flags.isOpenDetail = false
 }
+const gotoComment = () => {
+  router.push({
+    path: '/comment',
+    query: {
+      id: props.songs.id,
+    }
+  })
+  flags.isOpenDetail = false
+}
 const exposeObj = {
   el: audio,
   orderStatusVal,
@@ -198,7 +210,7 @@ defineExpose(exposeObj)
       <el-icon :size="25" @click="closeMusicDetail" class="close np-drag"><ArrowDown /></el-icon>
       <i v-if="isLike" @click="likeMusic(id, false)"  class="iconfont icon-xihuan1"></i>
       <i v-else  @click="likeMusic(id)"  class="iconfont icon-xihuan"></i>
-      <el-icon :size="20"><ChatDotSquare /></el-icon>
+      <el-icon style="cursor: pointer;" @click="gotoComment" :size="20"><ChatDotSquare /></el-icon>
       <div class="more">
         <el-icon :size="10"><MoreFilled /></el-icon>
       </div>

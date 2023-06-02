@@ -184,6 +184,10 @@ export const getArtistAlbum = (id: number, limit?: number) =>
 // 获取专辑内容
 export const getAlbumContent = (id: number) => request(`/album?id=${id}`, 'get')
 
+// 获取歌曲评论
+export const getCommentMusic = (id: number, offset: number, limit?: number) =>
+    request('/comment/music', 'get', {params: {id, offset, limit}})
+
 
 
 

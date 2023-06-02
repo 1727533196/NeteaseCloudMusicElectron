@@ -38,6 +38,7 @@ const activeName = ref<TabsName>(list[0].name as TabsName)
 let timer: NodeJS.Timer
 
 watch(() => route.fullPath, () => {
+
   if(route.path === '/detail') {
     init()
   }
