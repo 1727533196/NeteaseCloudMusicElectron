@@ -10,6 +10,6 @@ const props = defineProps<Props>()
   </el-tab-pane>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 
 </style>

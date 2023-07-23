@@ -170,7 +170,7 @@ export const likeMusicApi = (id: number, like: boolean = true) =>
       songs: GetMusicDetailData[]}>('/like', {id, like} ,'get')
 
 // 获取歌词
-export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyric?id=${id}`, 'get')
+export const getLyric = (id: number) => request<{id: number}, GetLyricRes>(`/lyric/new?id=${id}`, 'get')
 
 // 获取云盘歌曲
 export const getUserCloud = (limit?: number, offset?: number) =>
@@ -185,8 +185,9 @@ export const getArtistAlbum = (id: number, limit?: number) =>
 export const getAlbumContent = (id: number) => request(`/album?id=${id}`, 'get')
 
 // 获取歌曲评论
-export const getCommentMusic = (id: number, offset: number, limit?: number) =>
-    request('/comment/music', 'get', {params: {id, offset, limit}})
+// 0: 歌曲 1: mv 2: 歌单 3: 专辑 4: 电台节目 5: 视频 6: 动态 7: 电台
+export const getCommentMusic = (id: number, type: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, pageNo: number, pageSize?: number, sortType?: 1 | 2 | 3, cursor?: number) =>
+    request('/comment/new', 'get', {params: {id, type, pageNo, pageSize, sortType, cursor}})
 
 
 

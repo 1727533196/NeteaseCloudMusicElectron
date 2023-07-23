@@ -22,8 +22,6 @@ const model = ref<'hot' | 'keywords'>("hot")
 const music = useMusicAction()
 
 const searchHandler = (item: string | object, key?: 'allMatch' | 'songs' | 'artists' | 'albums' | 'playlists') => {
-  console.log(item, key)
-  console.log(model.value)
   if(model.value === "hot") {
     router.push(`/search?key=${item}`)
   } else {
@@ -82,11 +80,11 @@ const hig = (result: object) => {
     const list = result[key]
     if(key === 'allMatch') {
       list.forEach(item => {
-        item.keyword = item.keyword.replace(regExp, `<span style="color:lightskyblue">${keywords.value}</span>`)
+        item.text = item.keyword.replace(regExp, `<span style="color:lightskyblue">${keywords.value}</span>`)
       })
     } else {
       list.forEach(item => {
-        item.name = item.name.replace(regExp, `<span style="color:lightskyblue">${keywords.value}</span>`)
+        item.text = item.name.replace(regExp, `<span style="color:lightskyblue">${keywords.value}</span>`)
       })
     }
   }

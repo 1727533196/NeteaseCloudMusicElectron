@@ -19,7 +19,6 @@ const sendPhoneHandler = () => {
 }
 const loginHandler = () => {
   codeLogin(phone.value, code.value).then(data => {
-    console.log('data', data)
   })
 }
 
@@ -70,7 +69,6 @@ const init = async () => {
     } else if(code === 803) {
       clearInterval(timer)
       isSucceed.value = true
-      console.log('cookie', cookie)
       // const cookies = cookie.replace('HTTPOnly', '')
       // setCookies(cookies);
       localStorage.setItem(`MUSIC_U`, cookie);

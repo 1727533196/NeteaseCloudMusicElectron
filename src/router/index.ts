@@ -14,7 +14,6 @@ const flags = useFlags(pinia)
 router.push = (params) => {
   let to
   let count = +router.currentRoute.value.query.count!
-  console.log(params)
   if(typeof params === 'string') {
     const result = parsePathQuery(params)
     to = {

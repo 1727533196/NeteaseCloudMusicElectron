@@ -60,8 +60,7 @@ const config = {
       <div class="suggest-box" v-for="key in props.keywordsList.order">
         <div class="title">{{ config[key].text }}</div>
         <div @click="emit('click', target, key)" class="item" v-for="target in props.keywordsList[key]">
-          <div v-if="key === 'allMatch'" v-html="target.keyword" class="name"/>
-          <div v-else class="name" v-html="target.name"/>
+          <div class="name" v-html="target.text"/>
         </div>
       </div>
     </template>

@@ -39,14 +39,12 @@ function init() {
 
 async function getSingerDetail(id: number) {
   const {data} = await getArtistDetail(id)
-  console.log(data)
   state.singerDetail = data
   state.artist = data.artist
 }
 async function getSingerAlbum(id: number) {
   const {hotAlbums} = await getArtistAlbum(id)
   state.albums = hotAlbums
-  console.log(hotAlbums)
 }
 const alias = computed(() => {
   return state.artist.alias?.join('；')

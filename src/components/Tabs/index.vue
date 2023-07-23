@@ -19,16 +19,21 @@ const activeName = computed({
 </script>
 
 <template>
-  <el-tabs v-model="activeName" v-bind="$attrs">
+  <el-tabs class="bass-tabs" v-model="activeName" v-bind="$attrs">
     <slot></slot>
   </el-tabs>
 </template>
 
 <style lang="less">
-.el-tabs {
+.bass-tabs.el-tabs {
   .el-tabs__active-bar {
     background-color: @subject;
     transition: 0.3s ease !important;
+  }
+  .el-tabs__item.is-active {
+    font-size: 18px !important;
+    color: white !important;
+    font-weight: 800;
   }
   .el-tabs__content {
     overflow: inherit;
@@ -41,11 +46,7 @@ const activeName = computed({
   .el-tabs__nav-wrap::after {
     content: none;
   }
-  .is-active {
-    font-size: 20px !important;
-    color: white !important;
-    font-weight: 800;
-  }
+
   .el-tabs__content {
     padding-top: 20px;
     text-align: left;

@@ -8,6 +8,29 @@
   </head>
   <body>
     <div id="app"></div>
+    <script>
+const chromeVersion = /Chrome\/([0-9.]+)/
+  .exec(window?.navigator?.userAgent)?.[1]
+  ?.split('.')[0];
+
+      if (chromeVersion && parseInt(chromeVersion, 10) >= 88) {
+        const videoDom = document.createElement('video');
+        const hiddenCanvas = document.createElement('canvas');
+
+        videoDom.setAttribute('style', 'display:none');
+        videoDom.setAttribute('muted', '');
+        videoDom.muted = true;
+        videoDom.setAttribute('autoplay', '');
+        videoDom.autoplay = true;
+        videoDom.setAttribute('playsinline', '');
+        hiddenCanvas.setAttribute('style', 'display:none');
+        hiddenCanvas.setAttribute('width', '1');
+        hiddenCanvas.setAttribute('height', '1');
+        hiddenCanvas.getContext('2d')?.fillRect(0, 0, 1, 1);
+        videoDom.srcObject = hiddenCanvas?.captureStream();
+        document.body.appendChild(videoDom)
+      }
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

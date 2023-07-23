@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {CurrentItem, getLyric, getMusicDetail, GetMusicDetailData, getMusicUrl} from "@/api/musicList";
 import {nextTick, watch, ref} from "vue";
-import {formatLyric, randomNum} from "@/utils";
+import {formatLyric, parseYrc, randomNum, Yrc} from "@/utils";
 
 const index = ref(0)
 const lastIndexList = ref<number[]>([])
@@ -19,9 +19,10 @@ export const useMusicAction = defineStore('musicActionId', {
       runtimeList: {} as CurrentItem, // 用户当前正在播放音乐的列表
       oldList: {} as CurrentItem, // 用户上一次播放的歌单列表
       runtimeIds: [] as number[], // 用户当前正在播放音乐的列表ids
-      lyric: [] as Lyric[],
+      lyric: [] as Lyric[] | Yrc[],
       klyric: '',
       currentTime: 0,
+      lrcMode: 1 as 0 | 1,
     }
   },
   actions: {
@@ -35,10 +36,19 @@ export const useMusicAction = defineStore('musicActionId', {
     },
     // 获取歌词
     async getLyricHandler(id: number) {
-      const {klyric, lrc} = await getLyric(id)
+      const {klyric, lrc, yrc} = await getLyric(id)
       // 首先对歌词进行格式化处理
       // {time: number(s), text: string}
-      this.lyric = formatLyric(lrc.lyric)
+      if(yrc && yrc.lyric) {
+        this.lyric = parseYrc(yrc.lyric)
+        this.lrcMode = 1
+      } else {
+        this.lyric = formatLyric(lrc.lyric)
+        this.lrcMode = 0
+      }
+
+      // this.lyric = parseYrc(yrc.lyric)
+      // this.yrc = parseYrc(lrc.yrc)
     },
     // 获取音乐url
     async getMusicUrlHandler(id: number, i?: number) {

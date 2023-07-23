@@ -53,7 +53,6 @@ export default () => {
         }
         music.updateCurrentItem(playList)
         const {songs} = await getMusicDetail(ids)
-        console.log(songs)
         updatePlayList({...playList, tracks: songs})
       } else {
         await getRecommendSongs()

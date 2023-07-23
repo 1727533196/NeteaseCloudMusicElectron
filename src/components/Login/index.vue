@@ -29,7 +29,6 @@ const init = async () => {
     } else if(code === 803) {
       clearInterval(timer)
       isSucceed.value = true
-      console.log('cookie', cookie)
       localStorage.setItem(`MUSIC_U`, cookie);
       ElMessage.success('授权登陆成功')
       dialogVisible.value = false

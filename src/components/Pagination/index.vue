@@ -2,11 +2,11 @@
 import {withDefaults} from "vue";
 
 interface Props {
-  background: boolean
-  layout?: string
   total: number
   pageSize: number
   currentPage: number
+  background?: boolean
+  layout?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +57,11 @@ const emit = defineEmits(['size-change', 'current-change'])
   .is-active.number {
     background-color: @subject !important;
     color: white;
+  }
+  .more {
+    background-color: transparent !important;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: @text !important;
   }
   .number {
     background-color: transparent !important;

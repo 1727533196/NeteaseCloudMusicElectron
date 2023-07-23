@@ -4,10 +4,14 @@ import {computed, onMounted, reactive, ref, watch} from "vue";
 import {getCommentMusic, getMusicDetail, GetMusicDetailData} from "@/api/musicList";
 import {useRoute, useRouter} from "vue-router";
 import {useFlags} from "@/store/flags";
+import Pagination from '@/components/Pagination/index.vue'
 
 interface State {
   comments: any[]
   song: GetMusicDetailData | null
+  total: number
+  pageSize: number
+  currentPage: number
 }
 const flags = useFlags()
 const router = useRouter()
@@ -15,7 +19,10 @@ const route = useRoute()
 const page = ref(1)
 const state = reactive<State>({
   comments: [],
-  song: null
+  song: null,
+  total: 0,
+  pageSize: 20,
+  currentPage: 1,
 })
 let id = +route.query.id!
 const currentTab = ref<string>()
@@ -23,7 +30,6 @@ const imgEl = ref<HTMLDivElement>()
 const bg = ref<string>('')
 
 onMounted(() => {
-  console.log(imgEl)
   watch(bg, (val) => {
     toggleImg(val).then(img => {
       imgEl.value!.style.backgroundImage = `url(${img.src})`
@@ -31,10 +37,15 @@ onMounted(() => {
   })
 })
 const getCommentMusicFn = async (id: number, page: number) => {
-  const {comments, code} = await getCommentMusic(id, page)
+  const {data, code} = await getCommentMusic(id, 0, page,)
   if(code === 200) {
-    state.comments = comments
+    state.comments = data.comments
+    state.total = data.totalCount
   }
+}
+const currentChange = (page: number) => {
+  state.currentPage = page
+  getCommentMusicFn(id, page)
 }
 const getMusicDetailFn = async (id: number) => {
   const {songs} = await getMusicDetail(String(id))
@@ -56,9 +67,10 @@ const gotoUserDetail = (uid: number) => {
   })
 }
 watch(() => +route.query.id!, (value) => {
-  console.log(value)
-  id = value
-  init()
+  if(route.path === '/comment') {
+    id = value
+    init()
+  }
 })
 
 </script>
@@ -95,6 +107,7 @@ watch(() => +route.query.id!, (value) => {
                       <div class="time">{{item.timeStr}}</div>
                       <div class="operation">
                         <el-icon><Star /></el-icon>
+                        <span style="font-size: 12px">{{item.likedCount}}</span>
                         <div class="operator-line"></div>
                         <el-icon><ChatDotSquare /></el-icon>
                       </div>
@@ -103,13 +116,13 @@ watch(() => +route.query.id!, (value) => {
                   <div class="line"></div>
                 </div>
               </div>
+              <pagination @current-change="currentChange" :total="state.total" :pageSize="state.pageSize" :currentPage="state.currentPage"/>
             </div>
           </tab-pane>
           <tab-pane label="详情" value="details"></tab-pane>
         </tabs>
       </div>
     </div>
-
   </div>
 </template>
 

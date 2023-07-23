@@ -25,6 +25,7 @@ export interface MusicPlayerInstanceType {
   pause: typeof pause
   play: typeof play
   time: number
+  transitionIsPlay: UnwrapRef<boolean>
 }
 interface Props {
   src: string
@@ -43,6 +44,7 @@ const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
 const volume = ref<InstanceType<typeof Volume>>() // 音量组件实例
 const music = useMusicAction()
+const transitionIsPlay = ref(false)
 
 
 let originPlay: HTMLMediaElement["play"]
@@ -61,6 +63,9 @@ function play(lengthen: boolean = false) {
   originPlay.call(audio.value)
   isPlay.value = true
   mouseState.stop = false
+
+  // 开始时直接改变就可以，让逐字歌词跟得上
+  transitionIsPlay.value = true
   return transitionVolume(volume, true,lengthen)
 }
 function pause(isNeed: boolean = true, lengthen: boolean = false) {
@@ -68,7 +73,10 @@ function pause(isNeed: boolean = true, lengthen: boolean = false) {
   // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候:
   //  这个时候会先调用pause暂停上一首进行过渡，然后在调用play播放，这个时候就不需要更新暂停标识
   isNeed && (isPlay.value = false)
-  return transitionVolume(volume, false, lengthen)
+  return transitionVolume(volume, false, lengthen).then(() => {
+    // 暂停时应该等待音量过渡完成在改变，让逐字歌词也有一个暂停过渡效果
+    transitionIsPlay.value = false
+  })
 }
 let timer: NodeJS.Timer
 // 当过渡完成时会返回Promise
@@ -114,6 +122,7 @@ const reset = (val: boolean) => {
   mouseState.width = 0
   mouseState.currentTime = 0
   isPlay.value = val
+  transitionIsPlay.value = val
   // 这里需要停止timeupdate的事件监视，因为在暂停音乐时会过渡结束（就相当于还是在播放一段时间），
   //  这样会导致进度条进度重置不及时
   mouseState.stop = true  // 在每次play方法时都会重置stop值
@@ -132,6 +141,7 @@ const id = computed(() => {
 })
 
 const flags = useFlags()
+
 const openMusicDetail = () => {
   flags.isOpenDetail = !flags.isOpenDetail
 }
@@ -154,6 +164,7 @@ const exposeObj = {
   reset,
   play,
   pause,
+  transitionIsPlay,
 }
 Object.defineProperty(exposeObj, 'time', {
   get(): number {
@@ -166,6 +177,7 @@ Object.defineProperty(exposeObj, 'time', {
 // onmouseenter 鼠标移入
 // onmouseleave 鼠标移出
 defineExpose(exposeObj)
+
 
 
 

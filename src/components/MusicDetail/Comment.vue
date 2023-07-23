@@ -25,7 +25,6 @@ const bg = computed(() => {
 })
 const currentTab = ref<string>()
 onMounted(() => {
-  console.log(imgEl)
   watch(bg, (val) => {
     toggleImg(val).then(img => {
       imgEl.value!.style.backgroundImage = `url(${img.src})`

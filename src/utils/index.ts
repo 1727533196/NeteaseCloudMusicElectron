@@ -67,6 +67,145 @@ export function formatLyric(lyric: string) {
   return result
 }
 
+export type Yrc = {
+  time: number
+  duration: number
+  yrc: Array<{
+    text: string
+    transition: number
+    cursor: number
+    width: number | string
+  }>
+}
+// 解析逐字歌词
+export function parseYrc(yrc: string) {
+  type info = {
+    "t": number,
+    "c": [
+      {
+        "tx": string
+      },
+      {
+        "tx": string,
+        "li": string,
+        "or": string
+      },
+      {
+        "tx": string
+      },
+      {
+        "tx": string
+      }
+    ]
+  }
+  const result:Yrc[] = []
+  let obj = {
+    time: 0,
+    duration: 0,
+    line: 0,
+    yrc: [],
+  }
+  // {"t":0,"c":[{"tx":"作词: "},{"tx":"伍佰","li":".jpg","or":"orpheus:artist"},{"tx":"/"},{"tx":"徐克"}]}
+  // {"t":15370,"c":[{"tx":"作曲: "},{"tx":"伍佰","li":"164932837071.jpg","or":"artist"}]}
+  let startIndex = 0
+  let endIndex = 0
+  let present = ''
+  let index = 1
+  let isEnd = true
+  let startCount = 0
+  let endCount = 0
+  for (let i = 0; i < yrc.length; i++) {
+    const target = yrc[i]
+    if(target === '{') {
+      if(isEnd) {
+        startIndex = i
+        obj = { time: 0, duration: 0, line: 0, yrc: [] }
+      }
+      startCount++
+      isEnd = false
+      present = '{'
+
+    } else if(target === '}') {
+      endCount++
+      if(startCount === endCount) {
+        endIndex = i
+        isEnd = true
+        startCount = 0
+        endCount = 0
+        const str = JSON.parse(yrc.slice(startIndex, endIndex + 1)) as info
+        obj.time = str.t / 1000
+        obj.duration = str.t / 1000
+        obj.line = index++
+        let temp = {
+          text: '',
+          transition: 0,
+          cursor: 0,
+        }
+        str.c.forEach(item => {
+          temp.text += item.tx
+
+        })
+        temp.transition = index === 2 ? str.t : (str.t / 1000) - result[index - 3].time
+        temp.cursor = str.t / 1000
+        obj.yrc = [temp]
+        result.push(obj)
+      }
+
+    } else if(target === '[' && isEnd) {
+
+      startIndex = i
+      present = '['
+      obj = { time: 0, duration: 0, line: 0, yrc: [] }
+      result.push(obj)
+
+    } else if(target === ']' && isEnd) {
+
+      endIndex = i
+      const timeArr = yrc.slice(startIndex+1, endIndex).split(',')
+      obj.time = +timeArr[0] / 1000
+      obj.duration = +timeArr[1] / 1000
+      obj.line = index++
+
+    } else if(target === '(' && isEnd) {
+
+      startIndex = i
+      present = '('
+
+    } else if(target === ')' && isEnd) {
+      endIndex = i
+      const timeArr = yrc.slice(startIndex+1, endIndex).split(',')
+      // console.log(yrc)
+      let text: string = yrc[i+1]
+      let isBlank = false
+
+      // for (;i < yrc.length; i++) {
+      //   const target = yrc[i]
+      //   if(['[', '('].includes(target)) {
+      //     console.log(yrc.slice(endIndex + 1, i), endIndex+1, i);
+      //     text = yrc.slice(endIndex+1, i)
+      //     if(i - (endIndex+1) > 1 && target !== '[') {
+      //       isBlank = true
+      //     }
+      //     i--
+      //     break
+      //   }
+      // }
+
+      obj.yrc.push({
+        text: text,
+        transition: timeArr[1] / 1000,
+        cursor: timeArr[0] / 1000,
+        width: 0,
+        isBlank,
+      })
+      // i++
+
+    }
+
+  }
+  return result
+}
+
 // 随机产生指定范围数
 export function randomNum(minNum: number,maxNum: number){
   return Math.floor(Math.random()*(maxNum-minNum+1)+minNum)
@@ -126,7 +265,10 @@ export function lookup(obj: object, key: string | undefined): any {
 // 切换图片过渡 (防止图片闪烁
 export function toggleImg(src: string): Promise<HTMLImageElement> {
   const img = new Image()
-  img.src = src
+  img.src = src;
+  img.crossOrigin = 'Anonymous';
+  img.width = 200
+  img.height = 200
   return new Promise((resolve) => {
     img.onload = () => {
       resolve(img)
@@ -175,3 +317,52 @@ export function parsePathQuery(path: string) {
   })
   return result
 }
+
+// 根据时间执行总时长    !!!! 请注意，当done为true时，必须调用pause来中断函数执行
+export function animation(time: number, cb: (elapsed: number, done: boolean) => void): (isPause: boolean) => void {
+  let start: number,
+      previousTimeStamp: number,
+      id: number,
+      animationStartTime = 0,
+      stoppedAt = 0;
+  let done = false
+
+  function step(timestamp: number) {
+    if (start === undefined) {
+      start = timestamp;
+    }
+    const elapsed = timestamp - start - animationStartTime // 以确保精度准确
+    if (previousTimeStamp !== timestamp) {
+      if (elapsed < time) {
+        cb(elapsed, done)
+      } else {
+        let done = true
+        cb(time, done)
+      }
+    }
+
+    if (elapsed < time) {
+      // time 秒之后停止动画
+      previousTimeStamp = timestamp;
+      id = requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+
+  return (isPause: boolean) => {
+    if(isPause) {
+      cancelAnimationFrame(id)
+      stoppedAt = performance.now()
+    } else {
+      animationStartTime += performance.now() - stoppedAt
+      id = requestAnimationFrame(step)
+    }
+  }
+}
+// const element = document.getElementById("box1");
+// animation(10000, (elapsed) => {
+//   const count = elapsed / 10000 * 100
+//   element.style.width = `${count}%`;
+// })
+

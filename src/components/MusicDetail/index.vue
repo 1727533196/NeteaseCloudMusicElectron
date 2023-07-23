@@ -1,19 +1,40 @@
 <script setup lang="ts">
 import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
-import {formattingTime, toggleImg} from "@/utils";
+import {formattingTime, toggleImg, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
+import {useFlags} from "@/store/flags";
+import MyWorker from "@/utils/worker.ts?worker"
+import ColorThief from 'colorthief'
 
 interface Props {
   modelValue: boolean
 }
+const defaultImg = '/src/assets/defaultBg.png'
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 const music = useMusicAction()
-const defaultImg = '/src/assets/defaultBg.png'
+const flags = useFlags()
 const cntrEl = ref<HTMLDivElement>()
 const lyrEl = ref<HTMLDivElement>()
+const targetTime = ref<HTMLDivElement>()
+const moveBox = ref<HTMLDivElement>()
+const containerEl = ref<HTMLDivElement>()
+const scrollEl = ref<HTMLDivElement>()
+const top = ref<number>(0)
+const correctHeight = ref<number>(0)
+const index = ref(0)
+const currentLyrLine = ref<Lyric>({time: 0, line: 1, text: '0'})
+const currentEnterLyric = ref<Lyric>(currentLyrLine.value)
+const isEnterLyric = ref(false) // 用来显示当前歌词的时间
+const worker = new MyWorker()
+let direction = false
+let isTransition = ref(true)
 let currentLyrEl: HTMLCollectionOf<HTMLDivElement>
+let isUserWheel = false // 是否为用户滚动，当用户滚动时，会在用户停止三秒之后置为false
+let timeout: NodeJS.Timeout
+let yrcIndex = 0 // 当前字的索引
+let suspend = false // 歌曲运行时暂停的标识
 
 const bg = computed(() => {
   return music.songs.al?.picUrl || defaultImg
@@ -27,13 +48,6 @@ const setModelValue = computed({
   }
 })
 
-const targetTime = ref<HTMLDivElement>()
-const currentLyrLine = ref<Lyric>({time: 0, line: 1, text: '0'})
-const isEnterLyric = ref(false) // 用来显示当前歌词的时间
-const currentEnterLyric = ref<Lyric>(currentLyrLine.value)
-const moveBox = ref<HTMLDivElement>()
-let index = 0
-
 function findLyric(time: number) {
   const result = music.lyric.find((item, index) => {
     if(index + 1 >= music.lyric.length) {
@@ -45,8 +59,11 @@ function findLyric(time: number) {
 }
 function moveLyric(currentLyr: Lyric) {
   currentLyrLine.value = currentLyr
-  index = currentLyr.line - 1
+  const lastIndex = index.value
 
+  index.value = currentLyr.line - 1
+
+  runHig(index.value, lastIndex)
   // 当用户操作滚动条时，不自动滚动
   if(!isUserWheel) {
     nextTick(() => {
@@ -64,37 +81,50 @@ function moveLyric(currentLyr: Lyric) {
 }
 watch(() => music.currentTime, (currentTime, lastTime) => {
   if(!lyrEl.value || !moveBox.value || music.lyric.notSupportedScroll) return
-
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(currentTime - lastTime) >= 1) {
     findLyric(currentTime)
+    findYrcIndex(index.value)
+    worker.postMessage({
+      pause: true,
+    })
+    higWidth(index.value)
     return
   }
 
   // 歌词是否到底
-  if(!music.lyric[index+1]) return;
-  if(currentLyrEl.length && (currentTime >= music.lyric[index+1].time)) {
-    moveLyric(music.lyric[index+1])
+  if(!music.lyric[index.value+1]) return;
+  if(currentLyrEl.length && (currentTime >= music.lyric[index.value+1].time)) {
+    moveLyric(music.lyric[index.value+1])
     return
   }
+
 })
-const containerEl = ref<HTMLDivElement>()
-const correctHeight = ref<number>(0)
-const scrollEl = ref<HTMLDivElement>()
-const top = ref<number>(0)
-let direction = false
-let isTransition = ref(true)
+
 onMounted(() => {
   currentLyrEl = document.querySelector('.lyric-container')!
-    .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
+      .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
   correctHeight.value = document.body.clientHeight
 
   // 解决切换图片闪烁问题
   watch(bg, (val) => {
     toggleImg(val).then(img => {
       if(cntrEl.value) {
-        cntrEl.value.style.backgroundImage = `url(${img.src})`;
+        const colorThief = new ColorThief()
+        const rgb = colorThief.getPalette(img, 2);
+
+        cntrEl.value.style.background = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`;
         (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
+      }
+    })
+  })
+  nextTick(() => {
+    watch(() => $audio.isPlay, (value) => {
+      if(value && suspend) {
+        suspend = false
+        worker.postMessage({
+          pause: false,
+        })
       }
     })
   })
@@ -108,7 +138,6 @@ onMounted(() => {
       // 这里加上1像素的偏移量是为了防止出现高度小数点的情况
       direction = true
       top.value = -correctHeight.value - 1
-      console.log(top.value)
     }
   })
 })
@@ -125,15 +154,13 @@ const mouseenter = (e: Event, lyric: Lyric) => {
   // 文本定位
   const el = e.target as HTMLDivElement
   targetTime.value!.style.left = el.offsetLeft + 5 + 'px'
-  targetTime.value!.style.top = el.offsetTop + (el.offsetHeight / 4)  + 'px'
+  targetTime.value!.style.top = el.offsetTop + (el.offsetHeight / 3)  + 'px'
   currentEnterLyric.value = lyric
 }
 const mouseleave = () => {
   isEnterLyric.value = false
 }
 
-let isUserWheel = false // 是否为用户滚动，当用户滚动时，会在用户停止三秒之后置为false
-let timeout: NodeJS.Timeout
 // 此事件只有当用户主动滑动滚轮才会触发，而编程的方式来操作滚动条则不会触发
 const wheelHandler = () => {
   isUserWheel = true
@@ -152,6 +179,86 @@ const lyricClick = (time: number) => {
   $audio.el.currentTime = time
 }
 
+// 高亮当前快进
+function higWidth(index: number) {
+  if(yrcIndex === -1) return
+  const yrc = ((music.lyric as Yrc[])[index] || {yrc: []}).yrc
+  for(let i = 0; i < yrcIndex; i++) {
+    yrc[i].width = 100 + '%'
+  }
+}
+// 清除上一次
+function clearWidth(lastIndex: number) {
+  const yrc = ((music.lyric as Yrc[])[lastIndex] || {yrc: []}).yrc
+  yrc.forEach(item => {
+    item.width = 0
+  })
+}
+function transitionYrc(index: number) {
+  const yrc = (music.lyric as Yrc[])[index].yrc
+  if(yrcIndex < yrc.length) {
+    const transition = (yrc[yrcIndex] || {transition: 0}).transition * 1000
+
+    worker.postMessage({
+      transition: transition,
+      test: yrc[yrcIndex].text,
+      yrcIndex
+    })
+  }
+}
+// 监听消息
+worker.onmessage = e => {
+  const {elapsed, done, transition} = e.data
+  const yrc = (music.lyric as Yrc[])[index.value].yrc
+  let width: number
+  width = 100
+  if($audio.transitionIsPlay) {
+    width = elapsed / transition * 100
+    yrc[yrcIndex].width = width + '%'
+    if(done) {
+      yrc[yrcIndex].width = 100 + '%'
+      yrcIndex++
+
+      if(yrcIndex <= yrc.length) {
+        transitionYrc(index.value)
+      }
+    }
+  } else {
+    suspend = true
+    worker.postMessage({
+      pause: true,
+    })
+  }
+}
+function findYrcIndex(index: number) {
+  const time = music.currentTime
+  const yrc = (music.lyric as Yrc[])[index].yrc
+  // 暂时兼容
+  if(!yrc) return
+  yrcIndex = yrc.findIndex((item, index) => {
+    if(index === 0) {
+      if(index + 1 > yrc.length - 1) {
+        return time >= item.cursor
+      }
+      return time >= item.cursor && time < yrc[index + 1].cursor
+    }
+    return time > yrc[index - 1].cursor && time <= item.cursor
+  })
+}
+function runHig(index: number, lastIndex: number) {
+  if(music.lrcMode !== 1) {
+    return
+  }
+  yrcIndex = 0
+  clearWidth(lastIndex)
+  if(yrcIndex !== -1) {
+    transitionYrc(index)
+  } else {
+    worker.postMessage({
+      pause: true,
+    })
+  }
+}
 
 </script>
 
@@ -174,27 +281,55 @@ const lyricClick = (time: number) => {
                 @wheel.stop="wheelHandler"
                 class="lyric-container"
               >
-                <div v-if="music.lyric.notSupportedScroll" class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
-                <div
-                  ref="moveBox"
-                  class="move-box"
-                >
-                  <template v-for="item in music.lyric">
+                <template v-if="music.lrcMode === 1">
+                  <div
+                    v-if="music.lrcMode === 1"
+                    ref="moveBox"
+                    class="move-box"
+                  >
                     <div
-                      v-if="item.text"
                       @mouseenter="mouseenter($event, item)"
                       @mouseleave="mouseleave"
                       @click="lyricClick(item.time)"
-                      :class="['lyric-item', {'current-lyric-item': currentLyrLine.line === item.line}]"
-                    >{{item.text}}</div>
-                    <div :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]" v-else-if="!music.lyric.notSupportedScroll"></div>
-                  </template>
-                  <span
-                    style="position: absolute; font-size: 12px"
-                    v-show="!music.lyric.notSupportedScroll && isEnterLyric"
-                    ref="targetTime"
-                  >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
-                </div>
+                      :class="{'lyric-item': true, 'current-lyric-item': currentLyrLine.line === item.line}" v-for="item in music.lyric">
+                      <div
+                        v-for="yrcItem in item.yrc"
+                        style="position: relative;display: inline-block;width: auto;padding: 0"
+                      >
+                        <span>{{yrcItem.text}}</span>
+                        <span class="transition" :style="{ width: yrcItem.width, }">{{yrcItem.text}}</span>
+                      </div>
+                    </div>
+                    <span
+                      style="position: absolute; font-size: 12px"
+                      v-show="!music.lyric.notSupportedScroll && isEnterLyric"
+                      ref="targetTime"
+                    >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="music.lyric.notSupportedScroll" class="lyric-item not-supported-scroll">*该歌词不支持自动滚动* <span>求滚动</span></div>
+                  <div
+                    ref="moveBox"
+                    class="move-box"
+                  >
+                    <template v-for="item in music.lyric">
+                      <div
+                        v-if="item.text"
+                        @mouseenter="mouseenter($event, item)"
+                        @mouseleave="mouseleave"
+                        @click="lyricClick(item.time)"
+                        :class="['hover-item', 'lyric-item', {'current-lyric-item': currentLyrLine.line === item.line}]"
+                      >{{item.text}}</div>
+                      <div :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]" v-else-if="!music.lyric.notSupportedScroll"></div>
+                    </template>
+                    <span
+                      style="position: absolute; font-size: 12px"
+                      v-show="!music.lyric.notSupportedScroll && isEnterLyric"
+                      ref="targetTime"
+                    >{{formattingTime(currentEnterLyric.time * 1000)}}</span>
+                  </div>
+                </template>
               </div>
             </div>
             <div
@@ -222,6 +357,7 @@ const lyricClick = (time: number) => {
   z-index: 2005;
   overflow: hidden;
   transform: translateY(100%);
+
   .box {
     overflow: hidden;
     width: 100%;
@@ -309,8 +445,8 @@ const lyricClick = (time: number) => {
             transition: 0.3s;
             .lyric-item {
               min-height: 10px;
-              padding: 10px 40px;
-              width: 100%;
+              padding: 10px 60px;
+              //width: 100%;
               border-radius: 10px;
               display: flex;
               align-items: center;
@@ -320,12 +456,21 @@ const lyricClick = (time: number) => {
               &:hover {
                 background-color: rgba(255,255,255,0.05);
               }
+              .transition {
+                left: 0;
+                position: absolute;
+                color: rgb(30,204,148);
+                width: 0;
+                overflow: hidden;
+                z-index: 99;
+                white-space: nowrap;
+              }
             }
             .empty-lyric {
               height: 41px;
             }
             .lyric-item.current-lyric-item {
-              color: rgb(30,204,148);
+              //color: rgb(30,204,148);
             }
           }
         }

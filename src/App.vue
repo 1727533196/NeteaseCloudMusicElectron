@@ -14,6 +14,7 @@ import MusicDetail from '@/components/MusicDetail/index.vue'
 import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
 import Login from '@/components/Login/index.vue'
 import {useUserInfo} from "@/store";
+import {parseYrc} from "@/utils";
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()

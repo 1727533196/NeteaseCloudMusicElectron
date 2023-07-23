@@ -51,7 +51,6 @@ function init() {
     userId.value = +uid
     isFirstEnter = userId.value !== oldUid
     oldUid = +uid
-    console.log(isFirstEnter)
     getUserDetailHandler(uid)
     getUserSongListHandler(uid)
     clearInterval(timer)

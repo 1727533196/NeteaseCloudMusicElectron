@@ -50,6 +50,7 @@ watch(() => route.fullPath, (val) => {
 </script>
 
 <template>
+  <span class="keyword">搜索 {{route.query.key}}</span>
   <tabs v-model="activeName">
     <tab-pane
       v-for="item in tabsConfig"
@@ -73,7 +74,10 @@ watch(() => route.fullPath, (val) => {
 </template>
 
 <style lang="less" scoped>
-* {
-  position: absolute;
+.keyword {
+  color: #d2d2d2;
+  font-size: 22px;
+  margin-left: 10px;
 }
+
 </style>

@@ -6,7 +6,6 @@ import {tabsConfig} from './config'
 const activeName = ref(tabsConfig[0].name)
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
 }
 </script>
 

@@ -28,7 +28,6 @@ export const codeLogin = async (phone: string, code: string) => {
     setCookies(data.cookie);
     getUserPlayListFn()
   } catch (e: any) {
-    console.log('e', e)
     ElMessage.error(e.message)
   }
 }
