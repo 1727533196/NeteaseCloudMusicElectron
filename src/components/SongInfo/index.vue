@@ -3,15 +3,49 @@ import {formatDate, toggleImg} from "@/utils";
 import {useMusicAction} from "@/store/music";
 import {useUserInfo} from "@/store";
 import {onMounted, ref, watch} from "vue";
+import ColorThief from 'colorthief'
 
 const music = useMusicAction()
 const store = useUserInfo()
 const left = ref<HTMLDivElement>()
 
+let pointer = 1
 watch(() => music.currentItem.coverImgUrl, (val) => {
   toggleImg(val).then(img => {
     if(left.value) {
       left.value!.style.backgroundImage = `url(${img.src})`
+      const app = document.querySelector('#opacity-bg1') as HTMLDivElement
+      const opacityBg = document.querySelector('#opacity-bg') as HTMLDivElement
+      const colorThief = new ColorThief()
+      const rgb = colorThief.getColor(img).map((item: number, index: number) => {
+        return index < 2 ? item / 2 : item / 2
+      });
+      if(music.currentItem.specialType !== 5) {
+        if(pointer === 0) {
+          app.style.backgroundImage = `linear-gradient(rgb(${rgb}), rgb(19, 19, 26))`
+          app.style.opacity = '1'
+          opacityBg.style.opacity = '0'
+          pointer = 1
+        } else {
+          opacityBg.style.backgroundImage = `linear-gradient(rgb(${rgb}), rgb(19, 19, 26))`
+          opacityBg.style.opacity = '1'
+          app.style.opacity = '0'
+          pointer = 0
+        }
+      } else {
+        if(pointer === 0) {
+          app.style.backgroundImage = ``
+          app.style.opacity = '1'
+          opacityBg.style.opacity = '0'
+          pointer = 1
+        } else {
+          opacityBg.style.backgroundImage = ``
+          opacityBg.style.opacity = '1'
+          app.style.opacity = '0'
+          pointer = 0
+        }
+
+      }
     }
   })
 }, {

@@ -16,22 +16,26 @@
 @darkText: rgb(150, 150, 150);
 @moreDark: rgba(150, 150, 150, 0.60);
 @subject: rgb(236,65,65);
-@bgColor: #2b2b2b;
+@bgColor: rgb(19, 19, 26);
 
 .el-loading-mask {
   background: transparent;
 }
 #box {
   display: flex;
-  height: calc(100% - 2px);
+  height: calc(100%);
 }
 .main{
   height: 100%;
-  //margin-top: 60px;
+  width: 100%;
+  z-index: 100;
+  position: relative;
+}
+.body {
+  height: 100%;
   overflow: hidden;
   overflow-y: auto;
   width: 100%;
-  //margin-left: 210px;
   display: flex;
   align-content: baseline;
   flex-direction: column;
@@ -46,6 +50,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-weight: 600 !important;
 }
 html,body,#app {
   height: 100%;
@@ -54,7 +59,10 @@ html,body,#app {
   -moz-osx-font-smoothing: grayscale;
   color: @text;
   overflow: hidden;
+  //background: linear-gradient(rgb(113, 129, 130), @bgColor);
   background-color: @bgColor;
+  transition: 0.8s;
+  //background-color: transparent;
 }
 #app {
   user-select: none;

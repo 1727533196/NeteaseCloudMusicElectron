@@ -62,7 +62,7 @@ defineExpose({
   transition: 0.1s;
   position: relative;
   width: 100%;
-  height: 2px;
+  height: 1px;
   overflow: hidden;
   .progress {
     width: 100%;

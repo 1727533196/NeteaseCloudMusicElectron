@@ -382,7 +382,7 @@ function runHig(index: number, lastIndex: number) {
     position: fixed;
     height: 100%;
     width: 100%;
-    transition: 1s background;
+    transition: 1s;
     background-image: url("../../assets/../assets/defaultBg.png");
     background-color: @bgColor;
     .bgSetting();

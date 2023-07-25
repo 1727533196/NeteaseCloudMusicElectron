@@ -21,28 +21,28 @@ export const originAsideMenuConfig: MenuConfig[] = [
     mark: false,
     list: [
       {
-        name: '发现音乐',
+        name: '为我推荐',
         icon: '',
         path: '/home',
         fontSize,
         id: 1,
       },
       {
-        name: '私人FM',
+        name: '云音乐精选',
         icon: '',
         path: '/fm',
         fontSize,
         id: 2,
       },
       {
-        name: '视频',
+        name: '博客',
         icon: '',
         path: '/video',
         fontSize,
         id: 3,
       },
       {
-        name: '关注',
+        name: '社区',
         icon: '',
         path: '/follow',
         fontSize,

@@ -88,14 +88,14 @@ const goIsDisable = computed(() => {
   position: relative; // 子元素 的 z-index 小于父元素时，仍然显示在 父元素 上面: 父元素position:relative;z-index:1,子元素position:开启定位;z-index:10，就可以做到子元素在父元素之上了
   top: 0;
   z-index: auto;
-  background-color: rgb(34,34,37);
-  border-bottom: 2px rgb(176,34,34) solid;
+  //background-color: @bgColor;
+  //border-bottom: 2px rgb(176,34,34) solid;
   display: flex;
   align-items: center;
   justify-content: space-between;
   .left {
-    background-image: url("@/assets/bg-logo.png");
-    width: 125px;
+    //background-image: url("@/assets/bg-logo.png");
+    width: 0px;
     height: 30px;
     .bgSetting();
     cursor: pointer;

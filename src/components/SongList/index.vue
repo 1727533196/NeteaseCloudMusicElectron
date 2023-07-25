@@ -169,8 +169,8 @@ export default defineComponent({
               onMousedown: () => mousedownHandler(data),
               key: data.id,
               class: 'list',
-              style: {background: data.id === id.value ? 'rgba(255, 255, 255, 0.08)'
-                  : i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}
+              // style: {background: data.id === id.value ? 'rgba(255, 255, 255, 0.08)'
+              //     : i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'none'}
             }, props.columns.map(config => {
               if(config.processEl) {
                 return indiviEl(config, 2, config.processEl(h, data, i))
@@ -249,7 +249,7 @@ export default defineComponent({
     height: 100%;
     width: 100%;
     :deep(.el-loading-mask) {
-      background-color: #2b2b2b;
+      //background-color: @bgColor;
 
       .el-loading-spinner {
         position: fixed;
@@ -309,6 +309,7 @@ export default defineComponent({
     padding: 0 25px;
     justify-content: space-around;
     font-size: 14px;
+    //font-weight: 800;
     display: flex;
     height: 35px;
     color: @darkText;

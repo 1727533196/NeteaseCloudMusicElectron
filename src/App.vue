@@ -36,18 +36,22 @@ getUserAccountFn()
 </script>
 
 <template>
-  <Header></Header>
+  <div id="opacity-bg" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
+  <div id="opacity-bg1" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
   <MusicDetail v-model="flags.isOpenDetail"/>
-  <div style="height: calc(100% - 136px);">
+  <div style="height: calc(100%);">
     <div id="box">
       <Aside></Aside>
       <div class="main">
-        <div class="top"></div>
-        <router-view v-slot="{Component}">
-<!--          <keep-alive>-->
+        <Header></Header>
+        <div class="body">
+          <div class="top"></div>
+          <router-view v-slot="{Component}">
+            <!--          <keep-alive>-->
             <component :is="Component"></component>
-<!--          </keep-alive>-->
-        </router-view>
+            <!--          </keep-alive>-->
+          </router-view>
+        </div>
       </div>
     </div>
     <div style="height: 20px"></div>

@@ -115,8 +115,8 @@ const getSearchSuggest = async (keywords: string) => {
     <el-icon
       @click="searchHandler(keywords)"
       class="search-icon"
-      size="15px"
-      color="white"
+      size="18px"
+      color="rgba(255, 255, 255, 0.5)"
     >
       <Search />
     </el-icon>
@@ -127,7 +127,7 @@ const getSearchSuggest = async (keywords: string) => {
       @blur="blurHandler"
       @input="inputHandler"
       class="search"
-      placeholder="搜索内容"
+      placeholder="林俊杰"
     />
     <div v-loading="loading" v-show="showSuggest" class="suggest">
       <List :model="model" @click="searchHandler" :keywordsList="state.keywordsList" :list="state.scoreList"/>
@@ -139,28 +139,29 @@ const getSearchSuggest = async (keywords: string) => {
 .search-container {
   position: relative;
   padding: 0 15px;
-  border-radius: 20px;
-  background-color: rgb(43,43,46);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.06);
   box-sizing: border-box;
   display: flex;
   align-items: center;
 
   .search-icon {
     position: relative;
-    top: -1px;
-    margin-right: 5px;
+    top: 1px;
+    margin-right: 10px;
     cursor: pointer;
   }
   .search {
     border: none;
     box-shadow: none;
-    width: 130px;
-    height: 30px;
+    width: 230px;
+    height: 37px;
     outline: none;
     box-sizing: border-box;
     background-color: transparent;
-    font-size: 12px;
+    font-size: 14px;
     color: white;
+    font-weight: 800;
   }
   :deep(.suggest) {
     position: absolute;

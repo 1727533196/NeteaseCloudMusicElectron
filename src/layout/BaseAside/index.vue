@@ -12,12 +12,13 @@ const route = useRoute()
 const init = () => {
   // 这里需要特殊处理的有 【创建的歌单】 和 【收藏的歌单】两个列表
     if(route.query.id && route.path === '/play-list') {
-      current.value = {
-        id: +route.query.id,
-        path: '/play-list'
-      } as ListItem
+      // current.value = {
+      //   id: +route.query.id,
+      //   path: '/play-list'
+      // } as ListItem
+      // console.log('current-->', current)
+
     }
-  // itemClick(asideMenuConfig[0].list[0])
 }
 watch(() => route.path, (value) => {
   if(needUseComparisonPaths.includes(value)) {
@@ -57,6 +58,11 @@ watch(() => route.fullPath, () => {
     init()
   }
 })
+watch(current, (value) => {
+  if(value && value.coverImgUrl) {
+
+  }
+})
 // 列表选中条件，有id优先id，没有id用path
 const isCurrent = (path: string, id: number) => {
   if(!current.value) {
@@ -92,16 +98,14 @@ const isCurrent = (path: string, id: number) => {
 
 <style lang="less" scoped>
 .aside {
-  border-right: 1px rgb(67,67,67) solid;
   width: 250px;
   height: 100%;
-  background-color: rgb(43,43,43);
-  //position: fixed;
-  //left: 0;
-  //top: 62px;
+  background-color: rgba(255,255, 255, 0.03);
   padding: 10px 10px;
   box-sizing: border-box;
   overflow-y: auto;
+  position: relative;
+  z-index: 100;
   &:hover::-webkit-scrollbar-thumb {
     visibility: visible;
   }
