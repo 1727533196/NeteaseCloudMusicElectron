@@ -73,10 +73,33 @@ const isCurrent = (path: string, id: number) => {
   }
   return current.value.id === id
 }
+
+const gotoDetail = () => {
+  router.push({
+    path: '/detail',
+    query: {
+      uid: store.profile.userId,
+    }
+  })
+}
+
+const login = () => {
+  window.$login.show()
+}
 </script>
 
 <template>
   <div class="aside">
+    <div class="avatar-box">
+      <template v-if="store.isLogin">
+        <div @click="gotoDetail" :style="{backgroundImage: `url(${store.profile.avatarUrl})`}" class="head-portraits"></div>
+        <div class="nickname">{{store.profile.nickname}}</div>
+      </template>
+      <div v-else @click="login" class="not-login">
+        <el-icon :size="22"><User/></el-icon>
+        <span>未登录</span>
+      </div>
+    </div>
     <div class="play-container">
       <template :key="i" v-for="(menuItem, i) in asideMenuConfig">
         <div class="lump">
@@ -103,17 +126,51 @@ const isCurrent = (path: string, id: number) => {
   background-color: rgba(255,255, 255, 0.03);
   padding: 10px 10px;
   box-sizing: border-box;
-  overflow-y: auto;
   position: relative;
   z-index: 100;
-  &:hover::-webkit-scrollbar-thumb {
-    visibility: visible;
+  overflow: hidden;
+  .avatar-box {
+    height: 80px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    //justify-content: center;
+    .head-portraits {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      background: url("https://p1.music.126.net/siSjcSLr8ybRZ3VUpC-9hg==/109951165504329717.jpg");
+      .bgSetting();
+      margin-right: 6px;
+      cursor: pointer;
+    }
+    .not-login {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+      cursor: pointer;
+      .el-icon {
+        background-color: rgba(255,255,255,.1);
+        border-radius: 50%;
+        width: 27px;
+        height: 27px;
+        margin-right: 7px;
+      }
+      >span {
+        font-size: 12px;
+        position: relative;
+        top: -0.5px;
+      }
+    }
+    .nickname {
+      max-width: 140px;
+      .textOverflow();;
+      font-size: 14px;
+    }
   }
-  &::-webkit-scrollbar-thumb {
-    visibility: hidden;
-  }
-
   .play-container {
+    overflow-y: auto;
+    height: calc(100% - 70px);
     .lump {
       padding-bottom: 10px;
       .title {
@@ -126,7 +183,7 @@ const isCurrent = (path: string, id: number) => {
       .play-list-item {
         cursor: pointer;
         color: @text;
-        font-size: 14px;
+        font-size: 13px;
         text-align: left;
         line-height: 40px;
         .textOverflow();;

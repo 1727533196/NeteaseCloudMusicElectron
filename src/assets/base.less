@@ -1,4 +1,5 @@
 @import './scroll';
+@import './theme/mixin';
 
 .textOverflow (@line: 1) {
   text-overflow:ellipsis;
@@ -32,7 +33,8 @@
   position: relative;
 }
 .body {
-  height: 100%;
+  height: calc(100% - 60px);
+  padding-bottom: 30px;
   overflow: hidden;
   overflow-y: auto;
   width: 100%;
@@ -42,15 +44,20 @@
   .top {
     margin-bottom: 20px;
   }
+  .bottom {
+    //height: 80px;
+    //width: 100%;
+  }
   .padding-container {
-    padding: 0 35px
+    padding: 0 35px;
+    padding-bottom: 30px;
   }
 }
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-weight: 600 !important;
+  font-weight: 600;
 }
 html,body,#app {
   height: 100%;
@@ -61,7 +68,6 @@ html,body,#app {
   overflow: hidden;
   //background: linear-gradient(rgb(113, 129, 130), @bgColor);
   background-color: @bgColor;
-  transition: 0.8s;
   //background-color: transparent;
 }
 #app {

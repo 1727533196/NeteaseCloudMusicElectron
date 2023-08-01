@@ -8,6 +8,7 @@ import UserDetailList from '@/components/UserDetailList/index.vue'
 import {list} from "@/views/UserDetail/config";
 import {getUserPlayList, PlayList} from "@/api/musicList";
 import {useUserInfo} from "@/store";
+import {useTheme} from "@/store/theme";
 
 interface State {
   userInfo: Profile
@@ -35,6 +36,7 @@ let isFirstEnter = true
 const userId = ref<number>()
 const location = ref<string>()
 const activeName = ref<TabsName>(list[0].name as TabsName)
+const theme = useTheme()
 let timer: NodeJS.Timer
 
 watch(() => route.fullPath, () => {
@@ -67,6 +69,7 @@ onUnmounted(() => {
 async function getUserDetailHandler(uid: number) {
   const {profile, level} = await getUserDetail(uid)
   state.userInfo = profile
+  theme.change(state.userInfo.avatarUrl)
   state.identify = {
     level,
   }

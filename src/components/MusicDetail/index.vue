@@ -84,11 +84,14 @@ watch(() => music.currentTime, (currentTime, lastTime) => {
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(currentTime - lastTime) >= 1) {
     findLyric(currentTime)
-    findYrcIndex(index.value)
-    worker.postMessage({
-      pause: true,
-    })
-    higWidth(index.value)
+    if(music.lrcMode === 1) {
+      findYrcIndex(index.value)
+      worker.postMessage({
+        pause: true,
+        val: true,
+      })
+      higWidth(index.value)
+    }
     return
   }
 
@@ -100,6 +103,43 @@ watch(() => music.currentTime, (currentTime, lastTime) => {
   }
 
 })
+let pointer = 1
+function gradualChange(img: HTMLImageElement) {
+  const gradual1 = document.querySelector('#gradual1') as HTMLDivElement
+  const gradual2 = document.querySelector('#gradual2') as HTMLDivElement
+  if(img) {
+    const colorThief = new ColorThief()
+    const rgb = colorThief.getPalette(img, 2) as Array<Array<string>>
+    if(pointer === 0) {
+      gradual1.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
+      gradual1.style.opacity = '1'
+
+      gradual2.style.opacity = '0'
+      pointer = 1
+    } else {
+      gradual2.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
+      gradual2.style.opacity = '1'
+
+      gradual1.style.opacity = '0'
+      pointer = 0
+    }
+
+  } else {
+    if(pointer === 0) {
+      gradual1.style.backgroundImage = ``
+      gradual1.style.opacity = '1'
+
+      gradual2.style.opacity = '0'
+      pointer = 1
+    } else {
+      gradual2.style.backgroundImage = ``
+      gradual2.style.opacity = '1'
+
+      gradual1.style.opacity = '0'
+      pointer = 0
+    }
+  }
+}
 
 onMounted(() => {
   currentLyrEl = document.querySelector('.lyric-container')!
@@ -110,10 +150,7 @@ onMounted(() => {
   watch(bg, (val) => {
     toggleImg(val).then(img => {
       if(cntrEl.value) {
-        const colorThief = new ColorThief()
-        const rgb = colorThief.getPalette(img, 2);
-
-        cntrEl.value.style.background = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`;
+        gradualChange(img);
         (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
       }
     })
@@ -123,7 +160,8 @@ onMounted(() => {
       if(value && suspend) {
         suspend = false
         worker.postMessage({
-          pause: false,
+          pause: true,
+          val: false,
         })
       }
     })
@@ -213,8 +251,10 @@ worker.onmessage = e => {
   let width: number
   width = 100
   if($audio.transitionIsPlay) {
-    width = elapsed / transition * 100
-    yrc[yrcIndex].width = width + '%'
+    if(yrc[yrcIndex]) {
+      width = elapsed / transition * 100
+      yrc[yrcIndex].width = width + '%'
+    }
     if(done) {
       yrc[yrcIndex].width = 100 + '%'
       yrcIndex++
@@ -227,6 +267,7 @@ worker.onmessage = e => {
     suspend = true
     worker.postMessage({
       pause: true,
+      val: true,
     })
   }
 }
@@ -256,6 +297,7 @@ function runHig(index: number, lastIndex: number) {
   } else {
     worker.postMessage({
       pause: true,
+      val: true,
     })
   }
 }
@@ -272,6 +314,11 @@ function runHig(index: number, lastIndex: number) {
         :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"
       >
+        <div id="gradual1">
+        </div>
+        <div id="gradual2">
+
+        </div>
         <div ref="cntrEl" class="music-detail-container">
           <div class="shadow">
             <div class="lyric-and-bg-container">
@@ -319,7 +366,7 @@ function runHig(index: number, lastIndex: number) {
                         @mouseenter="mouseenter($event, item)"
                         @mouseleave="mouseleave"
                         @click="lyricClick(item.time)"
-                        :class="['hover-item', 'lyric-item', {'current-lyric-item': currentLyrLine.line === item.line}]"
+                        :class="['hover-item', 'lyric-item', {'current-lyric-item': currentLyrLine.line === item.line, 'current-lyric-line-item': currentLyrLine.line === item.line}]"
                       >{{item.text}}</div>
                       <div :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]" v-else-if="!music.lyric.notSupportedScroll"></div>
                     </template>
@@ -365,6 +412,13 @@ function runHig(index: number, lastIndex: number) {
       position: relative;
       transition: 0.5s;
       overflow: hidden;
+      background-color: @bgColor;
+      #gradual1, #gradual2 {
+        height: 100%;
+        width: 100%;
+        transition: 1s;
+        position: absolute;
+      }
     }
   }
 
@@ -383,8 +437,8 @@ function runHig(index: number, lastIndex: number) {
     height: 100%;
     width: 100%;
     transition: 1s;
-    background-image: url("../../assets/../assets/defaultBg.png");
-    background-color: @bgColor;
+    //background-image: url("../../assets/../assets/defaultBg.png");
+    //background-color: @bgColor;
     .bgSetting();
     .shadow {
       backdrop-filter: blur(15px);
@@ -413,7 +467,7 @@ function runHig(index: number, lastIndex: number) {
           width: 40vw;
           border-radius: 5px;
           overflow: auto;
-          box-shadow: 0 5px 15px 5px rgba(0,0,0,0.05);
+          //box-shadow: 0 5px 15px 5px rgba(0,0,0,0.05);
           position: relative;
           //scroll-behavior: smooth; // 111
           .not-supported-scroll {
@@ -453,6 +507,7 @@ function runHig(index: number, lastIndex: number) {
               justify-content: center;
               text-align: center;
               margin: 3px 0;
+              transition: 0.5s font-size;
               &:hover {
                 background-color: rgba(255,255,255,0.05);
               }
@@ -470,7 +525,11 @@ function runHig(index: number, lastIndex: number) {
               height: 41px;
             }
             .lyric-item.current-lyric-item {
-              //color: rgb(30,204,148);
+              font-size: 18px;
+            }
+            .lyric-item.current-lyric-line-item {
+              font-size: 18px;
+              color: rgb(30,204,148);
             }
           }
         }

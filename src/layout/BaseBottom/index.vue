@@ -11,7 +11,7 @@
 <style lang="less" scoped>
 .container {
   height: 75px;
-  background-color: rgb(28,28,36);
+  background-color: rgb(26,26,35);
   border-top: rgb(59,59,62) 1px solid;
   position: fixed;
   bottom: 0;

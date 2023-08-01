@@ -39,7 +39,7 @@ getUserAccountFn()
   <div id="opacity-bg" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
   <div id="opacity-bg1" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
   <MusicDetail v-model="flags.isOpenDetail"/>
-  <div style="height: calc(100%);">
+  <div style="height: calc(100% - 75px);position: relative;z-index: auto">
     <div id="box">
       <Aside></Aside>
       <div class="main">

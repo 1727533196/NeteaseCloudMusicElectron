@@ -22,8 +22,10 @@ const model = ref<'hot' | 'keywords'>("hot")
 const music = useMusicAction()
 
 const searchHandler = (item: string | object, key?: 'allMatch' | 'songs' | 'artists' | 'albums' | 'playlists') => {
+  console.log('111-->', 111, key, model.value, item)
+
   if(model.value === "hot") {
-    router.push(`/search?key=${item}`)
+    router.push(`/search?key=${item.searchWord}`)
   } else {
     if(key === "allMatch") {
       router.push(`/search?key=${item.keyword}`)
@@ -53,7 +55,7 @@ const blurHandler = () => {
   setTimeout(() => {
     flags.isOpenSearch = false
     showSuggest.value = false
-  },100)
+  },300)
 }
 let timer: NodeJS.Timeout
 const inputHandler = () => {
@@ -168,7 +170,7 @@ const getSearchSuggest = async (keywords: string) => {
     border-radius: 10px;
     width: 400px;
     height: 77vh;
-    background-color: rgb(54,54,54);
+    background-color: rgb(45,45,56);
     transform: translateX(-50%) translateY(100%);
     left: 50%;
     bottom: -3vh;

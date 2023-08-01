@@ -13,7 +13,7 @@ interface MenuConfig {
   mark: 'my' | 'play' | 'subscribedList' | false,
   list: ListItem[]
 }
-const fontSize = 15
+const fontSize = 13
 export const needUseComparisonPaths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/cloud']
 export const originAsideMenuConfig: MenuConfig[] = [
   {

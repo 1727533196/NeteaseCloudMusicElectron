@@ -6,6 +6,7 @@ import {getAlbumContent, getArtistAlbum, GetArtistAlbumRes} from "@/api/musicLis
 import AdaptiveListBox from '@/components/AdaptiveListBox/index.vue'
 import AdaptiveList from '@/components/AdaptiveList/index.vue'
 import {tabsConfig} from "@/views/SingerPage/config";
+import {useTheme} from "@/store/theme";
 
 interface State {
   singerDetail: getArtistDetailRes['data']
@@ -21,6 +22,7 @@ type LabelType = 1 | 2 | 3 | 4
 const activeTab = ref<LabelType>(tabsConfig[0].name as LabelType)
 const route = useRoute()
 const router = useRouter()
+const theme = useTheme()
 watch(() => route.fullPath, () => {
   if(route.path === '/singer-page') {
     init()
@@ -39,8 +41,10 @@ function init() {
 
 async function getSingerDetail(id: number) {
   const {data} = await getArtistDetail(id)
+
   state.singerDetail = data
   state.artist = data.artist
+  theme.change(state.artist.avatar)
 }
 async function getSingerAlbum(id: number) {
   const {hotAlbums} = await getArtistAlbum(id)

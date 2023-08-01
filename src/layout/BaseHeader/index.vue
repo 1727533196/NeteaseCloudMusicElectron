@@ -15,18 +15,7 @@ const {maximize, unmaximize, minimize, restore, close} = handle()
 const maximizeOrUnmaximize = () => {
   flags.isMaximize ? unmaximize() : maximize()
 }
-const gotoDetail = () => {
-  router.push({
-    path: '/detail',
-    query: {
-      uid: store.profile.userId,
-    }
-  })
-}
 
-const login = () => {
-  window.$login.show()
-}
 const back = () => {
   if(backIsDisable.value) {
     return
@@ -58,14 +47,6 @@ const goIsDisable = computed(() => {
       <Search/>
     </div>
     <div class="right no-drag">
-      <template v-if="store.isLogin">
-        <div @click="gotoDetail" :style="{backgroundImage: `url(${store.profile.avatarUrl})`}" class="head-portraits"></div>
-        <div class="nickname">{{store.profile.nickname}}</div>
-      </template>
-      <div v-else @click="login" class="not-login">
-        <el-icon :size="22"><User/></el-icon>
-        <span>未登录</span>
-      </div>
       <div class="operator">
         <div class="handler" @click="minimize">
           <i class="iconfont icon-weibiaoti-"></i>
@@ -87,7 +68,7 @@ const goIsDisable = computed(() => {
   width: 100%;
   position: relative; // 子元素 的 z-index 小于父元素时，仍然显示在 父元素 上面: 父元素position:relative;z-index:1,子元素position:开启定位;z-index:10，就可以做到子元素在父元素之上了
   top: 0;
-  z-index: auto;
+  z-index: 10  ;
   //background-color: @bgColor;
   //border-bottom: 2px rgb(176,34,34) solid;
   display: flex;
@@ -128,40 +109,7 @@ const goIsDisable = computed(() => {
     margin-right: 15px;
     display: flex;
     align-items: center;
-    .head-portraits {
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      background: url("https://p1.music.126.net/siSjcSLr8ybRZ3VUpC-9hg==/109951165504329717.jpg");
-      .bgSetting();
-      margin-right: 6px;
-      cursor: pointer;
-    }
-    .not-login {
-      display: flex;
-      align-items: center;
-      margin-right: 20px;
-      cursor: pointer;
-      .el-icon {
-        background-color: rgba(255,255,255,.1);
-        border-radius: 50%;
-        width: 27px;
-        height: 27px;
-        margin-right: 7px;
-      }
-      >span {
-        font-size: 12px;
-        position: relative;
-        top: -0.5px;
-      }
-    }
-    .nickname {
-      max-width: 80px;
-      .textOverflow();;
-      color: rgb(165,167,168);
-      font-size: 12px;
-      margin-right: 30px;
-    }
+
     .operator {
       display: flex;
       align-items: center;

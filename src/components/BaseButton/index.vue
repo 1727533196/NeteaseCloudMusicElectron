@@ -19,27 +19,32 @@ const emit = defineEmits(['click'])
 
 <style lang="less" scoped>
 .btn {
-  font-size: 14px;
+  font-size: 15px;
   display: inline-block;
-  padding: 5px 15px;
-  border-radius: 30px;
+  padding: 11px 23px;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: 600;
+  position: relative;
+  color: white;
   & + & {
     margin-left: 8px;
   }
 }
 .btn.subject {
-  background-color: @subject;
+  background-image: linear-gradient(rgb(255, 17, 104), rgb(252, 61, 73));
   color: white;
-  &:first-child:hover {
-    background-color: rgb(220,20,20);
+  &:hover {
+    background-image: linear-gradient(rgb(229, 15, 94), rgb(252, 61, 73));
   }
 }
 .btn.default {
-  border: 1px solid rgb(70,70,70);
+  //border: 0.5px solid rgb(70,70,70);
+  background-color: rgb(33,33,39);
   &:hover {
-    background-color: rgba(255,255,255,0.03);
+    background-color: rgba(255,255,255,0.1);
   }
 }
+
 
 </style>

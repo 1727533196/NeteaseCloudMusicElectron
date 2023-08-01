@@ -135,7 +135,7 @@ watch(() => +route.query.id!, (value) => {
   width: 100%;
   //position: fixed;
   //transform: translateY(100%);
-  background-color: @bgColor;
+  //background-color: @bgColor;
   .comment-box {
     padding: 0 0 0 35px;
     display: flex;

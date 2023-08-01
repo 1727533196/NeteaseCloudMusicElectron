@@ -3,7 +3,10 @@ import {animation} from "@/utils/index";
 let pause: (isPause: boolean) => void
 onmessage = function (event) {
   const data  = event.data
-  if(!data.pause) {
+  if(data.pause) {
+    // 关闭上一次
+    pause && pause(data.val)
+  } else {
     pause = animation(data.transition, (elapsed, done) => {
       if(done) {
         pause(true)
@@ -12,9 +15,12 @@ onmessage = function (event) {
         elapsed, done, transition: data.transition
       })
     })
-  } else {
-    // 关闭上一次
-    pause && pause(true)
   }
+  // if(!data.pause) {
+  //
+  // } else {
+  //   // 关闭上一次
+  //   pause && pause(true)
+  // }
 }
 
