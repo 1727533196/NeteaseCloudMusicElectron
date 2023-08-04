@@ -1,26 +1,27 @@
 import {useFlags} from "@/store/flags";
+import {ipcRenderer} from 'electron'
 
 export const handle = () => {
   const flags = useFlags();
 
   const maximize = () => {
-    window.electronAPI.maximize()
+    ipcRenderer.send('maximize')
     flags.isMaximize = true;
   }
   const unmaximize = () => {
-    window.electronAPI.unmaximize()
+    ipcRenderer.send('unmaximize')
     flags.isMaximize = false;
   }
   const minimize = () => {
-    window.electronAPI.minimize()
+    ipcRenderer.send('minimize')
     flags.isMinimize = true;
   }
   const restore = () => {
-    window.electronAPI.restore()
+    ipcRenderer.send('restore')
     flags.isMinimize = false;
   }
   const close = () => {
-    window.electronAPI.close()
+    ipcRenderer.send('close')
   }
 
   return {

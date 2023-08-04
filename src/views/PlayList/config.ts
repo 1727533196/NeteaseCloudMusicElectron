@@ -38,7 +38,7 @@ export const columns: Columns[] = [
     type: 'album',
   },
   {
-    title: '时间',
+    title: '时长',
     prop: 'dt',
     width: '10%',
     class: 'time',

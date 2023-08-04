@@ -41,9 +41,10 @@ class Main {
             width: 1150,
             webPreferences: {
                 nodeIntegration: true, // 为了解决required识别问题
-                // 需要设置contextIsolation属性为false。
-                // 但是使用某些api，比如拖拽开发功能的contextBridge需要contextIsolation为true。
-                contextIsolation: true,
+                // // 需要设置contextIsolation属性为false。
+                // // 但是使用某些api，比如拖拽开发功能的contextBridge需要contextIsolation为true。
+                contextIsolation: false,
+                enableRemoteModule: true,
                 preload: path.join(__dirname, './preload.js'),
             },
             frame: false,

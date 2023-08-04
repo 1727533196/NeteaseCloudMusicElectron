@@ -123,7 +123,6 @@ export default defineComponent({
       }
     }
 
-
     const router = useRouter()
     const singerDetail = (id: number) => {
       router.push(`/singer-page?id=${id}`)
@@ -146,6 +145,7 @@ export default defineComponent({
 
     const loadingDiretive = resolveDirective('loading')!
     const input = resolveComponent('ElInput')
+    const elImage = resolveComponent('ElImage')
     const val = ref('')
 
     return () => {
