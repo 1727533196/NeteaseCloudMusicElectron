@@ -14,7 +14,7 @@ import MusicDetail from '@/components/MusicDetail/index.vue'
 import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/index.vue'
 import Login from '@/components/Login/index.vue'
 import {useUserInfo} from "@/store";
-import {parseYrc} from "@/utils";
+import PlayListDrawer from '@/components/PlayListDrawer/index.vue'
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
@@ -23,13 +23,16 @@ const music = useMusicAction()
 const flags = useFlags()
 const route = useRoute()
 const store = useUserInfo()
-
 // 初始化全局属性
 onMounted(() => {
   if(audioInstance.value !== undefined) {
     window.$audio = audioInstance.value!
+    console.log(window.$audio)
   }
   window.$login = login.value!
+  document.addEventListener('click', () => {
+    flags.isOpenDrawer = false
+  })
 })
 getUserAccountFn()
 
@@ -39,6 +42,7 @@ getUserAccountFn()
   <div id="opacity-bg" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
   <div id="opacity-bg1" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
   <MusicDetail v-model="flags.isOpenDetail"/>
+  <PlayListDrawer v-model="flags.isOpenDrawer"/>
   <div style="height: calc(100% - 75px);position: relative;z-index: auto">
     <div id="box">
       <Aside></Aside>

@@ -4,18 +4,12 @@ import {Columns} from "@/components/SongList/index.vue";
 
 export const columns: Columns[] = [
   {
-    title: '',
+    title: '#',
     width: '45px',
     type: 'index',
     class: 'empty',
   },
-  {
-    title: '',
-    width: '45px',
-    type: 'handle',
-    class: 'handle',
-    icon: ['love'],
-  },
+
   {
     title: '标题',
     prop: 'name',
@@ -24,20 +18,20 @@ export const columns: Columns[] = [
     type: 'title',
   },
   {
-    title: '歌手',
-    prop: 'ar',
-    width: '20%',
-    class: 'singer',
-    type: 'singer',
-  },
-  {
     title: '专辑',
     prop: 'al.name', // 嵌套取值
     width: '20%',
     class: 'album',
   },
   {
-    title: '时间',
+    title: '喜欢',
+    width: '45px',
+    type: 'handle',
+    class: 'handle',
+    icon: ['love'],
+  },
+  {
+    title: '时长',
     prop: 'dt',
     width: '10%',
     class: 'time',

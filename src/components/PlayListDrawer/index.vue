@@ -1,0 +1,105 @@
+<script setup lang="ts">
+import SongList from "@/components/SongList/index.vue";
+import {computed} from "vue";
+import {columns} from "@/components/PlayListDrawer/config";
+import {playListState} from "@/layout/BaseAside/usePlayList";
+import {useMusicAction} from "@/store/music";
+import {useTheme} from "@/store/theme";
+
+interface Props {
+  modelValue: boolean
+}
+const props = defineProps<Props>()
+const emit = defineEmits(['update:modelValue'])
+const music = useMusicAction()
+const theme = useTheme()
+
+const setModelValue = computed({
+  get() {
+    return props.modelValue
+  },
+  set(val) {
+    emit('update:modelValue', val)
+  }
+})
+console.log(theme)
+
+</script>
+
+<template>
+  <div @click.stop :style="{backgroundImage:music.currentItem.specialType === 5 ? '' : `linear-gradient(rgb(${theme.bgColor}) , rgb(19, 19, 26) )`}" :class="['drawer',{'open-drawer': setModelValue}]">
+    <div class="head">
+      <div class="left">
+        <span class="text">播放列表</span>
+        <span class="count">{{ playListState.playList.length }}</span>
+      </div>
+    </div>
+    <SongList
+      @play="music.getMusicUrlHandler"
+      :columns="columns"
+      :loading="playListState.loading"
+      :songs="music.songs"
+      :ids="music.runtimeIds"
+      :list="music.runtimeList.tracks || []"
+      :list-info="playListState.listInfo"
+      :lazy="true"
+      :is-need-title="false"
+      :scroll="true"
+    />
+  </div>
+</template>
+
+<style scoped lang="less">
+.drawer {
+  position: fixed;
+  z-index: 2006;
+  height: calc(100% - 200px);
+  width: 400px;
+  background-color: #13131a;
+  right: 0;
+  top: 90px;
+  border-radius: 15px 0 0 15px;
+  box-shadow: 0 5px 15px 5px rgba(0,0,0,0.3);
+  transform: translateX(120%);
+  //visibility: hidden;
+  transition: 0.4s;
+  overflow: hidden;
+  //overflow: auto;
+  .head {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    //background-color: #13131a;
+    .left {
+      .text {
+        font-size: 18px;
+        color: white;
+      }
+      .count {
+        color: @darkText;
+        font-size: 14px;
+        position: relative;
+        left: 2px;
+        top: -3px;
+      }
+    }
+  }
+  :deep(.container) {
+    padding: 10px 10px;
+    margin-top: 0;
+    height: calc(100% - 60px);
+    .list {
+      justify-content: space-between;
+      padding: 20px;
+    }
+  }
+
+}
+.open-drawer.drawer {
+  //visibility: visible;
+  transform: translateX(0%);
+}
+
+</style>

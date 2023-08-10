@@ -4,7 +4,6 @@ import RankingList from './components/RankingList.vue'
 import SongMenu from './components/SongMenu.vue'
 import Singer from './components/Singer.vue'
 import NewestMusic from './components/NewestMusic.vue'
-import {Component} from "vue";
 
 export const tabsConfig = [
   {

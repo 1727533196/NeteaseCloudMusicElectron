@@ -38,13 +38,15 @@ const goIsDisable = computed(() => {
 
 <template>
   <div :class="['window-container', {'no-drag':flags.isOpenSearch}]">
-    <div class="left no-drag"></div>
-    <div class="center no-drag">
+    <div class="left no-drag">
       <div class="flip">
         <el-icon :class="{disable: backIsDisable}" @click="back"><ArrowLeft /></el-icon>
         <el-icon :class="{disable: goIsDisable}" @click="go"><ArrowRight /></el-icon>
       </div>
       <Search/>
+    </div>
+    <div class="center no-drag">
+
     </div>
     <div class="right no-drag">
       <div class="operator">
@@ -64,8 +66,9 @@ const goIsDisable = computed(() => {
 
 <style lang="less" scoped>
 .window-container {
-  height: 60px;
+  height: 70px;
   width: 100%;
+  padding-top: 30px;
   position: relative; // 子元素 的 z-index 小于父元素时，仍然显示在 父元素 上面: 父元素position:relative;z-index:1,子元素position:开启定位;z-index:10，就可以做到子元素在父元素之上了
   top: 0;
   z-index: 10  ;
@@ -75,35 +78,38 @@ const goIsDisable = computed(() => {
   align-items: center;
   justify-content: space-between;
   .left {
-    //background-image: url("@/assets/bg-logo.png");
-    width: 0px;
-    height: 30px;
-    .bgSetting();
-    cursor: pointer;
-    margin-left: 15px;
-  }
-  .center {
     margin-right: 20%;
     display: flex;
     align-items: center;
+    //width: 0px;
+    //height: 30px;
+    //.bgSetting();
+    //cursor: pointer;
+    margin-left: 35px;
     .flip {
       display: flex;
       align-items: center;
-      margin-right: 20px;
+      margin-right: 15px;
       justify-content: space-between;
-      width: 60px;
+      width: 65px;
       .el-icon {
         cursor: pointer;
-        background-color: rgba(255,255,255,0.01);
-        border-radius: 50%;
-        height: 25px;
-        width: 25px;
+        //background-color: rgba(255,255,255,0.01);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        width: 27px;
+        height: 37px;
+        font-weight: 800;
       }
       .disable.el-icon {
         cursor: default;
         color: @moreDark;
       }
     }
+  }
+  .center {
+
+
   }
   .right {
     margin-right: 15px;
@@ -118,12 +124,19 @@ const goIsDisable = computed(() => {
       .handler {
         margin-right: 20px;
         cursor: pointer;
+        color: @text;
         &:hover {
           color: rgb(30,204,148);
         }
       }
       .iconfont.icon-weibiaoti- {
-        font-size: 29px;
+        font-size: 25px;
+      }
+      .iconfont.icon-guanbi {
+        font-size: 14px;
+      }
+      .iconfont.icon-3zuidahua-1 {
+        font-size: 14px;
       }
     }
 

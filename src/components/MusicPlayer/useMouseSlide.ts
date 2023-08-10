@@ -5,7 +5,7 @@ import {useMusicAction} from "@/store/music";
 
 export interface State {
   width: number // 当前进度条的百分比进度
-  height: number // 当前音量高度百分比
+  volumeWidth: number // 当前音量高度百分比
   progress: boolean // 鼠标是否进入进度条
   volume: boolean // 鼠标是否进入音量调节
   left: number
@@ -23,7 +23,7 @@ export default (audio: Ref<HTMLAudioElement>,
   const store = useUserInfo()
   const state = reactive<State>({
     width: 0,
-    height: 0,
+    volumeWidth: 0,
     progress: false,
     volume: false,
     left: 0,
@@ -39,7 +39,7 @@ export default (audio: Ref<HTMLAudioElement>,
   // 初始化
   watch(audio, (value) => {
     const volume = Number(localStorage.getItem('volume') || 1)
-    state.height = volume * 100
+    state.volumeWidth = volume * 100
     value.volume = volume
     state.isMute = volume === 0
   })
@@ -56,7 +56,7 @@ export default (audio: Ref<HTMLAudioElement>,
   const volumeHandler = (target: boolean) => {
     const volume = Number(sessionStorage.getItem('volume') || localStorage.getItem('volume') || 1)
     state.isMute = target
-    state.height = target ? 0 : volume * 100
+    state.volumeWidth = target ? 0 : volume * 100
     audio.value!.volume = target ? 0 : volume
     sessionStorage.setItem('ectype_volume', String(audio.value!.volume))
     store.volume = audio.value!.volume
@@ -76,9 +76,10 @@ export default (audio: Ref<HTMLAudioElement>,
       state.width = (x / plan.value!.plan.offsetWidth) * 100;
       audio.value!.currentTime = state.width * audio.value!.duration / 100
     } else if(target === 'volume') {
-      const y = Math.abs(e.clientY - volume.value!.volume.getBoundingClientRect().bottom);
-      state.height = y / volume.value!.volume.offsetHeight * 100
-      audio.value!.volume = y / volume.value!.volume.offsetHeight
+      const y = Math.abs(e.clientX - volume.value!.volume.getBoundingClientRect().left);
+      state.volumeWidth = y / volume.value!.volume.offsetWidth * 100
+      console.log(state.volumeWidth, e)
+      audio.value!.volume = y / volume.value!.volume.offsetWidth
       clearTimeout(timer)
       timer = setTimeout(() => {
         localStorage.setItem('volume', String(audio.value!.volume))
@@ -93,7 +94,7 @@ export default (audio: Ref<HTMLAudioElement>,
     if(target === 'progress') {
       state.left = e.clientX - plan.value!.plan.offsetLeft
     } else if(target === 'volume') {
-      state.top = e.clientY
+      // state.top = e.clientX - plan.value!.plan.offsetLeft
       state.volume = true
     }
     isDown.value = true
@@ -110,10 +111,10 @@ export default (audio: Ref<HTMLAudioElement>,
       const width = ((e.clientX - offsetLeft) / offsetWidth * 100)
       state.width = width >= 100 ? 100 : width
     } else if(state.current === 'volume') {
-      const {offsetHeight} = volume.value!.volume
-      const height = Math.min((volume.value!.volume.getBoundingClientRect().bottom - e.clientY) / offsetHeight * 100, 100)
-      state.height = height < 0 ? 0 : height
-      audio.value!.volume = state.height / 100
+      const {offsetWidth} = volume.value!.volume
+      const width = Math.min((volume.value!.volume.getBoundingClientRect().left - e.clientX) / offsetWidth * 100, 100)
+      state.volumeWidth = width < 0 ? 0 : width
+      audio.value!.volume = state.volumeWidth / 100
     }
   })
   document.addEventListener('mouseup', (e) => {

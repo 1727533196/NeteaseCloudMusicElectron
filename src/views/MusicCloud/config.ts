@@ -4,17 +4,10 @@ import {GetMusicDetailData} from "@/api/musicList";
 
 export const columns: Columns[] = [
   {
-    title: '',
+    title: '#',
     width: '45px',
     type: 'index',
     class: 'empty',
-  },
-  {
-    title: '',
-    width: '45px',
-    type: 'handle',
-    class: 'handle',
-    icon: ['love'],
   },
   {
     title: '标题',
@@ -22,13 +15,6 @@ export const columns: Columns[] = [
     width: '40%',
     class: 'title',
     type: 'title',
-  },
-  {
-    title: '歌手',
-    prop: 'ar',
-    width: '20%',
-    class: 'singer',
-    type: 'singer',
   },
   {
     title: '专辑',

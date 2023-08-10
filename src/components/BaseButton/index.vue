@@ -39,8 +39,8 @@ const emit = defineEmits(['click'])
   }
 }
 .btn.default {
-  //border: 0.5px solid rgb(70,70,70);
-  background-color: rgb(33,33,39);
+  border: 1px solid rgba(255,255,255,0.1);
+  background-color: rgba(255,255,255, 0.05);
   &:hover {
     background-color: rgba(255,255,255,0.1);
   }

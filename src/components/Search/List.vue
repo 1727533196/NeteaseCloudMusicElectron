@@ -76,7 +76,7 @@ const config = {
     align-items: center;
     height: 60px;
     cursor: pointer;
-    padding: 0 25px;
+    padding: 0 35px;
     &:hover {
       background-color: rgba(0,0,0,0.05);
     }

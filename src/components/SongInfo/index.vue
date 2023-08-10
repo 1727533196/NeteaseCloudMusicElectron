@@ -62,7 +62,7 @@ watch(() => music.currentItem.coverImgUrl, (val) => {
 <style lang="less" scoped>
 .list-info {
   display: flex;
-  padding: 0 25px;
+  padding: 0 35px;
 
   .left {
     //background-image: url("https://p1.music.126.net/9GAbSb_hlXPu66HWInJOww==/109951162846052486.jpg");

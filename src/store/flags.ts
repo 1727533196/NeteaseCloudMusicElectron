@@ -9,6 +9,7 @@ export const useFlags = defineStore("flagsId", {
       isOpenDetail: false, // 是否打开歌曲详情页面
       isOpenSearch: false, // 搜索框是否被打开
       maxCount: 0, // 页面层级, 前进返回使用
+      isOpenDrawer: false, // 播放列表抽屉是否打开
     }
   },
 })

@@ -5,11 +5,12 @@ import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
 import {GetMusicDetailData} from "@/api/musicList";
 import {formattingTime} from "@/utils";
 import CurrentTime from './compoents/CurrentTime.vue';
-import Volume from './compoents/Volume.vue'
+// import Volume from './compoents/Volume.vue'
 import useMusic from "@/components/MusicPlayer/useMusic";
 import {useFlags} from "@/store/flags";
 import {useMusicAction} from "@/store/music";
 import {useRouter} from "vue-router";
+import Volume from './Volume.vue'
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -179,7 +180,9 @@ Object.defineProperty(exposeObj, 'time', {
 defineExpose(exposeObj)
 
 
-
+const openDrawer = () => {
+  flags.isOpenDrawer = !flags.isOpenDrawer
+}
 
 </script>
 
@@ -248,20 +251,24 @@ defineExpose(exposeObj)
       </div>
     </div>
     <div class="right">
-      <div v-if="props.songs.ar" class="current-time">{{ formattingTime(music.currentTime * 1000) }}</div>
-      <span style="margin: 0 5px;line-height: 15px">/</span>
-      <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
-      <Volume
-        ref="volume"
-        :mouse-state="mouseState"
-        :mousedown-handler="mousedownHandler"
-        :mouseenter-handler="mouseenterHandler"
-        :mouseleave-handler="mouseleaveHandler"
-        :mouseup-handler="mouseupHandler"
-        :circle-down="circleDown"
-        :volume-handler="volumeHandler"
-        :songs="props.songs"
-      />
+      <div style="display:flex;">
+        <div v-if="props.songs.ar" class="current-time">{{ formattingTime(music.currentTime * 1000) }}</div>
+        <span style="margin: 0 5px;line-height: 15px">/</span>
+        <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
+      </div>
+      <el-icon @click.stop="openDrawer" class="list"><Expand /></el-icon>
+      <Volume :audio="audio"></Volume>
+<!--      <Volume-->
+<!--        ref="volume"-->
+<!--        :mouse-state="mouseState"-->
+<!--        :mousedown-handler="mousedownHandler"-->
+<!--        :mouseenter-handler="mouseenterHandler"-->
+<!--        :mouseleave-handler="mouseleaveHandler"-->
+<!--        :mouseup-handler="mouseupHandler"-->
+<!--        :circle-down="circleDown"-->
+<!--        :volume-handler="volumeHandler"-->
+<!--        :songs="props.songs"-->
+<!--      />-->
     </div>
   </div>
 </template>
@@ -467,12 +474,17 @@ defineExpose(exposeObj)
   }
 
   .right {
-    width: 25%;
+    width: 27%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     .current-time, .total-time {
       color: @text;
       font-size: 12px;
+    }
+    .list {
+      font-size: 20px;
+      cursor: pointer;
     }
   }
 

@@ -105,15 +105,14 @@ export function parseYrc(yrc: string) {
     line: 0,
     yrc: [],
   }
-  // {"t":0,"c":[{"tx":"作词: "},{"tx":"伍佰","li":".jpg","or":"orpheus:artist"},{"tx":"/"},{"tx":"徐克"}]}
-  // {"t":15370,"c":[{"tx":"作曲: "},{"tx":"伍佰","li":"164932837071.jpg","or":"artist"}]}
+
   let startIndex = 0
   let endIndex = 0
-  let present = ''
-  let index = 1
+  let present = '' // 当前扫描到的标识
+  let index = 1 // 每行歌词的index
+  let startCount = 0 // 当前扫描到的{数量
+  let endCount = 0 // 当前扫描到的}数量
   let isEnd = true
-  let startCount = 0
-  let endCount = 0
   for (let i = 0; i < yrc.length; i++) {
     const target = yrc[i]
     if(target === '{') {
@@ -149,6 +148,10 @@ export function parseYrc(yrc: string) {
         temp.cursor = str.t / 1000
         obj.yrc = [temp]
         result.push(obj)
+        if(index === 3) {
+          result[0].duration = obj.time
+          result[0].yrc[0].transition = obj.time
+        }
       }
 
     } else if(target === '[' && isEnd) {
@@ -174,22 +177,8 @@ export function parseYrc(yrc: string) {
     } else if(target === ')' && isEnd) {
       endIndex = i
       const timeArr = yrc.slice(startIndex+1, endIndex).split(',')
-      // console.log(yrc)
       let text: string = yrc[i+1]
       let isBlank = false
-
-      // for (;i < yrc.length; i++) {
-      //   const target = yrc[i]
-      //   if(['[', '('].includes(target)) {
-      //     console.log(yrc.slice(endIndex + 1, i), endIndex+1, i);
-      //     text = yrc.slice(endIndex+1, i)
-      //     if(i - (endIndex+1) > 1 && target !== '[') {
-      //       isBlank = true
-      //     }
-      //     i--
-      //     break
-      //   }
-      // }
 
       obj.yrc.push({
         text: text,
@@ -198,8 +187,6 @@ export function parseYrc(yrc: string) {
         width: 0,
         isBlank,
       })
-      // i++
-
     }
 
   }

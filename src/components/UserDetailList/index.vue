@@ -10,7 +10,7 @@ import AdaptiveList from '@/components/AdaptiveList/index.vue'
 type List = {label: string, name: string}[]
 interface Props {
   list: List
-  modelValue: string
+  modelValue: boolean
   playList: PlayList[]
   userId: number
   loading: boolean

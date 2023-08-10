@@ -17,6 +17,7 @@ declare module '@vue/runtime-core' {
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElSlider: typeof import('element-plus/es')['ElSlider']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     List: typeof import('./src/components/Search/List.vue')['default']
@@ -25,6 +26,7 @@ declare module '@vue/runtime-core' {
     MusicDetail: typeof import('./src/components/MusicDetail/index.vue')['default']
     MusicPlayer: typeof import('./src/components/MusicPlayer/index.vue')['default']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']
+    PlayListDrawer: typeof import('./src/components/PlayListDrawer/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Search: typeof import('./src/components/Search/index.vue')['default']
@@ -34,7 +36,7 @@ declare module '@vue/runtime-core' {
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     UserDetailCard: typeof import('./src/components/UserDetailCard/index.vue')['default']
     UserDetailList: typeof import('./src/components/UserDetailList/index.vue')['default']
-    Volume: typeof import('./src/components/MusicPlayer/compoents/Volume.vue')['default']
+    Volume: typeof import('./src/components/MusicPlayer/Volume.vue')['default']
   }
 }
 

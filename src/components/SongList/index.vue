@@ -15,7 +15,7 @@ export interface Columns {
   on?: object
   style?: object
   width?: string
-  type?: 'index' | 'handle' | 'singer' | 'title' | 'album'
+  type?: 'index' | 'handle' | 'title' | 'album'
   class?: string
   processEl?: (createVNode: typeof h, arg: any, index: number) => any
 }
@@ -29,6 +29,7 @@ interface Props {
   ids?: number[] // 歌曲id列表
   listInfo?: PlayList // 歌单信息
   scroll?: boolean // 是否显示滚动条
+  lazy?: boolean // 图片懒加载
 }
 
 export const indiviEl = (config: Columns, type: 1 | 2,value: any) => {
@@ -78,6 +79,14 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    lazy: { // 是否启用图片懒加载
+      type: Boolean,
+      default: true,
+    },
+    isNeedTitle: { // 是否需要标题
+      type: Boolean,
+      default: true,
+    }
   },
   emits: ['play', 'current-change', 'update:modelValue'], // 播放歌曲
   setup(props, {emit, attrs}) {
@@ -136,12 +145,33 @@ export default defineComponent({
         onCurrentChange: (page: number) => emit('current-change', page),
       }) : ''
     }
+    const renderSinger = (data: GetMusicDetailData, config: Columns) => {
+      if(!data.ar) {
+        return indiviEl(config, 2, data.artist)
+      }
+      const len = data.ar.length - 1
+      return h('div', data.ar.map((ar, index) => {
+        return [h('span', {
+          onClick: () => ar.id && singerDetail(ar.id),
+          class: [ar.id && 'name'],
+          style: {cursor: ar.id ? 'pointer' : 'default', color: ar.id ? '' : 'rgba(150, 150, 150, 0.60)'}
+        }, ar.name || data.artist || '未知艺人'), (index < len ? ' / ' : '')]
+      }))
+    }
 
     watch(() => props.loading, (val) => {
       if(props.isLoadingEndflyback && val) {
         document.querySelector('.main')!.scrollTop = 0
       }
     })
+    const renderTitle = () => {
+      if(!props.isNeedTitle) {
+        return ''
+      }
+      return h('div', {class:'title-container', style: {}}, props.columns.map(config => {
+        return indiviEl(config, 1, config.title)
+      }))
+    }
 
     const loadingDiretive = resolveDirective('loading')!
     const input = resolveComponent('ElInput')
@@ -160,9 +190,7 @@ export default defineComponent({
           //   modelValue: val.value,
           //   'onUpdate:modelValue': (value: string) => emit('update:modelValue', value)
           // }),
-          h('div', {class:'title-container', style: {}}, props.columns.map(config => {
-            return indiviEl(config, 1, config.title)
-          })),
+          renderTitle(),
           h('div', {class:'list-container'}, props.list.map((data, i) => {
             return h('div', {
               ondblclick: () => playHandler(data, i),
@@ -192,29 +220,34 @@ export default defineComponent({
               else if(config.type) {
                 if(config.type === 'index') {
                   return indiviEl(config, 2, formatCount(props.isPaging
-                    ? props.pageSize * (props.currentPage-1) + (i + 1) :
-                    i + 1)
+                      ? props.pageSize * (props.currentPage-1) + (i + 1) :
+                      i + 1)
                   )
-                } else if(config.type === 'singer') {
-                  if(!data.ar) {
-                    return indiviEl(config, 2, data.artist)
-                  }
-                  const len = data.ar.length - 1
-                  return indiviEl(config, 2, data.ar.map((ar, index) => {
-                    return [h('span', {
-                      onClick: () => ar.id && singerDetail(ar.id),
-                      class: [ar.id && 'name'],
-                      style: {cursor: ar.id ? 'pointer' : 'default', color: ar.id ? '' : 'rgba(150, 150, 150, 0.60)'}
-                    }, ar.name || data.artist || '未知艺人'), (index < len ? ' / ' : '')]
-                  }))
                 } else if(config.type === 'title') {
-                  return indiviEl({
+                  return [ indiviEl({
                     ...config,
                     style: {
                       ...config.style,
                       color: activeText(data) ? 'rgb(255,60,60)' : ''
                     }
-                  }, 2, lookup(data, config.prop))
+                  }, 2, [h('div',{class: 'title-box'},[
+                        h(elImage, {
+                          src: (data.al || {}).picUrl,
+                          class: 'pic-url',
+                          lazy: config.lazy,
+                        }),
+                        h('div', {class:'name-box'},[
+                          h('div', {
+                            style: {
+                              color: activeText(data) ? 'rgb(255,60,60)' : ''
+                            }
+                          }, lookup(data, config.prop)),
+                          renderSinger(data, config),
+                        ])
+
+                      ]
+                  )
+                  ])]
                 } else if(config.type === 'album') {
                   return indiviEl(config, 2, lookup(data, config.prop) || '未知专辑')
                 }
@@ -242,6 +275,7 @@ export default defineComponent({
   margin-top: 20px;
   flex: 1;
   position: relative;
+  padding: 35px;
   .loading {
     position: absolute;
     z-index: 99;
@@ -258,6 +292,11 @@ export default defineComponent({
       }
     }
   }
+  .title-item.empty {
+    position: relative;
+    top: 2px;
+    left: 2px;
+  }
   .empty {
     width: 50px;
   }
@@ -270,19 +309,9 @@ export default defineComponent({
     color: @text;
     margin-right: 40% - 38px;
     .textOverflow();;
+    //margin-right: 20% - 19px;
   }
-  .singer {
-    width: 20%;
-    .textOverflow();;
-    margin-right: 20% - 19px;
-    .name {
-      cursor: pointer;
-      &:hover {
-        color: @text;
-      }
-    }
 
-  }
   .album {
     width: 20%;
     .textOverflow();;
@@ -292,11 +321,11 @@ export default defineComponent({
     width: 10%;
   }
   .title-container {
-    padding: 0 25px;
     display: flex;
     font-size: 14px;
     height: 35px;
     color: @darkText;
+    padding: 0 20px;
     justify-content: space-around;
     .title-item {
       text-align: left;
@@ -306,14 +335,41 @@ export default defineComponent({
     }
   }
   .list {
-    padding: 0 25px;
     justify-content: space-around;
     font-size: 14px;
-    //font-weight: 800;
     display: flex;
-    height: 35px;
+    height: 70px;
     color: @darkText;
     align-items: center;
+    padding: 0 20px;
+    .title-box {
+      display: flex;
+      .pic-url {
+        height: 50px;
+        width: 50px;
+        border-radius: 8px;
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+      .name-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        .title {
+          color: @text;
+        }
+        >div {
+          .textOverflow();
+        }
+      }
+
+    }
+    .name {
+      cursor: pointer;
+      &:hover {
+        color: @text;
+      }
+    }
     .item {
       text-align: left;
     }
@@ -332,12 +388,9 @@ export default defineComponent({
       }
     }
 
-    .title {
-      color: @text;
-    }
-
     &:hover {
       background-color: rgba(255, 255, 255, 0.06) !important;
+      border-radius: 10px;
     }
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {useRouter} from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import useSearch from "@/components/Search/useSearch";
@@ -20,10 +20,12 @@ const {search} = useSearch()
 const flags = useFlags()
 const model = ref<'hot' | 'keywords'>("hot")
 const music = useMusicAction()
+const searchContainerEl = ref<HTMLDivElement>()
 
 const searchHandler = (item: string | object, key?: 'allMatch' | 'songs' | 'artists' | 'albums' | 'playlists') => {
   console.log('111-->', 111, key, model.value, item)
 
+  showSuggest.value = false
   if(model.value === "hot") {
     router.push(`/search?key=${item.searchWord}`)
   } else {
@@ -37,6 +39,8 @@ const searchHandler = (item: string | object, key?: 'allMatch' | 'songs' | 'arti
       router.push(`/play-list?id=${item.id}&type=album`)
     } else if(key === "playlists") {
       router.push(`/play-list?id=${item.id}`)
+    } else {
+      router.push(`/search?key=${item}`)
     }
   }
 }
@@ -113,7 +117,7 @@ const getSearchSuggest = async (keywords: string) => {
 </script>
 
 <template>
-  <div class="search-container">
+  <div @keyup.enter="searchHandler(keywords)" ref="searchContainerEl" class="search-container">
     <el-icon
       @click="searchHandler(keywords)"
       class="search-icon"
@@ -130,6 +134,7 @@ const getSearchSuggest = async (keywords: string) => {
       @input="inputHandler"
       class="search"
       placeholder="林俊杰"
+
     />
     <div v-loading="loading" v-show="showSuggest" class="suggest">
       <List :model="model" @click="searchHandler" :keywordsList="state.keywordsList" :list="state.scoreList"/>
@@ -142,10 +147,14 @@ const getSearchSuggest = async (keywords: string) => {
   position: relative;
   padding: 0 15px;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.06);
+  //background-color: rgba(255, 255, 255, 0.06);
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  input::-webkit-input-placeholder {
+    color: white;
+  }
 
   .search-icon {
     position: relative;
@@ -169,13 +178,13 @@ const getSearchSuggest = async (keywords: string) => {
     position: absolute;
     border-radius: 10px;
     width: 400px;
-    height: 77vh;
+    max-height: 77vh;
     background-color: rgb(45,45,56);
     transform: translateX(-50%) translateY(100%);
     left: 50%;
     bottom: -3vh;
     z-index: 10;
-    overflow: hidden;
+    overflow: auto;
     .el-loading-mask {
       background: transparent;
     }

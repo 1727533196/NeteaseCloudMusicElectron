@@ -41,6 +41,7 @@ export const useMusicAction = defineStore('musicActionId', {
       // {time: number(s), text: string}
       if(yrc && yrc.lyric) {
         this.lyric = parseYrc(yrc.lyric)
+        console.log(this.lyric)
         this.lrcMode = 1
       } else {
         this.lyric = formatLyric(lrc.lyric)

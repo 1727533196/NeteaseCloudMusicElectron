@@ -29,10 +29,16 @@ defineExpose({
     @mouseenter="props.mouseenterHandler('volume')"
     class="volume-container"
   >
+    <i
+      v-if="!props.mouseState.isMute"
+      @click="props.volumeHandler(true)"
+      class="iconfont icon-yinliang"/>
+    <i
+      v-else
+      @click="props.volumeHandler(false)"
+      class="iconfont icon-jingyin"/>
     <div
       @mouseup="mouseupHandler"
-      v-show="props.mouseState.volume"
-      :style="{height: 100+'px'}"
       class="layer"
     >
       <div
@@ -42,7 +48,7 @@ defineExpose({
         class="progress"
       >
         <div
-          :style="{height: props.mouseState.height +'%', borderRadius: props.mouseState.progress ? '5px' : ''}"
+          :style="{width: props.mouseState.volumeWidth +'%', borderRadius: props.mouseState.progress ? '5px' : ''}"
           class="progress-bar"
         >
           <div
@@ -51,77 +57,44 @@ defineExpose({
           ></div>
         </div>
       </div>
-      <div class="triangle"/>
     </div>
-    <i
-      v-if="!props.mouseState.isMute"
-      @click="props.volumeHandler(true)"
-      class="iconfont icon-yinliang"/>
-    <i
-      v-else
-      @click="props.volumeHandler(false)"
-      class="iconfont icon-jingyin"/>
   </div>
 </template>
 
 <style lang="less" scoped>
 .volume-container {
-  margin-left: 110px;
+  margin-left: 50px;
   position: relative;
-  width: 20px;
+  //width: 20px;
   display: flex;
-  justify-content: center;
-  padding-top: 20px;
+  align-items: center;
+  justify-content: space-around;
+  width: 130px;
   .layer {
-    background-color: rgb(37,37,37);
-    height: 0;
-    padding: 10px 0;
+    height: 5px;
     box-sizing: border-box;
-    width: 30px;
+    width: 90px;
     border-radius: 5px;
-    border: 1px solid rgb(47,47,47);
-    position: absolute;
-    box-shadow: #00000019 0 0 5px 5px;
-    top: -115px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    .block {
-      height: 20px;
-      width: 30px;
-      position: absolute;
-      bottom: -30px;
-    }
-    .triangle {
-      position: absolute;
-      padding-bottom: 20px;
-      bottom: -33px;
-      width: 0px;
-      height: 0px;
-      border: 6px solid #000;
-      border-top-color: rgb(50,50,50);
-      border-bottom-color: transparent;
-      border-left-color: transparent;
-      border-right-color: transparent;
-    }
     .progress {
-      width: 3px;
-      background-color: rgb(73,73,76);
-      height: 100%;
+      width: 90px;
+      background-color: rgba(255,255,255, 0.1);
+      height: 5px;
       position: relative;
+      border-radius: 5px;
     }
     .progress-bar {
-      position: absolute;
-      height: 100%;
+      position: relative;
+      height: 5px;
       background-color: rgb(236,65,65);
       z-index: 2;
-      width: 3px;
+      width: 90px;
       bottom: 0;
+      border-radius: 5px;
       .circle {
         position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-46%);
+        right: -7px;
+        top: 50%;
+        transform: translateY(-50%);
         height: 10px;
         width: 10px;
         border-radius: 50%;
@@ -134,9 +107,9 @@ defineExpose({
   }
   .iconfont {
     cursor: pointer;
-    transform: translateY(-50%);
-    position: absolute;
-    top: 50%;
+    //transform: translateY(-50%);
+    //position: absolute;
+    //top: 50%;
     color: @text;
   }
   .iconfont:hover {
