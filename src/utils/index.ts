@@ -118,7 +118,7 @@ export function parseYrc(yrc: string) {
     if(target === '{') {
       if(isEnd) {
         startIndex = i
-        obj = { time: 0, duration: 0, line: 0, yrc: [] }
+        // obj = { time: 0, duration: 0, line: 0, yrc: [] }
       }
       startCount++
       isEnd = false
@@ -131,27 +131,27 @@ export function parseYrc(yrc: string) {
         isEnd = true
         startCount = 0
         endCount = 0
-        const str = JSON.parse(yrc.slice(startIndex, endIndex + 1)) as info
-        obj.time = str.t / 1000
-        obj.duration = str.t / 1000
-        obj.line = index++
-        let temp = {
-          text: '',
-          transition: 0,
-          cursor: 0,
-        }
-        str.c.forEach(item => {
-          temp.text += item.tx
-
-        })
-        temp.transition = index === 2 ? str.t : (str.t / 1000) - result[index - 3].time
-        temp.cursor = str.t / 1000
-        obj.yrc = [temp]
-        result.push(obj)
-        if(index === 3) {
-          result[0].duration = obj.time
-          result[0].yrc[0].transition = obj.time
-        }
+        // const str = JSON.parse(yrc.slice(startIndex, endIndex + 1)) as info
+        // obj.time = str.t / 1000
+        // obj.duration = str.t / 1000
+        // obj.line = index++
+        // let temp = {
+        //   text: '',
+        //   transition: 0,
+        //   cursor: 0,
+        // }
+        // str.c.forEach(item => {
+        //   temp.text += item.tx
+        //
+        // })
+        // temp.transition = index === 2 ? str.t : (str.t / 1000) - result[index - 3].time
+        // temp.cursor = str.t / 1000
+        // obj.yrc = [temp]
+        // result.push(obj)
+        // if(index === 3) {
+        //   result[0].duration = obj.time
+        //   result[0].yrc[0].transition = obj.time
+        // }
       }
 
     } else if(target === '[' && isEnd) {

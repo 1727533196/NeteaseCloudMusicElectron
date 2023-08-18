@@ -66,12 +66,13 @@ const goIsDisable = computed(() => {
 
 <style lang="less" scoped>
 .window-container {
-  height: 70px;
+  height: 90px;
   width: 100%;
   padding-top: 30px;
+  padding-bottom: 20px;
   position: relative; // 子元素 的 z-index 小于父元素时，仍然显示在 父元素 上面: 父元素position:relative;z-index:1,子元素position:开启定位;z-index:10，就可以做到子元素在父元素之上了
   top: 0;
-  z-index: 10  ;
+  z-index: auto;
   //background-color: @bgColor;
   //border-bottom: 2px rgb(176,34,34) solid;
   display: flex;

@@ -430,6 +430,9 @@ function runHig(index: number, lastIndex: number) {
     padding: 10px;
     font-size: 20px;
     cursor: pointer;
+    //border: 1px solid rgba(255, 255, 255, 0.1);
+    //background-color: rgba(255, 255, 255, 0.05);
+    //border-radius: 10px;
   }
   // 这里使用fixed是为了让高度固定, 如果参考container的高度,会导致在过渡过程中图片按比例缩放
   .music-detail-container {
@@ -491,7 +494,7 @@ function runHig(index: number, lastIndex: number) {
           .move-box {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            //align-items: center;
             position: absolute;
             width: 100%;
             top: 30%;
@@ -504,17 +507,20 @@ function runHig(index: number, lastIndex: number) {
               border-radius: 10px;
               display: flex;
               align-items: center;
-              justify-content: center;
+              //justify-content: center;
               text-align: center;
               margin: 3px 0;
               transition: 0.5s font-size;
+              flex-wrap: wrap;
+              color: rgba(255, 255, 255, 0.3);
+              font-size: 23px;
               &:hover {
                 background-color: rgba(255,255,255,0.05);
               }
               .transition {
                 left: 0;
                 position: absolute;
-                color: rgb(30,204,148);
+                color: white;
                 width: 0;
                 overflow: hidden;
                 z-index: 99;
@@ -525,7 +531,7 @@ function runHig(index: number, lastIndex: number) {
               height: 41px;
             }
             .lyric-item.current-lyric-item {
-              font-size: 18px;
+              //font-size: 18px;
             }
             .lyric-item.current-lyric-line-item {
               font-size: 18px;

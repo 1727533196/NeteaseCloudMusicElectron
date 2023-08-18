@@ -24,9 +24,9 @@ const clickSliderHandler = () => {
       <el-icon><ArrowRight /></el-icon>
     </div>
     <div class="subject">
-<!--      <div style="margin-right: calc(2vw - 10px)" class="item">-->
-<!--        <slot></slot>-->
-<!--      </div>-->
+      <div style="margin-right: calc(2vw - 10px)" class="item">
+        <slot></slot>
+      </div>
       <div
         class="item"
         :id="index+2"

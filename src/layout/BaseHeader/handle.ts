@@ -1,5 +1,5 @@
 import {useFlags} from "@/store/flags";
-import {ipcRenderer} from 'electron'
+// import {ipcRenderer} from 'electron'
 
 export const handle = () => {
   const flags = useFlags();

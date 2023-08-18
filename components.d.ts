@@ -20,7 +20,7 @@ declare module '@vue/runtime-core' {
     ElSlider: typeof import('element-plus/es')['ElSlider']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
-    List: typeof import('./src/components/Search/List.vue')['default']
+    List: typeof import('./src/components/List/index.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
     Login: typeof import('./src/components/Login/index.vue')['default']
     MusicDetail: typeof import('./src/components/MusicDetail/index.vue')['default']
