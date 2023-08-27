@@ -37,11 +37,17 @@ export function formatLyric(lyric: string) {
   // [00:24.46]春雨后太阳缓缓的露出笑容;  lyricArr[i].split(']') => ['[00:24.46', '春雨后太阳缓缓的露出笑容']
   // [03:05.32][01:28.24]这个夏天 融化了整个季节  => ['[03:05.32', '[01:28.24', '这个夏天 融化了整个季节']
   let isSort = false
+  let overlookCount = -1
   for (let i = 0; i < lyricArr.length; i++) {
+    if(lyricArr[i][0] === '{') {
+      overlookCount++
+      continue
+    }
     let lyricItem = lyricArr[i].split(']')
     const text = lyricItem.pop() as string
+    const index = i - overlookCount
     if(lyricItem[0] === undefined) {
-      result.push({ time: false, text: lyricArr[i], line: i+1 })
+      result.push({ time: false, text: lyricArr[i], line: index })
       result.notSupportedScroll = true
       continue
     }
@@ -50,11 +56,11 @@ export function formatLyric(lyric: string) {
       isSort || (isSort = true)
       for (let i = 0; i < lyricItem.length; i++) {
         const time = timeDeserialize(lyricItem[i].replace('[', ''))
-        result.push({ time, text, line: i+1 })
+        result.push({ time, text, line: index })
       }
     } else {
       const time = timeDeserialize(lyricItem[0].replace('[', ''))
-      result.push({ time, text, line: i+1 })
+      result.push({ time, text, line: index })
     }
   }
   if(isSort) {

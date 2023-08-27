@@ -41,15 +41,12 @@ export const useMusicAction = defineStore('musicActionId', {
       // {time: number(s), text: string}
       if(yrc && yrc.lyric) {
         this.lyric = parseYrc(yrc.lyric)
-        console.log(this.lyric)
         this.lrcMode = 1
       } else {
         this.lyric = formatLyric(lrc.lyric)
         this.lrcMode = 0
       }
-
-      // this.lyric = parseYrc(yrc.lyric)
-      // this.yrc = parseYrc(lrc.yrc)
+      console.log(this.lyric)
     },
     // 获取音乐url
     async getMusicUrlHandler(id: number, i?: number) {

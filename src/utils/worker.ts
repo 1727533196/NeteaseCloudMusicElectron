@@ -16,11 +16,5 @@ onmessage = function (event) {
       })
     })
   }
-  // if(!data.pause) {
-  //
-  // } else {
-  //   // 关闭上一次
-  //   pause && pause(true)
-  // }
 }
 

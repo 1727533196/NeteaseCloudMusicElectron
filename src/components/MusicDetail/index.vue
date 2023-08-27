@@ -5,7 +5,7 @@ import {formattingTime, toggleImg, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
 import {useFlags} from "@/store/flags";
 import MyWorker from "@/utils/worker.ts?worker"
-import ColorThief from 'colorthief'
+import {gradualChange} from './useMusic'
 
 interface Props {
   modelValue: boolean
@@ -48,6 +48,25 @@ const setModelValue = computed({
   }
 })
 
+let cut = false
+// 切换歌曲时
+watch(() => music.songs.id, (val, oldVal) => {
+  cut = true
+  index.value = 0
+  isUserWheel = false
+  yrcIndex = 0
+  nextTick(() => {
+    lyrEl.value!.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  })
+  worker.postMessage({
+    pause: true,
+    val: true,
+  })
+})
+
 function findLyric(time: number) {
   const result = music.lyric.find((item, index) => {
     if(index + 1 >= music.lyric.length) {
@@ -61,161 +80,46 @@ function moveLyric(currentLyr: Lyric) {
   currentLyrLine.value = currentLyr
   const lastIndex = index.value
 
-  index.value = currentLyr.line - 1
+  index.value = currentLyr.line
 
-  runHig(index.value, lastIndex)
+  runHig(index.value-1, lastIndex - 1)
   // 当用户操作滚动条时，不自动滚动
   if(!isUserWheel) {
     nextTick(() => {
-      const top = moveBox.value!.offsetTop / 4 + moveBox.value!.offsetTop
+      const top = moveBox.value!.offsetTop / 1.5 + moveBox.value!.offsetTop
       lyrEl.value!.scrollTo({
         top: currentLyrEl[0].offsetTop+top - (lyrEl.value!.clientHeight/2),
         behavior: 'smooth'
       })
-      // currentLyrEl[0].scrollIntoView({
-      //   block: 'center',
-      //   behavior: 'smooth',
-      // })
     })
   }
 }
 watch(() => music.currentTime, (currentTime, lastTime) => {
   if(!lyrEl.value || !moveBox.value || music.lyric.notSupportedScroll) return
+  if(cut) {
+    cut = false
+    return
+  }
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(currentTime - lastTime) >= 1) {
     findLyric(currentTime)
     if(music.lrcMode === 1) {
-      findYrcIndex(index.value)
+      findYrcIndex(index.value - 1)
       worker.postMessage({
         pause: true,
         val: true,
       })
-      higWidth(index.value)
+      higWidth(index.value - 1)
     }
     return
   }
-
   // 歌词是否到底
   if(!music.lyric[index.value+1]) return;
-  if(currentLyrEl.length && (currentTime >= music.lyric[index.value+1].time)) {
-    moveLyric(music.lyric[index.value+1])
+  if(currentLyrEl.length && (currentTime >= music.lyric[index.value].time)) {
+    moveLyric(music.lyric[index.value])
     return
   }
-
 })
-let pointer = 1
-function gradualChange(img: HTMLImageElement) {
-  const gradual1 = document.querySelector('#gradual1') as HTMLDivElement
-  const gradual2 = document.querySelector('#gradual2') as HTMLDivElement
-  if(img) {
-    const colorThief = new ColorThief()
-    const rgb = colorThief.getPalette(img, 2) as Array<Array<string>>
-    if(pointer === 0) {
-      gradual1.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
-      gradual1.style.opacity = '1'
-
-      gradual2.style.opacity = '0'
-      pointer = 1
-    } else {
-      gradual2.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
-      gradual2.style.opacity = '1'
-
-      gradual1.style.opacity = '0'
-      pointer = 0
-    }
-
-  } else {
-    if(pointer === 0) {
-      gradual1.style.backgroundImage = ``
-      gradual1.style.opacity = '1'
-
-      gradual2.style.opacity = '0'
-      pointer = 1
-    } else {
-      gradual2.style.backgroundImage = ``
-      gradual2.style.opacity = '1'
-
-      gradual1.style.opacity = '0'
-      pointer = 0
-    }
-  }
-}
-
-onMounted(() => {
-  currentLyrEl = document.querySelector('.lyric-container')!
-      .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
-  correctHeight.value = document.body.clientHeight
-
-  // 解决切换图片闪烁问题
-  watch(bg, (val) => {
-    toggleImg(val).then(img => {
-      if(cntrEl.value) {
-        gradualChange(img);
-        (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
-      }
-    })
-  })
-  nextTick(() => {
-    watch(() => $audio.isPlay, (value) => {
-      if(value && suspend) {
-        suspend = false
-        worker.postMessage({
-          pause: true,
-          val: false,
-        })
-      }
-    })
-  })
-  containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
-    isTransition.value = true
-    // event.wheelDelta 值为负则向下滚动，值为正则向上
-    if(event.wheelDelta > 0) {
-      top.value = 0
-      direction = false
-    } else {
-      // 这里加上1像素的偏移量是为了防止出现高度小数点的情况
-      direction = true
-      top.value = -correctHeight.value - 1
-    }
-  })
-})
-
-window.onresize = () => {
-  correctHeight.value = document.body.clientHeight
-  if(direction) {
-    isTransition.value = false
-    top.value = -correctHeight.value - 1
-  }
-}
-const mouseenter = (e: Event, lyric: Lyric) => {
-  isEnterLyric.value = true
-  // 文本定位
-  const el = e.target as HTMLDivElement
-  targetTime.value!.style.left = el.offsetLeft + 5 + 'px'
-  targetTime.value!.style.top = el.offsetTop + (el.offsetHeight / 3)  + 'px'
-  currentEnterLyric.value = lyric
-}
-const mouseleave = () => {
-  isEnterLyric.value = false
-}
-
-// 此事件只有当用户主动滑动滚轮才会触发，而编程的方式来操作滚动条则不会触发
-const wheelHandler = () => {
-  isUserWheel = true
-  clearTimeout(timeout)
-  timeout = setTimeout(() => {
-    isUserWheel = false
-  },3000)
-}
-const closeDetail = () => {
-  setModelValue.value = false
-}
-const lyricClick = (time: number) => {
-  if (music.lyric.notSupportedScroll) {
-    return
-  }
-  $audio.el.currentTime = time
-}
 
 // 高亮当前快进
 function higWidth(index: number) {
@@ -247,7 +151,10 @@ function transitionYrc(index: number) {
 // 监听消息
 worker.onmessage = e => {
   const {elapsed, done, transition} = e.data
-  const yrc = (music.lyric as Yrc[])[index.value].yrc
+  if(cut) {
+    return
+  }
+  const yrc = ((music.lyric as Yrc[])[index.value - 1] || {}).yrc
   let width: number
   width = 100
   if($audio.transitionIsPlay) {
@@ -255,12 +162,12 @@ worker.onmessage = e => {
       width = elapsed / transition * 100
       yrc[yrcIndex].width = width + '%'
     }
-    if(done) {
+    if(done && yrc[yrcIndex]) {
       yrc[yrcIndex].width = 100 + '%'
       yrcIndex++
 
       if(yrcIndex <= yrc.length) {
-        transitionYrc(index.value)
+        transitionYrc(index.value - 1)
       }
     }
   } else {
@@ -301,7 +208,80 @@ function runHig(index: number, lastIndex: number) {
     })
   }
 }
+onMounted(() => {
+  currentLyrEl = document.querySelector('.lyric-container')!
+    .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
+  correctHeight.value = document.body.clientHeight
 
+  // 解决切换图片闪烁问题
+  watch(bg, (val) => {
+    toggleImg(val).then(img => {
+      if(cntrEl.value) {
+        gradualChange(img);
+        (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
+      }
+    })
+  })
+  nextTick(() => {
+    watch(() => $audio.isPlay, (value) => {
+      if(value && suspend) {
+        suspend = false
+        worker.postMessage({
+          pause: true,
+          val: false,
+        })
+      }
+    })
+  })
+  containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
+    isTransition.value = true
+    // event.wheelDelta 值为负则向下滚动，值为正则向上
+    if(event.wheelDelta > 0) {
+      top.value = 0
+      direction = false
+    } else {
+      // 这里加上1像素的偏移量是为了防止出现高度小数点的情况
+      direction = true
+      top.value = -correctHeight.value - 1
+    }
+  })
+})
+const mouseenter = (e: Event, lyric: Lyric) => {
+  isEnterLyric.value = true
+  // 文本定位
+  const el = e.target as HTMLDivElement
+  targetTime.value!.style.left = el.offsetLeft + 5 + 'px'
+  targetTime.value!.style.top = el.offsetTop + (el.offsetHeight / 3)  + 'px'
+  currentEnterLyric.value = lyric
+}
+const mouseleave = () => {
+  isEnterLyric.value = false
+}
+
+// 此事件只有当用户主动滑动滚轮才会触发，而编程的方式来操作滚动条则不会触发
+const wheelHandler = () => {
+  isUserWheel = true
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    isUserWheel = false
+  },3000)
+}
+const closeDetail = () => {
+  setModelValue.value = false
+}
+const lyricClick = (time: number) => {
+  if (music.lyric.notSupportedScroll) {
+    return
+  }
+  $audio.el.currentTime = time
+}
+window.onresize = () => {
+  correctHeight.value = document.body.clientHeight
+  if(direction) {
+    isTransition.value = false
+    top.value = -correctHeight.value - 1
+  }
+}
 </script>
 
 <template>
@@ -344,7 +324,7 @@ function runHig(index: number, lastIndex: number) {
                         style="position: relative;display: inline-block;width: auto;padding: 0"
                       >
                         <span>{{yrcItem.text}}</span>
-                        <span class="transition" :style="{ width: yrcItem.width, }">{{yrcItem.text}}</span>
+                        <span class="transition" :style="{ width: yrcItem.width }">{{yrcItem.text}}</span>
                       </div>
                     </div>
                     <span
@@ -508,7 +488,7 @@ function runHig(index: number, lastIndex: number) {
               display: flex;
               align-items: center;
               //justify-content: center;
-              text-align: center;
+              //text-align: center;
               margin: 3px 0;
               transition: 0.5s font-size;
               flex-wrap: wrap;
@@ -534,8 +514,7 @@ function runHig(index: number, lastIndex: number) {
               //font-size: 18px;
             }
             .lyric-item.current-lyric-line-item {
-              font-size: 18px;
-              color: rgb(30,204,148);
+              color: white;
             }
           }
         }
