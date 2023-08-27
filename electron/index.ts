@@ -59,7 +59,7 @@ class Main {
             win.loadURL(url);
         }
         this.ipcWindowEvent()
-        win.webContents.openDevTools()
+        // win.webContents.openDevTools()
     }
     ipcWindowEvent() {
         ipcMain.on('maximize', (event: any) => {

@@ -95,6 +95,7 @@ function moveLyric(currentLyr: Lyric) {
   }
 }
 watch(() => music.currentTime, (currentTime, lastTime) => {
+  console.log(index.value, music.currentTime)
   if(!lyrEl.value || !moveBox.value || music.lyric.notSupportedScroll) return
   if(cut) {
     cut = false
@@ -114,7 +115,7 @@ watch(() => music.currentTime, (currentTime, lastTime) => {
     return
   }
   // 歌词是否到底
-  if(!music.lyric[index.value+1]) return;
+  if(!music.lyric[index.value]) return;
   if(currentLyrEl.length && (currentTime >= music.lyric[index.value].time)) {
     moveLyric(music.lyric[index.value])
     return
@@ -323,7 +324,7 @@ window.onresize = () => {
                         v-for="yrcItem in item.yrc"
                         style="position: relative;display: inline-block;width: auto;padding: 0"
                       >
-                        <span>{{yrcItem.text}}</span>
+                        <span style="white-space: pre-wrap">{{yrcItem.text}}</span>
                         <span class="transition" :style="{ width: yrcItem.width }">{{yrcItem.text}}</span>
                       </div>
                     </div>
@@ -499,12 +500,14 @@ window.onresize = () => {
               }
               .transition {
                 left: 0;
+                top: 0;
                 position: absolute;
                 color: white;
                 width: 0;
                 overflow: hidden;
                 z-index: 99;
                 white-space: nowrap;
+                //white-space: pre-line;
               }
             }
             .empty-lyric {

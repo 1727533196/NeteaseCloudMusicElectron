@@ -183,9 +183,15 @@ export function parseYrc(yrc: string) {
     } else if(target === ')' && isEnd) {
       endIndex = i
       const timeArr = yrc.slice(startIndex+1, endIndex).split(',')
-      let text: string = yrc[i+1]
+      let text: string = '';
       let isBlank = false
 
+      for (let o = i+1; o < yrc.length; o++) {
+        if(['[', '('].includes(yrc[o])) {
+          break
+        }
+        text += yrc[o]
+      }
       obj.yrc.push({
         text: text,
         transition: timeArr[1] / 1000,
