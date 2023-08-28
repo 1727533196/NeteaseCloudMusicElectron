@@ -3,6 +3,7 @@ import {ref} from "vue";
 import {GetMusicDetailData} from "@/api/musicList";
 import {State} from "@/components/MusicPlayer/useMouseSlide";
 import {useFlags} from "@/store/flags";
+import {useMusicAction} from "@/store/music";
 
 interface Props {
   mouseenterHandler: (target: 'progress') => void
@@ -19,6 +20,7 @@ const flags = useFlags()
 defineExpose({
   plan,
 })
+const music = useMusicAction()
 </script>
 
 <template>
@@ -35,7 +37,10 @@ defineExpose({
       class="progress"
     ></div>
     <div
-      :style="{width: props.mouseState.width +'%', borderRadius: props.mouseState.progress ? '5px' : ''}"
+      :style="{width: props.mouseState.width +'%',
+      borderRadius: props.mouseState.progress ? '5px' : '',
+      backgroundImage: `linear-gradient(to right, rgb(${music.bgColor[0][0] / 2.3+','+music.bgColor[0][1] / 2+','+music.bgColor[0][2] / 2}), rgb(${music.bgColor[0]}))`
+      }"
       class="progress-bar"
     >
       <div

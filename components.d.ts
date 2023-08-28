@@ -27,6 +27,7 @@ declare module '@vue/runtime-core' {
     MusicPlayer: typeof import('./src/components/MusicPlayer/index.vue')['default']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']
     PlayListDrawer: typeof import('./src/components/PlayListDrawer/index.vue')['default']
+    ProgressBar: typeof import('./src/components/MusicPlayer/ProgressBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Search: typeof import('./src/components/Search/index.vue')['default']

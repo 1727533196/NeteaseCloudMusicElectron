@@ -23,6 +23,7 @@ export const useMusicAction = defineStore('musicActionId', {
       klyric: '',
       currentTime: 0,
       lrcMode: 1 as 0 | 1,
+      bgColor: [] as Array<Array<string>>, // 当前正在播放的音乐主题色
     }
   },
   actions: {

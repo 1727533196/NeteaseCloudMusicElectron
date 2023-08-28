@@ -11,6 +11,7 @@ import {useFlags} from "@/store/flags";
 import {useMusicAction} from "@/store/music";
 import {useRouter} from "vue-router";
 import Volume from './Volume.vue'
+import ProgressBar from "@/components/MusicPlayer/ProgressBar.vue";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio =   {
@@ -248,6 +249,7 @@ const openDrawer = () => {
           :circle-down="circleDown"
           :songs="props.songs"
         />
+<!--        <ProgressBar />-->
       </div>
     </div>
     <div class="right">
@@ -258,17 +260,6 @@ const openDrawer = () => {
       </div>
       <el-icon @click.stop="openDrawer" class="list"><Expand /></el-icon>
       <Volume :audio="audio"></Volume>
-<!--      <Volume-->
-<!--        ref="volume"-->
-<!--        :mouse-state="mouseState"-->
-<!--        :mousedown-handler="mousedownHandler"-->
-<!--        :mouseenter-handler="mouseenterHandler"-->
-<!--        :mouseleave-handler="mouseleaveHandler"-->
-<!--        :mouseup-handler="mouseupHandler"-->
-<!--        :circle-down="circleDown"-->
-<!--        :volume-handler="volumeHandler"-->
-<!--        :songs="props.songs"-->
-<!--      />-->
     </div>
   </div>
 </template>

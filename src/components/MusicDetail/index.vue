@@ -295,11 +295,8 @@ window.onresize = () => {
         :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"
       >
-        <div id="gradual1">
-        </div>
-        <div id="gradual2">
-
-        </div>
+        <div id="gradual1"/>
+        <div id="gradual2"/>
         <div ref="cntrEl" class="music-detail-container">
           <div class="shadow">
             <div class="lyric-and-bg-container">
