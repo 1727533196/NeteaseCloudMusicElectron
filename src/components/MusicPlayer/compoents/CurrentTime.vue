@@ -39,7 +39,6 @@ const music = useMusicAction()
     <div
       :style="{width: props.mouseState.width +'%',
       borderRadius: props.mouseState.progress ? '5px' : '',
-      backgroundImage: `linear-gradient(to right, rgb(${music.bgColor[0][0] / 2.3+','+music.bgColor[0][1] / 2+','+music.bgColor[0][2] / 2}), rgb(${music.bgColor[0]}))`
       }"
       class="progress-bar"
     >
