@@ -41,3 +41,38 @@ export function gradualChange(img: HTMLImageElement) {
     }
   }
 }
+
+export const useRhythm = () => {
+  const splitCount = 4
+  const splitImg = (img: HTMLImageElement) => {
+    for (let i = 0; i < splitCount; i++) {
+      const canvas = document.createElement('canvas')
+      const context = canvas.getContext('2d')!
+      const { clientWidth, clientHeight } = document.body
+      const px = Math.max(clientWidth, clientHeight) / 2
+      canvas.width = px
+      canvas.height = px
+
+      if(i === 0) {
+        context.drawImage(img, 0, 0)
+      } else if(i === 1) {
+
+      } else if(i === 2) {
+
+      } else if(i === 3) {
+
+      }
+    }
+  }
+
+  return {
+    splitImg,
+  }
+}
+
+
+
+
+
+
+

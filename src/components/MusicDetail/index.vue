@@ -5,7 +5,8 @@ import {formattingTime, toggleImg, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
 import {useFlags} from "@/store/flags";
 import MyWorker from "@/utils/worker.ts?worker"
-import {gradualChange} from './useMusic'
+import {gradualChange, useRhythm} from './useMusic'
+import {useSettings} from "@/store/settings";
 
 interface Props {
   modelValue: boolean
@@ -15,6 +16,7 @@ const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
 const music = useMusicAction()
 const flags = useFlags()
+const settings = useSettings()
 const cntrEl = ref<HTMLDivElement>()
 const lyrEl = ref<HTMLDivElement>()
 const targetTime = ref<HTMLDivElement>()
@@ -95,7 +97,7 @@ function moveLyric(currentLyr: Lyric) {
   }
 }
 watch(() => music.currentTime, (currentTime, lastTime) => {
-  console.log(index.value, music.currentTime)
+  // console.log(index.value, music.currentTime)
   if(!lyrEl.value || !moveBox.value || music.lyric.notSupportedScroll) return
   if(cut) {
     cut = false
@@ -209,6 +211,7 @@ function runHig(index: number, lastIndex: number) {
     })
   }
 }
+const {splitImg} = useRhythm()
 onMounted(() => {
   currentLyrEl = document.querySelector('.lyric-container')!
     .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
@@ -218,7 +221,11 @@ onMounted(() => {
   watch(bg, (val) => {
     toggleImg(val).then(img => {
       if(cntrEl.value) {
-        gradualChange(img);
+        if(settings.lyricBg === 'rgb') {
+          gradualChange(img);
+        } else if(settings.lyricBg === 'rhythm') {
+          splitImg(img)
+        }
         (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
       }
     })
@@ -295,8 +302,13 @@ window.onresize = () => {
         :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"
       >
-        <div id="gradual1"/>
-        <div id="gradual2"/>
+        <template v-if="settings.lyricBg === 'rgb'">
+          <div id="gradual1"/>
+          <div id="gradual2"/>
+        </template>
+        <template v-else-if="settings.lyricBg === 'rhythm'">
+          <div id="rhythm-box"></div>
+        </template>
         <div ref="cntrEl" class="music-detail-container">
           <div class="shadow">
             <div class="lyric-and-bg-container">

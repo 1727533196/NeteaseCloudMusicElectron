@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, Ref, UnwrapRef, computed, onMounted, toRef} from "vue";
+import {ref, Ref, UnwrapRef, computed, onMounted, toRef, reactive} from "vue";
 import {useUserInfo} from "@/store";
 import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
 import {GetMusicDetailData} from "@/api/musicList";
@@ -64,7 +64,7 @@ function play(lengthen: boolean = false) {
   audio.value!.volume = 0
   originPlay.call(audio.value)
   isPlay.value = true
-  mouseState.stop = false
+  timeState.stop = false
 
   // 开始时直接改变就可以，让逐字歌词跟得上
   transitionIsPlay.value = true
@@ -109,25 +109,33 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
   })
 }
 const {
-  mouseleaveHandler,
-  mouseenterHandler,
-  mousedownHandler,
-  timeupdate,
-  circleDown,
-  volumeHandler,
   volumechange,
-  mouseupHandler,
-  state: mouseState,
 } = useMouseSlide(<Ref<HTMLAudioElement>>audio, plan, volume)
 
+
+const timeState = reactive({
+  model: 0,
+  stop: false,
+  currentTime: 0,
+})
+
+const timeupdate = () => {
+  if(timeState.stop || isNaN($audio.el.duration)){
+    return
+  }
+  music.currentTime = $audio.time
+  timeState.model = ($audio.time / $audio.el.duration) * 100
+}
+
+
 const reset = (val: boolean) => {
-  mouseState.width = 0
-  mouseState.currentTime = 0
+  timeState.model = 0
+  timeState.currentTime = 0
   isPlay.value = val
   transitionIsPlay.value = val
   // 这里需要停止timeupdate的事件监视，因为在暂停音乐时会过渡结束（就相当于还是在播放一段时间），
   //  这样会导致进度条进度重置不及时
-  mouseState.stop = true  // 在每次play方法时都会重置stop值
+  timeState.stop = true  // 在每次play方法时都会重置stop值
 }
 const end = () => {
   emit('playEnd')
@@ -239,18 +247,6 @@ const openDrawer = () => {
         <i v-show="!isPlay" @click="audio.play(false)" class="iconfont operation icon-kaishi1"></i>
         <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
       </div>
-      <div class="plan-container">
-        <CurrentTime
-          ref="plan"
-          :mouse-state="mouseState"
-          :mousedown-handler="mousedownHandler"
-          :mouseenter-handler="mouseenterHandler"
-          :mouseleave-handler="mouseleaveHandler"
-          :circle-down="circleDown"
-          :songs="props.songs"
-        />
-<!--        <ProgressBar />-->
-      </div>
     </div>
     <div class="right">
       <div style="display:flex;">
@@ -262,9 +258,24 @@ const openDrawer = () => {
       <Volume :audio="audio"></Volume>
     </div>
   </div>
+  <div class="plan-container">
+    <ProgressBar
+      v-model="timeState.model"
+      v-model:stop="timeState.stop"
+      :songs="props.songs"
+    />
+  </div>
 </template>
 
 <style lang="less">
+.plan-container {
+  display: flex;
+  align-items: center;
+  height: 15px;
+  position: absolute;
+  top: -8.5px;
+  width: 100%;
+}
 .el-overlay {
   .music-drawer {
     background-image: url("../../assets/defaultBg.png");
@@ -452,15 +463,6 @@ const openDrawer = () => {
           margin-left: 1px;
         }
       }
-    }
-
-    .plan-container {
-      display: flex;
-      align-items: center;
-      height: 15px;
-      position: absolute;
-      top: -8px;
-      width: 100%;
     }
   }
 

@@ -6,7 +6,7 @@ onmessage = function (event) {
   if(data.pause) {
     // 关闭上一次
     pause && pause(data.val)
-  } else {
+  } else if(data.transition) {
     pause = animation(data.transition, (elapsed, done) => {
       if(done) {
         pause(true)

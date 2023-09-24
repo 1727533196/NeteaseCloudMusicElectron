@@ -1,41 +1,77 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {GetMusicDetailData} from "@/api/musicList";
+import {useMusicAction} from "@/store/music";
 
-const model = ref(0)
-
-const change = () => {
-
+interface Props {
+  songs: GetMusicDetailData
+  modelValue: number
+  stop: boolean
 }
-const input = () => {
-
+const props = defineProps<Props>()
+const emit = defineEmits(['update:modelValue','update:stop'])
+const music = useMusicAction()
+const change = (val: number) => {
+  $audio.time = val * $audio.el.duration / 100
+  stop()
 }
-// const timeupdate = () => {
-//   if(isDown.value || state.stop){
-//     return
-//   }
-//   music.currentTime = audio.value!.currentTime
-//   state.width = (audio.value!.currentTime / audio.value!.duration) * 100
-// }
+const click = () => {
+  $audio.time = model.value * $audio.el.duration / 100
+  stop()
+}
+function stop() {
+  emit('update:stop', true)
+  setTimeout(() => {
+    emit('update:stop', false)
+  }, 1)
+}
+
+const model = computed<number>({
+  get() {
+    return props.modelValue
+  },
+  set(val) {
+    emit('update:modelValue', val)
+  }
+})
+defineExpose({
+
+})
 </script>
 
 <template>
-  <div>
-<!--    <el-slider-->
-<!--      v-model="model"-->
-<!--      @change="change"-->
-<!--      @input="input"-->
-<!--      :show-tooltip="false"-->
-<!--      :show-stops="false"-->
-<!--      style="width: 80px;overflow: hidden"-->
-<!--    />-->
+  <div v-if="props.songs.ar" style="width: 100%">
+    <el-slider
+      v-model="model"
+      @change="change"
+      @click="click"
+      :show-tooltip="false"
+      :show-stops="false"
+      :step="0.000001"
+    />
   </div>
 </template>
 
 <style scoped lang="less">
 :deep(.el-slider__button-wrapper) {
   cursor: pointer !important;
+  display: none;
 }
 :deep(.el-slider__button) {
   display: none;
+}
+:deep(.el-slider__runway) {
+  height: 1px;
+  width: 100%;
+  padding: 15px 0;
+  background-color: transparent;
+}
+:deep(.el-slider__bar) {
+  height: 1px;
+  background-color: rgb(236,65,65);
+  border-radius: 0;
+}
+:deep(.el-slider) {
+  width: 100%;
 }
 </style>

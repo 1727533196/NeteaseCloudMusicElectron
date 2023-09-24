@@ -206,9 +206,13 @@ export function parseYrc(yrc: string) {
 }
 
 // 随机产生指定范围数
-export function randomNum(minNum: number,maxNum: number){
+export function randomNum(minNum: number,maxNum: number, decimals = false){
+  if(decimals) {
+    return Math.random() * (maxNum - minNum) + minNum;
+  }
   return Math.floor(Math.random()*(maxNum-minNum+1)+minNum)
 }
+
 
 /*
 * 首先Array(1,2,3,4)，你知道的吧,生成一个数组[1,2,3,4]
