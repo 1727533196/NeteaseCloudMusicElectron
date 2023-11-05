@@ -42,27 +42,44 @@ export function gradualChange(img: HTMLImageElement) {
   }
 }
 
-export const useRhythm = () => {
-  const splitCount = 4
+export const useRhythm = (insertionEl: HTMLElement) => {
   const splitImg = (img: HTMLImageElement) => {
-    for (let i = 0; i < splitCount; i++) {
-      const canvas = document.createElement('canvas')
-      const context = canvas.getContext('2d')!
-      const { clientWidth, clientHeight } = document.body
-      const px = Math.max(clientWidth, clientHeight) / 2
-      canvas.width = px
-      canvas.height = px
+    const smallImageWidth = img.width / 2;
+    const smallImageHeight = img.height / 2;
+    console.log('smallImageWidth-->', smallImageWidth)
+    console.log('smallImageHeight-->', smallImageHeight)
+    const cutImagesData = [];
+    for (let y = 0; y < 2; y++) {
+      for (let x = 0; x < 2; x++) {
+        const cutCanvas = document.createElement('canvas');
+        cutCanvas.width = smallImageWidth;
+        cutCanvas.height = smallImageHeight;
+        const cutCtx = cutCanvas.getContext('2d')!;
 
-      if(i === 0) {
-        context.drawImage(img, 0, 0)
-      } else if(i === 1) {
+        cutCtx.drawImage(
+          img,
+          x * smallImageWidth,
+          y * smallImageHeight,
+          smallImageWidth,
+          smallImageHeight,
+          0,
+          0,
+          smallImageWidth,
+          smallImageHeight
+        );
 
-      } else if(i === 2) {
-
-      } else if(i === 3) {
-
+        const smallImageDataUrl = cutCanvas.toDataURL("image/png");
+        cutImagesData.push(smallImageDataUrl);
+        const smallImage = new Image();
+        smallImage.src = smallImageDataUrl;
+        smallImage.classList.add('cut-image');
+        insertion(smallImage)
       }
     }
+  }
+
+  const insertion = (smallImage: HTMLImageElement) => {
+    insertionEl.appendChild(smallImage)
   }
 
   return {

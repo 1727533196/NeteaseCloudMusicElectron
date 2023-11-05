@@ -211,8 +211,10 @@ function runHig(index: number, lastIndex: number) {
     })
   }
 }
-const {splitImg} = useRhythm()
+
 onMounted(() => {
+  const rhythmBox = document.querySelector('#rhythm-box') as HTMLDivElement
+  const {splitImg} = useRhythm(rhythmBox)
   currentLyrEl = document.querySelector('.lyric-container')!
     .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
   correctHeight.value = document.body.clientHeight
@@ -407,6 +409,9 @@ window.onresize = () => {
         height: 100%;
         width: 100%;
         transition: 1s;
+        position: absolute;
+      }
+      #rhythm-box {
         position: absolute;
       }
     }

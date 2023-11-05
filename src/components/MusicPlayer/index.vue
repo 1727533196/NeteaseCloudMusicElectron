@@ -192,6 +192,11 @@ defineExpose(exposeObj)
 const openDrawer = () => {
   flags.isOpenDrawer = !flags.isOpenDrawer
 }
+const num = ref(1)
+
+const inputHandleChange = (val: number) => {
+  audio.value!.playbackRate = val
+}
 
 </script>
 
@@ -255,6 +260,7 @@ const openDrawer = () => {
         <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
       </div>
       <el-icon @click.stop="openDrawer" class="list"><Expand /></el-icon>
+<!--      <el-input-number :step="0.1" v-model="num" :min="0.5" :max="2" @change="inputHandleChange" />-->
       <Volume :audio="audio"></Volume>
     </div>
   </div>

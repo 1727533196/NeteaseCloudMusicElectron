@@ -270,8 +270,8 @@ export function toggleImg(src: string): Promise<HTMLImageElement> {
   const img = new Image()
   img.src = src;
   img.crossOrigin = 'Anonymous';
-  img.width = 300
-  img.height = 300
+  img.width = document.body.clientWidth
+  img.height = document.body.clientHeight
   return new Promise((resolve) => {
     img.onload = () => {
       resolve(img)
