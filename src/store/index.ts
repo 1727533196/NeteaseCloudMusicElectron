@@ -38,9 +38,9 @@ export const useUserInfo = defineStore('userInfoId', {
     updateUserPlayList(val: PlayList[]) {
       this.userPlayListInfo = val
 
-      let copyVal = JSON.parse(JSON.stringify(val)) as PlayList[]
-      let myList: ListItem[] = []
-      let subscribedList: ListItem[] = []
+      const copyVal = JSON.parse(JSON.stringify(val)) as PlayList[]
+      const myList: ListItem[] = []
+      const subscribedList: ListItem[] = []
       copyVal.forEach(item => {
         if(item.subscribed) {
           subscribedList.push({...item, icon: '', path: "/play-list"})
@@ -48,7 +48,8 @@ export const useUserInfo = defineStore('userInfoId', {
           myList.push({
             ...item,
             name: item.specialType === 5 ? '我喜欢的音乐' : item.name,
-            icon: item.specialType === 5 ? 'icon-xihuan' : '',
+            // icon: item.specialType === 5 ? 'icon-xihuan' : '',
+            icon: item.specialType === 5 ? '' : '',
             path: "/play-list"
           })
         }

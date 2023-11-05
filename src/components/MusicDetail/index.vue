@@ -385,6 +385,7 @@ window.onresize = () => {
 </template>
 
 <style lang="less" scoped>
+
 .container {
   visibility: hidden;
   position: fixed;
@@ -413,6 +414,20 @@ window.onresize = () => {
       }
       #rhythm-box {
         position: absolute;
+        filter: blur(90px);
+        @keyframes rotate {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        :global(.cut-image) {
+          transition: 0.3s linear;
+          animation: rotate 100s infinite linear;
+        }
       }
     }
   }
