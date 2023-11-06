@@ -10,7 +10,7 @@ export function gradualChange(img: HTMLImageElement) {
   if(img) {
     const colorThief = new ColorThief()
     const rgb = colorThief.getPalette(img, 2) as Array<Array<string>>
-    music.bgColor = rgb
+    music.updateBgColor(rgb)
     if(pointer === 0) {
       gradual1.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
       gradual1.style.opacity = '1'

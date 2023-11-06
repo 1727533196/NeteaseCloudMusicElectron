@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import {getUserAccountFn} from "@/utils/userInfo";
-import { onUnmounted, ref } from "vue";
+import {ref } from "vue";
 import {codeLogin, sendCodePhone} from "@/utils/useLogin";
-import {loginQrCheck, loginQrCreate, loginQrKey, loginStatus} from "@/api/login";
-import { setCookies } from "@/utils/cookies";
-import { ElMessage } from "element-plus/es";
-import {useUserInfo} from "@/store";
-// import request from "@/utils/request";
-// import QRCode from 'qrcode'
 
 const phone = ref('')
 const code = ref('')
@@ -22,68 +16,6 @@ const loginHandler = () => {
   })
 }
 
-const key = ref('')
-const qrUrl = ref('')
-const flag = ref(false) // 是否授权中
-const isSucceed = ref(false)
-let timer: NodeJS.Timer
-const init = async () => {
-  const { data:{unikey} } = await loginQrKey()
-  key.value = unikey
-  // 之前
-  const { data:{qrimg} } = await loginQrCreate(key.value, true)
-  qrUrl.value = qrimg
-  // end 。。。
-
-  // 现在
-  // QRCode.toString(
-  //   `https://music.163.com/login?codekey=${unikey}`,
-  //   {
-  //     width: 192,
-  //     margin: 0,
-  //     // color: {
-  //     //   dark: '#335eea',
-  //     //   light: '#00000000',
-  //     // },
-  //     type: 'svg',
-  //   }
-  // )
-  //       .then(svg => {
-  //         qrUrl.value = `data:image/svg+xml;utf8,${encodeURIComponent(
-  //           svg
-  //         )}`;
-  //       })
-  //       .catch(err => {
-  //         console.error(err);
-  //       })
-  // end 。。。
-
-  timer = setInterval(async () => {
-    // 800二维码不存在或已过期 801等待扫码  802授权中 803授权登陆成功
-    const {code, message, cookie} = await loginQrCheck(key.value)
-    if(code === 800) {
-      clearInterval(timer)
-      init()
-    } else if(code === 802) {
-      flag.value = true
-    } else if(code === 803) {
-      clearInterval(timer)
-      isSucceed.value = true
-      // const cookies = cookie.replace('HTTPOnly', '')
-      // setCookies(cookies);
-      localStorage.setItem(`MUSIC_U`, cookie);
-      ElMessage.success('授权登陆成功')
-      getUserAccountFn()
-    }
-  }, 3000)
-  return timer
-}
-init()
-
-onUnmounted(() => {
-  clearInterval(timer)
-})
-
 </script>
 
 <template>
@@ -94,10 +26,6 @@ onUnmounted(() => {
       <el-input placeholder="输入验证码" v-model="code"></el-input>
       <el-button @click="sendPhoneHandler" type="primary">发送验证码</el-button>
       <el-button @click="loginHandler" type="primary">登录</el-button>
-    </div>
-    <div>
-      <img v-if="!flag" :src="qrUrl" alt="" id="qr-img">
-      <h1 v-else>{{isSucceed ? '授权登陆成功' : '授权中...'}}</h1>
     </div>
   </div>
 </template>
