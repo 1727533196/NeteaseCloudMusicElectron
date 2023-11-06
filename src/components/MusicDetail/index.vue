@@ -22,7 +22,6 @@ const lyrEl = ref<HTMLDivElement>()
 const targetTime = ref<HTMLDivElement>()
 const moveBox = ref<HTMLDivElement>()
 const containerEl = ref<HTMLDivElement>()
-const scrollEl = ref<HTMLDivElement>()
 const top = ref<number>(0)
 const correctHeight = ref<number>(0)
 const index = ref(0)
@@ -71,9 +70,9 @@ watch(() => music.songs.id, (val, oldVal) => {
 
 function findLyric(time: number) {
   const result = music.lyric.find((item, index) => {
-    if(index + 1 >= music.lyric.length) {
-      return item
-    }
+    // if(index + 1 >= music.lyric.length) {
+    //   return item
+    // }
     return item.time <= time && music.lyric[index+1].time > time
   })
   result && moveLyric(result)
@@ -182,6 +181,9 @@ worker.onmessage = e => {
   }
 }
 function findYrcIndex(index: number) {
+  if(index < 0 || index > music.lyric.length - 1) {
+    return
+  }
   const time = music.currentTime
   const yrc = (music.lyric as Yrc[])[index].yrc
   // 暂时兼容
@@ -299,7 +301,6 @@ window.onresize = () => {
     <el-icon :size="45" @click="closeDetail" class="close np-drag"><ArrowDown /></el-icon>
     <div class="box" :style="{height: correctHeight +'px'}">
       <div
-        ref="scrollEl"
         class="scroll-box"
         :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"

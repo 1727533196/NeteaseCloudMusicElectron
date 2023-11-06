@@ -102,6 +102,9 @@ export const useMusicAction = defineStore('musicActionId', {
       }
       this.playEnd()
     },
+    updateBgColor(colors: Array<Array<string>>) {
+      this.bgColor = colors
+    },
   },
 
 })
