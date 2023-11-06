@@ -334,7 +334,7 @@ window.onresize = () => {
                         v-for="yrcItem in item.yrc"
                         style="position: relative;display: inline-block;width: auto;padding: 0"
                       >
-                        <span class="test1" :style="['white-space: pre-wrap']">{{yrcItem.text}}</span>
+                        <span style="white-space: pre-wrap">{{yrcItem.text}}</span>
                         <span class="transition" :style="{ width: yrcItem.width }">{{yrcItem.text}}</span>
                       </div>
                     </div>
@@ -384,12 +384,7 @@ window.onresize = () => {
 </template>
 
 <style lang="less" scoped>
-.test1 {
-  background:#7e7e7e -webkit-linear-gradient(left, #fff, #fff) no-repeat 0 0;
-  -webkit-text-fill-color:transparent;
-  -webkit-background-clip:text;
-  background-size:0 100%;
-}
+
 .container {
   visibility: hidden;
   position: fixed;
