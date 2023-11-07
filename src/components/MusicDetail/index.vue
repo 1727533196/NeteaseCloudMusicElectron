@@ -5,7 +5,7 @@ import {formattingTime, toggleImg, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
 import {useFlags} from "@/store/flags";
 import MyWorker from "@/utils/worker.ts?worker"
-import {gradualChange, useRhythm} from './useMusic'
+import {colorExtraction, gradualChange, useRhythm} from './useMusic'
 import {useSettings} from "@/store/settings";
 
 interface Props {
@@ -225,11 +225,15 @@ onMounted(() => {
   watch(bg, (val) => {
     toggleImg(val).then(img => {
       if(cntrEl.value) {
+        const rgb = colorExtraction(img)
+
         if(settings.lyricBg === 'rgb') {
-          gradualChange(img);
+          gradualChange(img, rgb);
         } else if(settings.lyricBg === 'rhythm') {
+          music.updateBgColor(rgb)
           splitImg(img)
         }
+
         (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
       }
     })
@@ -315,11 +319,12 @@ window.onresize = () => {
         <div ref="cntrEl" class="music-detail-container">
           <div class="shadow">
             <div class="lyric-and-bg-container">
-              <div class="bg-img"></div>
+              <div :style="{transform: music.lyric.length ? '' : 'translateX(0)'}" class="bg-img"></div>
               <div
                 ref="lyrEl"
                 @wheel.stop="wheelHandler"
                 class="lyric-container"
+                v-show="music.lyric.length"
               >
                 <template v-if="music.lrcMode === 1">
                   <div
@@ -468,8 +473,9 @@ window.onresize = () => {
         justify-content: space-around;
         align-items: center;
         height: 58vh;
+        transition: 1s;
         .bg-img {
-          transition: 1s background;
+          transition: 1s;
           width: 45vh;
           height: 45vh;
           border-radius: 5px;

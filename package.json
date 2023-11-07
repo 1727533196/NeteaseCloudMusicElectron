@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "dist/electron/index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "vue-tsc --noEmit && vite build",
     "build-electron": "rimraf dist && vite build && electron-builder",
     "preview": "vite preview"

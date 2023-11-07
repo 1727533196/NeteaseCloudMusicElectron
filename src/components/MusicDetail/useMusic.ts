@@ -3,13 +3,17 @@ import useMusic from "@/components/MusicPlayer/useMusic";
 import {useMusicAction} from "@/store/music";
 
 let pointer = 1
-export function gradualChange(img: HTMLImageElement) {
-  const music = useMusicAction()
+
+export function colorExtraction(img: HTMLImageElement) {
+  const colorThief = new ColorThief()
+  return colorThief.getPalette(img, 2) as Array<Array<string>>
+}
+
+export function gradualChange(img: HTMLImageElement, rgb: Array<Array<string>>) {
   const gradual1 = document.querySelector('#gradual1') as HTMLDivElement
   const gradual2 = document.querySelector('#gradual2') as HTMLDivElement
   if(img) {
-    const colorThief = new ColorThief()
-    const rgb = colorThief.getPalette(img, 2) as Array<Array<string>>
+    const music = useMusicAction()
     music.updateBgColor(rgb)
     if(pointer === 0) {
       gradual1.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
@@ -46,9 +50,8 @@ export const useRhythm = (insertionEl: HTMLElement) => {
   const splitImg = (img: HTMLImageElement) => {
     const smallImageWidth = img.width / 2;
     const smallImageHeight = img.height / 2;
-    console.log('smallImageWidth-->', smallImageWidth)
-    console.log('smallImageHeight-->', smallImageHeight)
     const cutImagesData = [];
+    insertionEl.innerHTML = ''
     for (let y = 0; y < 2; y++) {
       for (let x = 0; x < 2; x++) {
         const cutCanvas = document.createElement('canvas');

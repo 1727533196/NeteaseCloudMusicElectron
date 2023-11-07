@@ -40,7 +40,7 @@ defineExpose({
 </script>
 
 <template>
-  <div v-if="props.songs.ar" style="width: 100%">
+  <div class="base-progress-bar" v-if="props.songs.ar" style="width: 100%">
     <el-slider
       v-model="model"
       @change="change"
@@ -77,11 +77,13 @@ defineExpose({
 </style>
 <style lang="less">
 .shadow {
-  .el-slider__bar {
-    height: 10px;
-    background-image: linear-gradient(to right, rgb(v-bind('music.bgColor[0]')), rgb(v-bind('music.bgColor[1]')));
-    border-radius: 10px;
-    background-color: transparent;
+  .base-progress-bar {
+    .el-slider__bar {
+      height: 10px;
+      background-image: linear-gradient(to right, rgb(v-bind('music.bgColor[0]')), rgb(v-bind('music.bgColor[1]')));
+      border-radius: 10px;
+      background-color: transparent;
+    }
   }
 }
 </style>
