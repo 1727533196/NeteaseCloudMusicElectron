@@ -226,15 +226,11 @@ onMounted(() => {
     toggleImg(val).then(img => {
       if(cntrEl.value) {
         const rgb = colorExtraction(img)
+        gradualChange(img, rgb);
+        music.updateBgColor(rgb)
+        splitImg(img)
 
-        if(settings.lyricBg === 'rgb') {
-          gradualChange(img, rgb);
-        } else if(settings.lyricBg === 'rhythm') {
-          music.updateBgColor(rgb)
-          splitImg(img)
-        }
-
-        (cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
+        ;(cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
       }
     })
   })
@@ -309,13 +305,11 @@ window.onresize = () => {
         :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"
       >
-        <template v-if="settings.lyricBg === 'rgb'">
+        <div>
           <div id="gradual1"/>
           <div id="gradual2"/>
-        </template>
-        <template v-else-if="settings.lyricBg === 'rhythm'">
           <div id="rhythm-box"></div>
-        </template>
+        </div>
         <div ref="cntrEl" class="music-detail-container">
           <div class="shadow">
             <div class="lyric-and-bg-container">
@@ -565,6 +559,10 @@ window.onresize = () => {
   transform: translateY(0) !important;
   visibility: visible;
   //height: calc(100%) !important;
+  .test {
+    background-color: rgba(255, 255, 255, 0.05);
+    //background-color: rgba(0, 0, 0, 0.2);
+  }
 }
 
 </style>

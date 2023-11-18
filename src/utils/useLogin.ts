@@ -1,4 +1,4 @@
-import {captchaLogin, phoneLogin} from "@/api/login";
+import {anonimousLogin, captchaLogin, phoneLogin} from "@/api/login";
 import {setCookies} from "@/utils/cookies";
 import {ElMessage} from "element-plus";
 import {useUserInfo} from "@/store";
@@ -29,5 +29,15 @@ export const codeLogin = async (phone: string, code: string) => {
     getUserPlayListFn()
   } catch (e: any) {
     ElMessage.error(e.message)
+  }
+}
+
+export const useAnonimousLogin = async () => {
+  try {
+    const data = await anonimousLogin()
+    console.log(data)
+    localStorage.setItem(`MUSIC_U`, cookie);
+  } catch (e) {
+
   }
 }

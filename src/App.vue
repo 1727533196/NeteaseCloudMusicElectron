@@ -15,6 +15,7 @@ import MusicPlayer, {MusicPlayerInstanceType} from '@/components/MusicPlayer/ind
 import Login from '@/components/Login/index.vue'
 import {useUserInfo} from "@/store";
 import PlayListDrawer from '@/components/PlayListDrawer/index.vue'
+import {useAnonimousLogin} from "@/utils/useLogin";
 
 // const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
@@ -30,6 +31,7 @@ onMounted(() => {
     console.log(window.$audio)
   }
   window.$login = login.value!
+  useAnonimousLogin()
   document.addEventListener('click', () => {
     flags.isOpenDrawer = false
   })

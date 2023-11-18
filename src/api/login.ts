@@ -37,3 +37,6 @@ export const loginQrCheck = (key: string) =>
 
 // 获取登录状态
 export const loginStatus = (cookie: string) => request('/login/status', {cookie})
+
+// 游客登陆
+export const anonimousLogin = () => request('/register/anonimous')

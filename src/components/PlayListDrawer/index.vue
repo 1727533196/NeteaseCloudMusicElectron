@@ -27,7 +27,7 @@ console.log(theme)
 </script>
 
 <template>
-  <div @click.stop :style="{backgroundImage:music.currentItem.specialType === 5 ? '' : `linear-gradient(rgb(${theme.bgColor}) , rgb(19, 19, 26) )`}" :class="['drawer',{'open-drawer': setModelValue}]">
+  <div @click.stop :class="['drawer',{'open-drawer': setModelValue}]">
     <div class="head">
       <div class="left">
         <span class="text">播放列表</span>
@@ -55,7 +55,9 @@ console.log(theme)
   z-index: 2006;
   height: calc(100% - 200px);
   width: 400px;
-  background-color: #13131a;
+  background: transparent;
+  color: #fff;
+  background-color: rgba(19, 19, 26, 0.3);
   right: 0;
   top: 90px;
   border-radius: 15px 0 0 15px;

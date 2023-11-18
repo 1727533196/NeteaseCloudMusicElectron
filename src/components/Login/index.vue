@@ -10,6 +10,7 @@ const qrUrl = ref('')
 const flag = ref(false) // 是否授权中
 const isSucceed = ref(false)
 let timer: NodeJS.Timer
+
 const init = async () => {
   const { data:{unikey} } = await loginQrKey()
   key.value = unikey
