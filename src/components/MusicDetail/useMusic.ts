@@ -1,6 +1,7 @@
 import ColorThief from 'colorthief'
 import useMusic from "@/components/MusicPlayer/useMusic";
 import {useMusicAction} from "@/store/music";
+import {randomNum} from "@/utils";
 
 let pointer = 1
 
@@ -47,17 +48,22 @@ export function gradualChange(img: HTMLImageElement, rgb: Array<Array<string>>) 
 }
 
 export const useRhythm = (insertionEl: HTMLElement) => {
+  const style = document.createElement('style')
   const splitImg = (img: HTMLImageElement) => {
     const smallImageWidth = img.width / 2;
     const smallImageHeight = img.height / 2;
     const cutImagesData = [];
+    let index = 0
     insertionEl.innerHTML = ''
+    style.innerHTML = ''
+
     for (let y = 0; y < 2; y++) {
       for (let x = 0; x < 2; x++) {
         const cutCanvas = document.createElement('canvas');
         cutCanvas.width = smallImageWidth;
         cutCanvas.height = smallImageHeight;
         const cutCtx = cutCanvas.getContext('2d')!;
+        index++
 
         cutCtx.drawImage(
           img,
@@ -73,12 +79,29 @@ export const useRhythm = (insertionEl: HTMLElement) => {
 
         const smallImageDataUrl = cutCanvas.toDataURL("image/png");
         cutImagesData.push(smallImageDataUrl);
+
         const smallImage = new Image();
         smallImage.src = smallImageDataUrl;
-        smallImage.classList.add('cut-image');
+        smallImage.classList.add(`cut-image`);
+        const deg = randomNum(0, 360)
+        smallImage.style.transform = `rotate(${deg}deg)`;
+
+        style.innerHTML += `
+         @keyframes cut-rotate${index} {
+          from {
+            transform: rotate(${deg}deg);
+          }
+
+          to {
+            transform: rotate(${deg + 360}deg);
+          }
+        }
+        `
+        smallImage.style.animation = `cut-rotate${index} 10s infinite linear`
         insertion(smallImage)
       }
     }
+    document.head.appendChild(style)
   }
 
   const insertion = (smallImage: HTMLImageElement) => {
