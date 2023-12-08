@@ -324,29 +324,27 @@ export function parsePathQuery(path: string) {
 // 根据时间执行总时长    !!!! 请注意，当done为true时，必须调用pause来中断函数执行
 export function animation(time: number, cb: (elapsed: number, done: boolean) => void): (isPause: boolean) => void {
   let start: number,
-      previousTimeStamp: number,
       id: number,
       animationStartTime = 0,
       stoppedAt = 0;
   let done = false
 
   function step(timestamp: number) {
+    done = false
     if (start === undefined) {
       start = timestamp;
     }
     const elapsed = timestamp - start - animationStartTime // 以确保精度准确
-    if (previousTimeStamp !== timestamp) {
-      if (elapsed < time) {
-        cb(elapsed, done)
-      } else {
-        let done = true
-        cb(time, done)
-      }
+    if (elapsed < time) {
+      cb(elapsed, done)
+    } else {
+      done = true
+      cancelAnimationFrame(id)
+      cb(time, done)
     }
 
     if (elapsed < time) {
       // time 秒之后停止动画
-      previousTimeStamp = timestamp;
       id = requestAnimationFrame(step);
     }
   }

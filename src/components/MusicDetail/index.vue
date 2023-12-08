@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, nextTick, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, ref, watch, onUnmounted} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
 import {formattingTime, toggleImg, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
@@ -294,6 +294,9 @@ window.onresize = () => {
     top.value = -correctHeight.value - 1
   }
 }
+onUnmounted(() => {
+  window.onresize = null
+})
 </script>
 
 <template>
@@ -380,7 +383,6 @@ window.onresize = () => {
         <comment/>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -414,7 +416,7 @@ window.onresize = () => {
       }
       #rhythm-box {
         position: absolute;
-        filter: blur(90px);
+        filter: blur(120px);
 
         :global(.cut-image) {
           transition: 0.3s linear;

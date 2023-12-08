@@ -16,7 +16,6 @@ export default () => {
       ElMessage.error(e.msg)
     }
   }
-
   return {
     likeMusic
   }
