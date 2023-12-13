@@ -100,7 +100,7 @@ export default defineComponent({
     }
     const playHandler = (item: GetMusicDetailData, index: number) => {
       // 歌曲相同的情况下, 如果当前双击的歌曲不是当前正在播放的歌单歌曲,那应该播放
-      if(music.runtimeList.id === music.currentItem.id) {
+      if(music.state.runtimeList.id === music.state.currentItem.id) {
         // 没暂停，双击当前应该什么都不做
         if($audio.isPlay && props.songs.id === item.id) {
           return
@@ -111,7 +111,7 @@ export default defineComponent({
         }
       }
       // 判断与当前歌单是否相同
-      if(music.runtimeList.id !== music.currentItem.id && props.ids && props.listInfo) {
+      if(music.state.runtimeList.id !== music.state.currentItem.id && props.ids && props.listInfo) {
         // 如果不相同就更新 当前歌单
         music.updateRuntimeList({tracks:props.list, ...props.listInfo}, props.ids)
       }
@@ -126,7 +126,7 @@ export default defineComponent({
     }
     const activeText = (item: GetMusicDetailData) => {
       if(props.listInfo) {
-        return item.id === props.songs.id && (props.listInfo.id === music.runtimeList.id)
+        return item.id === props.songs.id && (props.listInfo.id === music.state.runtimeList.id)
       } else {
         return item.id === props.songs.id
       }

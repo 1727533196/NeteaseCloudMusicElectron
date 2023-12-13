@@ -55,7 +55,7 @@ const currentChange = (val: number) => {
     @current-change="currentChange"
     is-loading-endflyback
     is-paging
-    :songs="music.songs"
+    :songs="music.state.songs"
     :columns="columns"
     :loading="state.loading"
     :ids="state.ids"

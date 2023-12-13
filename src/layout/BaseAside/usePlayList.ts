@@ -34,7 +34,7 @@ export default () => {
   const getPlayListDetailFn = async (id: number, type: 'album') => {
     playListState.loading = true
 
-    music.oldList = {tracks: playListState.playList, ...playListState.listInfo}
+    music.state.oldList = {tracks: playListState.playList, ...playListState.listInfo}
     try {
       // 防止获取的是日推歌曲，因为日推歌曲没有歌单id
       if(id !== playListMock.id) {

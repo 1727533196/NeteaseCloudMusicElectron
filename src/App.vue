@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import {onMounted, ref} from 'vue'
 import {useRoute} from "vue-router";
 import {useMusicAction} from "@/store/music";
@@ -17,7 +15,6 @@ import {useUserInfo} from "@/store";
 import PlayListDrawer from '@/components/PlayListDrawer/index.vue'
 import {useAnonimousLogin} from "@/utils/useLogin";
 
-// const platform = window.electronAPI.platform
 const audioInstance = ref<MusicPlayerInstanceType>()
 const login = ref()
 const music = useMusicAction()
@@ -63,13 +60,13 @@ getUserAccountFn()
     <div style="height: 20px"></div>
   </div>
   <Bottom>
-    <teleport :disabled="!flags.isOpenDetail" to=".music-detail-container .shadow .test">
+    <teleport :disabled="!flags.isOpenDetail" to=".music-detail-container .test">
       <MusicPlayer
         ref="audioInstance"
         @cutSong="music.cutSongHandler"
         @playEnd="music.playEnd"
-        :songs="music.songs"
-        :src="music.musicUrl"
+        :songs="music.state.songs"
+        :src="music.state.musicUrl"
       ></MusicPlayer>
     </teleport>
   </Bottom>

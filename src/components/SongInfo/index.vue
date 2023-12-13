@@ -10,13 +10,13 @@ const store = useUserInfo()
 const left = ref<HTMLDivElement>()
 const theme = useTheme()
 
-watch(() => music.currentItem.coverImgUrl, (val) => {
+watch(() => music.state.currentItem.coverImgUrl, (val) => {
   toggleImg(val).then(img => {
     if(left.value) {
       left.value!.style.backgroundImage = `url(${img.src})`
     }
   })
-  const src = music.currentItem.specialType === 5 ? '' : val
+  const src = music.state.currentItem.specialType === 5 ? '' : val
   theme.change(src)
 }, {
   immediate: true,
@@ -25,19 +25,19 @@ watch(() => music.currentItem.coverImgUrl, (val) => {
 </script>
 
 <template>
-  <div v-if="music.currentItem.coverImgUrl" class="list-info">
+  <div v-if="music.state.currentItem.coverImgUrl" class="list-info">
     <div ref="left" class="left">
-      <span class="count">{{music.currentItem.playCount}}</span>
+      <span class="count">{{music.state.currentItem.playCount}}</span>
     </div>
     <div class="right">
       <div class="song-name">
         <div class="tag">歌单</div>
-        <div class="name">{{music.currentItem.name}}</div>
+        <div class="name">{{music.state.currentItem.name}}</div>
       </div>
       <div style="margin-top: 5px" class="song-info">
-        <div :style="{backgroundImage: `url(${music.currentItem.creator.avatarUrl})`}" class="avatar"></div>
-        <div class="nickname">{{music.currentItem.creator.nickname}}</div>
-        <div class="create-timer">{{formatDate(music.currentItem.createTime, 'YY-MM-DD hh:mm:ss')}}创建</div>
+        <div :style="{backgroundImage: `url(${music.state.currentItem.creator.avatarUrl})`}" class="avatar"></div>
+        <div class="nickname">{{music.state.currentItem.creator.nickname}}</div>
+        <div class="create-timer">{{formatDate(music.state.currentItem.createTime, 'YY-MM-DD hh:mm:ss')}}创建</div>
       </div>
       <div class="song-handle">
         <BaseButton type="subject">播放全部</BaseButton>

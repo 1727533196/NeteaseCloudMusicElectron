@@ -38,9 +38,9 @@ console.log(theme)
       @play="music.getMusicUrlHandler"
       :columns="columns"
       :loading="playListState.loading"
-      :songs="music.songs"
-      :ids="music.runtimeIds"
-      :list="music.runtimeList.tracks || []"
+      :songs="music.state.songs"
+      :ids="music.state.runtimeIds"
+      :list="music.state.runtimeList.tracks || []"
       :list-info="playListState.listInfo"
       :lazy="true"
       :is-need-title="false"
@@ -55,18 +55,17 @@ console.log(theme)
   z-index: 2006;
   height: calc(100% - 200px);
   width: 400px;
-  background: transparent;
+  //background: transparent;
   color: #fff;
-  background-color: rgba(19, 19, 26, 0.3);
+  background-color: rgba(40,40,40,.7);
   right: 0;
   top: 90px;
   border-radius: 15px 0 0 15px;
   box-shadow: 0 5px 15px 5px rgba(0,0,0,0.3);
   transform: translateX(120%);
-  //visibility: hidden;
   transition: 0.4s;
   overflow: hidden;
-  //overflow: auto;
+  backdrop-filter: blur(60px) saturate(210%);
   .head {
     height: 60px;
     width: 100%;

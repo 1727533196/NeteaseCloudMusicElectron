@@ -28,7 +28,7 @@ watch(() => route.fullPath, () => {
     @play="music.getMusicUrlHandler"
     :columns="columns"
     :loading="playListState.loading"
-    :songs="music.songs"
+    :songs="music.state.songs"
     :ids="playListState.ids"
     :list="playListState.playList"
     :list-info="playListState.listInfo"

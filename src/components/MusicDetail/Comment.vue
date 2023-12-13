@@ -21,7 +21,7 @@ const state = reactive({
 })
 
 const bg = computed(() => {
-  return music.songs.al?.picUrl || defaultImg
+  return music.state.songs.al?.picUrl || defaultImg
 })
 const currentTab = ref<string>()
 onMounted(() => {
@@ -37,7 +37,7 @@ const getCommentMusicFn = async (id: number, page: number) => {
     state.comments = comments
   }
 }
-watch(() => music.songs.id, (value) => {
+watch(() => music.state.songs.id, (value) => {
   getCommentMusicFn(value, page.value)
 })
 const gotoUserDetail = (uid: number) => {
@@ -58,12 +58,12 @@ const gotoUserDetail = (uid: number) => {
       <div class="info">
         <div ref="imgEl" class="bg-img"></div>
         <div class="song-info">
-          <div class="song-name">{{music.songs.name}}</div>
+          <div class="song-name">{{music.state.songs.name}}</div>
           <div class="singers">
             <div class="singer-info">
-              <span v-for="(item, index) in music.songs.ar">歌手: {{item.name + (index < music.songs.ar.length-1? '/' : '')}}</span>
+              <span v-for="(item, index) in music.state.songs.ar">歌手: {{item.name + (index < music.state.songs.ar.length-1? '/' : '')}}</span>
             </div>
-            <div class="album">专辑: {{(music.songs.al || {}).name}}</div>
+            <div class="album">专辑: {{(music.state.songs.al || {}).name}}</div>
           </div>
         </div>
       </div>

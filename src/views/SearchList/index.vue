@@ -64,7 +64,7 @@ watch(() => route.fullPath, (val) => {
     is-loading-endflyback
     :loading="loading"
     :columns="columns"
-    :songs="music.songs"
+    :songs="music.state.songs"
     :list="state.result"
     is-paging
     :total="state.songCount"

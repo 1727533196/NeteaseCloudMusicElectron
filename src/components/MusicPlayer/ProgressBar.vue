@@ -76,11 +76,11 @@ defineExpose({
 }
 </style>
 <style lang="less">
-.shadow {
+.music-detail-container {
   .base-progress-bar {
     .el-slider__bar {
       height: 10px;
-      background-image: linear-gradient(to right, rgb(v-bind('music.bgColor[0]')), rgb(v-bind('music.bgColor[1]')));
+      background-image: linear-gradient(to right, rgb(v-bind('music.state.bgColor[0]')), rgb(v-bind('music.state.bgColor[1]')));
       border-radius: 10px;
       background-color: transparent;
     }

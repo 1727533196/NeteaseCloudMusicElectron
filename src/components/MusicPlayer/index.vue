@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import {ref, Ref, UnwrapRef, computed, onMounted, toRef, reactive} from "vue";
+import {ref, onMounted, reactive, UnwrapRef} from "vue";
 import {useUserInfo} from "@/store";
-import useMouseSlide from "@/components/MusicPlayer/useMouseSlide";
-import {GetMusicDetailData} from "@/api/musicList";
-import {formattingTime} from "@/utils";
-import CurrentTime from './compoents/CurrentTime.vue';
-// import Volume from './compoents/Volume.vue'
-import useMusic from "@/components/MusicPlayer/useMusic";
-import {useFlags} from "@/store/flags";
 import {useMusicAction} from "@/store/music";
-import {useRouter} from "vue-router";
-import Volume from './Volume.vue'
 import ProgressBar from "@/components/MusicPlayer/ProgressBar.vue";
+import {GetMusicDetailData} from "@/api/musicList";
+import DetailLeft from "@/components/MusicPlayer/DetailLeft.vue";
+import DetailCenter from "@/components/MusicPlayer/DetailCenter.vue";
+import DetailRight from "@/components/MusicPlayer/DetailRight.vue";
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
-type userAudio =   {
+type userAudio = {
   play: (lengthen?: boolean) => Promise<undefined>,
   pause: (isNeed?: boolean, lengthen?: boolean) => Promise<undefined>
 } & Omit<HTMLAudioElement, 'pause' | 'play'>
@@ -34,9 +29,7 @@ interface Props {
   ids?: number[]
   songs: GetMusicDetailData
 }
-const {likeMusic} = useMusic()
 const store = useUserInfo()
-const router = useRouter()
 const props = defineProps<Props>()
 const emit = defineEmits(['playEnd', 'cutSong'])
 const isPlay = ref(false)
@@ -44,7 +37,6 @@ const isPlay = ref(false)
 const orderStatusVal = ref<0 | 1 | 2 | 3>(0)
 const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
-const volume = ref<InstanceType<typeof Volume>>() // 音量组件实例
 const music = useMusicAction()
 const transitionIsPlay = ref(false)
 
@@ -108,10 +100,6 @@ function transitionVolume(volume: number, target: boolean = true, lengthen: bool
     }, 50)
   })
 }
-const {
-  volumechange,
-} = useMouseSlide(<Ref<HTMLAudioElement>>audio, plan, volume)
-
 
 const timeState = reactive({
   model: 0,
@@ -123,10 +111,9 @@ const timeupdate = () => {
   if(timeState.stop || isNaN($audio.el.duration)){
     return
   }
-  music.currentTime = $audio.time
+  music.state.currentTime = $audio.time
   timeState.model = ($audio.time / $audio.el.duration) * 100
 }
-
 
 const reset = (val: boolean) => {
   timeState.model = 0
@@ -143,30 +130,7 @@ const end = () => {
 const setOrderHandler = () => {
   orderStatusVal.value = (orderStatusVal.value + 1 >= orderStatus.length ? 0 : orderStatusVal.value + 1) as typeof orderStatusVal.value
 }
-const isLike = computed(() => {
-  return store.userLikeIds.includes(props.songs.id)
-})
-const id = computed(() => {
-  return props.songs.id
-})
 
-const flags = useFlags()
-
-const openMusicDetail = () => {
-  flags.isOpenDetail = !flags.isOpenDetail
-}
-const closeMusicDetail = () => {
-  flags.isOpenDetail = false
-}
-const gotoComment = () => {
-  router.push({
-    path: '/comment',
-    query: {
-      id: props.songs.id,
-    }
-  })
-  flags.isOpenDetail = false
-}
 const exposeObj = {
   el: audio,
   orderStatusVal,
@@ -184,19 +148,7 @@ Object.defineProperty(exposeObj, 'time', {
     audio.value!.currentTime = time
   },
 })
-// onmouseenter 鼠标移入
-// onmouseleave 鼠标移出
 defineExpose(exposeObj)
-
-
-const openDrawer = () => {
-  flags.isOpenDrawer = !flags.isOpenDrawer
-}
-const num = ref(1)
-
-const inputHandleChange = (val: number) => {
-  audio.value!.playbackRate = val
-}
 
 </script>
 
@@ -204,65 +156,26 @@ const inputHandleChange = (val: number) => {
   <div class="bottom-container">
     <audio
       @timeupdate="timeupdate"
-      @volumechange="volumechange"
       @ended="end"
       ref="audio"
       class="plyr-audio"
       :src="props.src"
     ></audio>
-    <div v-show="!flags.isOpenDetail" class="left">
-      <div
-        @click="openMusicDetail"
-        class="picture-box"
-      >
-        <div
-          :style="{backgroundImage: `url(${props.songs.al?.picUrl})`}"
-          class="picture"
-        ></div>
-        <div class="shade-box"></div>
-        <el-icon :size="25" @click="closeMusicDetail" class="close np-drag"><ArrowDown /></el-icon>
-      </div>
-
-      <div class="name-info">
-        <span class="song-name">{{ props.songs.name }}</span>
-        <div class="name-container">
-          <template v-for="(item, i) in props.songs.ar">
-            <span class="name">{{ item.name }}</span>
-            <span v-if="i === 0 && i !== props.songs.ar.length-1">/</span>
-          </template>
-        </div>
-      </div>
-      <i v-if="isLike" @click="likeMusic(id, false)"  class="iconfont icon-xihuan1"></i>
-      <i v-else  @click="likeMusic(id)"  class="iconfont icon-xihuan"></i>
-    </div>
-    <div v-show="flags.isOpenDetail" class="left detail-left">
-      <el-icon :size="25" @click="closeMusicDetail" class="close np-drag"><ArrowDown /></el-icon>
-      <i v-if="isLike" @click="likeMusic(id, false)"  class="iconfont icon-xihuan1"></i>
-      <i v-else  @click="likeMusic(id)"  class="iconfont icon-xihuan"></i>
-      <el-icon style="cursor: pointer;" @click="gotoComment" :size="20"><ChatDotSquare /></el-icon>
-      <div class="more">
-        <el-icon :size="10"><MoreFilled /></el-icon>
-      </div>
-    </div>
-    <div class="center">
-      <div class="cut-container">
-        <i @click="setOrderHandler" :class="['iconfont', orderStatus[orderStatusVal]]"></i>
-        <i @click="emit('cutSong', false)" class="iconfont cut icon-shangyishou"></i>
-        <i v-show="isPlay"  @click="audio.pause" class="iconfont operation icon-Pause"></i>
-        <i v-show="!isPlay" @click="audio.play(false)" class="iconfont operation icon-kaishi1"></i>
-        <i @click="emit('cutSong', true)" class="iconfont cut icon-xiayishou"></i>
-      </div>
-    </div>
-    <div class="right">
-      <div style="display:flex;">
-        <div v-if="props.songs.ar" class="current-time">{{ formattingTime(music.currentTime * 1000) }}</div>
-        <span style="margin: 0 5px;line-height: 15px">/</span>
-        <div v-if="props.songs.ar" class="total-time">{{ formattingTime(props.songs.dt) }}</div>
-      </div>
-      <el-icon @click.stop="openDrawer" class="list"><Expand /></el-icon>
-<!--      <el-input-number :step="0.1" v-model="num" :min="0.5" :max="2" @change="inputHandleChange" />-->
-      <Volume :audio="audio"></Volume>
-    </div>
+    <DetailLeft :songs="props.songs"/>
+    <DetailCenter
+        :orderStatus="orderStatus"
+        :isPlay="isPlay"
+        :orderStatusVal="orderStatusVal"
+        @play="play"
+        @pause="pause"
+        @cutSong="emit('cutSong')"
+        @setOrderHandler="setOrderHandler"
+    />
+    <DetailRight
+        :currentTime="music.state.currentTime"
+        :songs="props.songs"
+        :audio="audio"
+    />
   </div>
   <div class="plan-container">
     <ProgressBar
@@ -287,7 +200,6 @@ const inputHandleChange = (val: number) => {
     background-image: url("../../assets/defaultBg.png");
     .bgSetting()
   }
-
 }
 </style>
 <style lang="less" scoped>
@@ -300,193 +212,6 @@ const inputHandleChange = (val: number) => {
   align-items: center;
   height: 100%;
   padding: 0 15px;
-
-  .left {
-    display: flex;
-    align-items: center;
-    color: @text;
-    width: 25%;
-
-    .iconfont {
-      cursor: pointer;
-      position: relative;
-      top: -8px;
-    }
-    .icon-xihuan {
-      color: @darkText;
-      font-size: 22px;
-    }
-    .icon-xihuan1 {
-      font-size: 21px;
-      color: rgb(235, 65, 65);
-    }
-
-    .picture-box {
-      position: relative;
-      cursor: pointer;
-      width: 50px;
-      height: 50px;
-      border-radius: 5px;
-      overflow: hidden;
-      .picture {
-        .bgSetting();
-        width: 100%;
-        height: 100%;
-        transition: 0.5s;
-      }
-      .shade-box {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0);
-        transition: 0.5s;
-      }
-      .close {
-        visibility: hidden;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transition: 0.5s;
-        opacity: 0;
-        transform: rotateX(-180deg) translateY(50%) translateX(-50%);
-      }
-      &:hover {
-        .picture {
-          filter:blur(1.5px);
-        }
-        .shade-box {
-          background-color: rgba(0,0,0,.3);
-        }
-        .close {
-          visibility: visible;
-          opacity: 1;
-        }
-      }
-
-    }
-
-
-    .name-info {
-      font-size: 14px;
-      margin-left: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: flex-start;
-
-      .song-name {
-        font-size: 15px;
-        max-width: 140px;
-        .textOverflow();;
-      }
-
-      .name-container {
-        max-width: 140px;
-        .textOverflow();;
-      }
-    }
-  }
-  .detail-left {
-    .icon-xihuan1,.icon-xihuan {
-      position: relative;
-      top: 0px;
-    }
-    > * + * {
-      margin-left: 20px;
-    }
-    .close {
-      cursor: pointer;
-    }
-    .more {
-      border: 0.5px solid rgba(255, 255, 255, .9);
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      > i{
-        position: relative;
-        top: 0px;
-      }
-    }
-  }
-
-  .center {
-    color: rgb(212, 212, 212);
-    width: 441px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    .cut-container {
-      //width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      .iconfont {
-        cursor: pointer;
-      }
-      .iconfont + .iconfont {
-        margin-left: 35px;
-      }
-
-      .iconfont:not(.operation):hover {
-        color: rgb(194, 58, 59);
-      }
-
-      .operation:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-
-      .cut {
-        font-size: 18px;
-      }
-
-      .operation {
-        //margin: 0 40px;
-        color: @text;
-        font-size: 18px;
-        display: inline-block;
-        width: 37px;
-        line-height: 37px;
-        text-align: center;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.05);
-
-        &::before {
-          margin-left: 3px;
-        }
-      }
-
-      .icon-Pause {
-        font-size: 16px;
-
-        &::before {
-          margin-left: 1px;
-        }
-      }
-    }
-  }
-
-  .right {
-    width: 27%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .current-time, .total-time {
-      color: @text;
-      font-size: 12px;
-    }
-    .list {
-      font-size: 20px;
-      cursor: pointer;
-    }
-  }
-
 }
 
 </style>

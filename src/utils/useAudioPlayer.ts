@@ -1,4 +1,4 @@
-function music() {
+function useAudioPlayer() {
   let audioContext: AudioContext
   let musicSource: AudioBufferSourceNode
 
@@ -18,6 +18,7 @@ function music() {
         if(musicSource) {
           musicSource.buffer = audioBuffer;
           musicSource.connect(audioContext.destination);
+          play()
         }
       })
       .catch(error => console.error('Error with decoding audio data', error));
@@ -40,7 +41,7 @@ function music() {
   }
 }
 
-export default music
+export default useAudioPlayer
 
 
 
