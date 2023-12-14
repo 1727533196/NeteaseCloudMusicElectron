@@ -1,21 +1,17 @@
 import ColorThief from 'colorthief'
-import useMusic from "@/components/MusicPlayer/useMusic";
-import {useMusicAction} from "@/store/music";
 import {randomNum} from "@/utils";
 
 let pointer = 1
 
 export function colorExtraction(img: HTMLImageElement) {
   const colorThief = new ColorThief()
-  return colorThief.getPalette(img, 2) as Array<Array<string>>
+  return colorThief.getPalette(img) as Array<Array<string>>
 }
 
 export function gradualChange(img: HTMLImageElement, rgb: Array<Array<string>>) {
   const gradual1 = document.querySelector('#gradual1') as HTMLDivElement
   const gradual2 = document.querySelector('#gradual2') as HTMLDivElement
   if(img) {
-    const music = useMusicAction()
-    music.updateBgColor(rgb)
     if(pointer === 0) {
       gradual1.style.backgroundImage = `linear-gradient(rgb(${rgb[0]}), rgb(${rgb[1]}))`
       gradual1.style.opacity = '1'

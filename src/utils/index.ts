@@ -368,3 +368,64 @@ export function animation(time: number, cb: (elapsed: number, done: boolean) => 
 // })
 
 
+export function rgbToHsl(r: number, g: number, b: number) {
+  r /= 255, g /= 255, b /= 255;
+  let max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if(max == min){
+    h = s = 0; // achromatic
+  }else{
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch(max){
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+
+  return [h, s, l];
+}
+
+export function isGoodColor(r: number, g: number, b: number) {
+  let hsl = rgbToHsl(r, g, b);
+  let h = hsl[0], s = hsl[1], l = hsl[2];
+  // 过滤掉过亮或过暗，过饱和或过淡的颜色
+  if (l < 0.2 || l > 0.8 || s < 0.2 || s > 0.8) {
+    return false;
+  }
+  return true;
+}
+export function findBestColors(colors: Array<Array<string>>, num: number): Array<Array<string>> {
+  let goodColors = colors.filter(color => isGoodColor(...color));
+  console.log(goodColors, colors)
+  if (goodColors.length < num) {
+
+  }
+
+  let bestColors = [];
+  for (let i = 0; i < num; i++) {
+    let bestColor;
+    let maxDifference = 0;
+    for (let j = 0; j < goodColors.length; j++) {
+      let color = goodColors[j];
+      let minDifference = bestColors.reduce((min, bestColor) => {
+        let hsl1 = rgbToHsl(...bestColor);
+        let hsl2 = rgbToHsl(...color);
+        let difference = Math.abs(hsl1[1] - hsl2[1]) + Math.abs(hsl1[2] - hsl2[2]);
+        return Math.min(min, difference);
+      }, Infinity);
+      if (minDifference > maxDifference) {
+        maxDifference = minDifference;
+        bestColor = color;
+      }
+    }
+    bestColors.push(bestColor);
+    let index = goodColors.indexOf(bestColor);
+    goodColors.splice(index, 1);
+  }
+
+  return bestColors;
+}

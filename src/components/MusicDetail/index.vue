@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, nextTick, onMounted, ref, watch, onUnmounted} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
-import {formattingTime, toggleImg, Yrc} from "@/utils";
+import {findBestColors, toggleImg, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
 import {useFlags} from "@/store/flags";
 import MyWorker from "@/utils/worker.ts?worker"
@@ -53,7 +53,6 @@ watch(() => music.state.songs.id, (val, oldVal) => {
   isUserWheel = false
   yrcIndex = 0
   nextTick(() => {
-    console.log(lyricDisplayInstance)
     lyricDisplayInstance.value.lyrEl!.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -92,52 +91,22 @@ function moveLyric(currentLyr: Lyric) {
     })
   }
 }
-// let lastTime = 0
-// function step() {
-//   let currentTime = $audio.el.currentTime;
-//   lastTime = currentTime;
-//   if(!$audio.isPlay) {
-//     return
-//   }
-//   if(!lyricDisplayInstance.value.lyrEl || !lyricDisplayInstance.value.moveBox || music.state.lyric.notSupportedScroll) return
-//   if(cut) {
-//     cut = false
-//     return
-//   }
-//   console.log(currentTime)
-//   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
-//   if(Math.abs(currentTime - lastTime) >= 1) {
-//     findLyric(currentTime)
-//     if(music.state.lrcMode === 1) {
-//       findYrcIndex(index.value - 1)
-//       worker.postMessage({
-//         pause: true,
-//         val: true,
-//       })
-//       higWidth(index.value - 1)
-//     }
-//     return
-//   }
-//   // 歌词是否到底
-//   if(!music.state.lyric[index.value]) return;
-//   if(currentLyrEl.length && (currentTime >= music.state.lyric[index.value].time)) {
-//     moveLyric(music.state.lyric[index.value])
-//     return
-//   }
-// }
-// function start() {
-//   step()
-//   requestAnimationFrame(start)
-// }
-
-watch(() => music.state.currentTime, (currentTime, lastTime) => {
-  if(!lyricDisplayInstance.value.lyrEl || !lyricDisplayInstance.value.moveBox || music.state.lyric.notSupportedScroll) return
-  if(cut) {
-    cut = false
+let lastTime = 0
+function step() {
+  let currentTime = window.$audio ? $audio.el.currentTime : 0;
+  if(
+      !window.$audio?.isPlay ||
+      !lyricDisplayInstance.value.lyrEl ||
+      !lyricDisplayInstance.value.moveBox ||
+      music.state.lyric.notSupportedScroll
+  ) {
     return
   }
+  if(cut) {
+    cut = false
+  }
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
-  if(Math.abs(currentTime - lastTime) >= 1) {
+  else if(Math.abs(currentTime - lastTime) >= 1) {
     findLyric(currentTime)
     if(music.state.lrcMode === 1) {
       findYrcIndex(index.value - 1)
@@ -147,15 +116,20 @@ watch(() => music.state.currentTime, (currentTime, lastTime) => {
       })
       higWidth(index.value - 1)
     }
-    return
   }
   // 歌词是否到底
-  if(!music.state.lyric[index.value]) return;
-  if(currentLyrEl.length && (currentTime >= music.state.lyric[index.value].time)) {
-    moveLyric(music.state.lyric[index.value])
-    return
+  else if(!music.state.lyric[index.value]) {
+
   }
-})
+  else if(currentLyrEl.length && (currentTime >= music.state.lyric[index.value].time)) {
+    moveLyric(music.state.lyric[index.value])
+  }
+  lastTime = currentTime;
+}
+function start() {
+  step()
+  requestAnimationFrame(start)
+}
 
 // 高亮当前快进
 function higWidth(index: number) {
@@ -249,9 +223,7 @@ function runHig(index: number, lastIndex: number) {
 }
 
 onMounted(() => {
-  // setTimeout(() => {
-  //   start()
-  // }, 5000)
+  start()
 
   const rhythmBox = document.querySelector('#rhythm-box') as HTMLDivElement
   const {splitImg} = useRhythm(rhythmBox)
@@ -264,8 +236,10 @@ onMounted(() => {
     toggleImg(val).then(img => {
       if(cntrEl.value) {
         const rgb = colorExtraction(img)
-        gradualChange(img, rgb);
-        music.updateBgColor(rgb)
+        console.log(rgb)
+        const bestColors = findBestColors(rgb, 2)
+        gradualChange(img, bestColors);
+        music.updateBgColor(bestColors)
         splitImg(img)
 
         ;(cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`

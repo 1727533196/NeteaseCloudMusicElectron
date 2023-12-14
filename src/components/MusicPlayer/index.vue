@@ -168,7 +168,7 @@ defineExpose(exposeObj)
         :orderStatusVal="orderStatusVal"
         @play="play"
         @pause="pause"
-        @cutSong="emit('cutSong')"
+        @cutSong="(val) => emit('cutSong', val)"
         @setOrderHandler="setOrderHandler"
     />
     <DetailRight

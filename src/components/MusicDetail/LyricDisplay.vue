@@ -130,6 +130,7 @@ defineExpose({
       width: 40vw;
       border-radius: 5px;
       overflow: auto;
+      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
       //box-shadow: 0 5px 15px 5px rgba(0,0,0,0.05);
       position: relative;
       //scroll-behavior: smooth; // 111
