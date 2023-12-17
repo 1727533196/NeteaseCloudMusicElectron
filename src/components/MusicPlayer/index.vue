@@ -65,7 +65,7 @@ function play(lengthen: boolean = false) {
 function pause(isNeed: boolean = true, lengthen: boolean = false) {
   let volume = store.volume
   // 是否需要更新暂停标识， 什么时候不需要，就比如切换下一首歌的时候:
-  //  这个时候会先调用pause暂停上一首进行过渡，然后在调用play播放，这个时候就不需要更新暂停标识
+  // 这个时候会先调用pause暂停上一首进行过渡，然后在调用play播放，这个时候就不需要更新暂停标识
   isNeed && (isPlay.value = false)
   return transitionVolume(volume, false, lengthen).then(() => {
     // 暂停时应该等待音量过渡完成在改变，让逐字歌词也有一个暂停过渡效果

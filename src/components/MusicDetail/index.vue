@@ -47,7 +47,7 @@ const setModelValue = computed({
 
 let cut = false
 // 切换歌曲时
-watch(() => music.state.songs.id, (val, oldVal) => {
+watch(() => music.state.songs.id, () => {
   cut = true
   index.value = 0
   isUserWheel = false
@@ -93,7 +93,6 @@ function moveLyric(currentLyr: Lyric) {
 }
 let lastTime = 0
 function step() {
-  let currentTime = window.$audio ? $audio.el.currentTime : 0;
   if(
       !window.$audio?.isPlay ||
       !lyricDisplayInstance.value.lyrEl ||
@@ -102,6 +101,9 @@ function step() {
   ) {
     return
   }
+
+  let currentTime = window.$audio ? $audio.el.currentTime : 0
+
   if(cut) {
     cut = false
   }
@@ -126,9 +128,9 @@ function step() {
   }
   lastTime = currentTime;
 }
-function start() {
+function startMoveLyr() {
   step()
-  requestAnimationFrame(start)
+  requestAnimationFrame(startMoveLyr)
 }
 
 // 高亮当前快进
@@ -223,7 +225,7 @@ function runHig(index: number, lastIndex: number) {
 }
 
 onMounted(() => {
-  start()
+  startMoveLyr()
 
   const rhythmBox = document.querySelector('#rhythm-box') as HTMLDivElement
   const {splitImg} = useRhythm(rhythmBox)

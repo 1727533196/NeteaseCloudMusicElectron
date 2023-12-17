@@ -79,9 +79,10 @@ defineExpose({
 .music-detail-container {
   .base-progress-bar {
     .el-slider__bar {
-      height: 10px;
-      background-image: linear-gradient(to right, rgb(v-bind('music.state.bgColor[0]')), rgb(v-bind('music.state.bgColor[1]')));
-      border-radius: 10px;
+      height: 6px;
+      background-image: linear-gradient(to right, rgb(v-bind('music.state.bgColor[1]')), rgb(v-bind('music.state.bgColor[0]')));
+      opacity: 0.8;
+      border-radius: 6px;
       background-color: transparent;
     }
   }
