@@ -402,7 +402,8 @@ export function findBestColors(colors: Array<Array<string>>, num: number): Array
   let goodColors = colors.filter(color => isGoodColor(...color));
   console.log(goodColors, colors)
   if (goodColors.length < num) {
-
+    let badColors = colors.filter(color => !isGoodColor(...color));
+    goodColors = [...goodColors, ...badColors.slice(0, num - goodColors.length)];
   }
 
   let bestColors = [];

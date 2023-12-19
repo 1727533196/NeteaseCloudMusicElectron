@@ -168,7 +168,7 @@ export default defineComponent({
       if(!props.isNeedTitle) {
         return ''
       }
-      return h('div', {class:'title-container', style: {}}, props.columns.map(config => {
+      return h('div', {class:'title-container', style: {display: props.loading ? 'none' : '',}}, props.columns.map(config => {
         return indiviEl(config, 1, config.title)
       }))
     }
@@ -191,7 +191,7 @@ export default defineComponent({
           //   'onUpdate:modelValue': (value: string) => emit('update:modelValue', value)
           // }),
           renderTitle(),
-          h('div', {class:'list-container'}, props.list.map((data, i) => {
+          h('div', {class:'list-container', style: {display: props.loading ? 'none' : '',}}, props.list.map((data, i) => {
             return h('div', {
               ondblclick: () => playHandler(data, i),
               onMousedown: () => mousedownHandler(data),
@@ -276,19 +276,13 @@ export default defineComponent({
   flex: 1;
   position: relative;
   padding: 35px;
+  margin-bottom: 80px;
   .loading {
-    position: absolute;
-    z-index: 99;
-    top: 0;
-    height: 100%;
-    width: 100%;
+    position: relative;
+    top: 100px;
     :deep(.el-loading-mask) {
-      //background-color: @bgColor;
 
       .el-loading-spinner {
-        position: fixed;
-        top: 50%;
-        transform: translateY(-50%);
       }
     }
   }

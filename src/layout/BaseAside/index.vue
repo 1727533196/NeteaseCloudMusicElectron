@@ -2,7 +2,7 @@
 import {ref, watch } from "vue";
 import {useUserInfo} from "@/store";
 import {useRoute, useRouter} from "vue-router";
-import {asideMenuConfig, ListItem, needUseComparisonPaths, paths} from "@/layout/BaseAside/config";
+import {asideFontSize, asideMenuConfig, ListItem, needUseComparisonPaths, paths} from "@/layout/BaseAside/config";
 
 const store = useUserInfo()
 const current = ref<ListItem>()
@@ -103,17 +103,19 @@ const login = () => {
     <div class="play-container">
       <template :key="i" v-for="(menuItem, i) in asideMenuConfig">
         <div class="lump">
-          <div v-if="menuItem.mark && menuItem.list.length" class="title">{{menuItem.title}}</div>
+<!--          <div v-if="menuItem.mark && menuItem.list.length" class="title">{{menuItem.title}}</div>-->
           <div
             @click="itemClick(item)"
             v-for="item in menuItem.list"
-            :style="{fontSize: item.fontSize+'px' || ''}"
+            :style="{fontSize: item.asideFontSize+'px' || ''}"
             :class="['play-list-item', {current: isCurrent(item.path, item.id)}]"
           >
-            <i :class="['iconfont', item.icon || '']"></i>
-            <span>{{item.name}}</span>
+            <i v-if="item.icon" :class="['iconfont', item.icon || '']"></i>
+            <img v-else-if="item.coverImgUrl" :src="item.coverImgUrl" alt="">
+            <span class="name">{{item.name}}</span>
           </div>
         </div>
+        <div v-if="i < asideMenuConfig.length - 1" class="line"></div>
       </template>
     </div>
   </div>
@@ -121,10 +123,10 @@ const login = () => {
 
 <style lang="less" scoped>
 .aside {
-  width: 250px;
+  width: 285px;
   height: 100%;
   background-color: rgba(255,255, 255, 0.03);
-  padding: 10px 10px;
+  padding: 10px 0;
   box-sizing: border-box;
   position: relative;
   z-index: 100;
@@ -134,6 +136,7 @@ const login = () => {
     width: 100%;
     display: flex;
     align-items: center;
+    padding: 0 25px;
     //justify-content: center;
     .head-portraits {
       border-radius: 50%;
@@ -171,8 +174,9 @@ const login = () => {
   .play-container {
     overflow-y: auto;
     height: calc(100% - 70px);
+    padding: 0 20px;
+    padding-bottom: 100px;
     .lump {
-      padding-bottom: 10px;
       .title {
         font-size: 14px;
         color: @darkText;
@@ -186,16 +190,33 @@ const login = () => {
         font-size: 13px;
         text-align: left;
         line-height: 40px;
-        .textOverflow();;
+        .textOverflow();
         padding: 0 10px;
         border-radius: 5px;
+        display: flex;
+        align-items: center;
+        margin: 7px 0;
+        > img {
+          width: 34px;
+          height: 34px;
+          border-radius: 6px;
+        }
+        .name {
+          margin-left: 10px;
+          .textOverflow();
+        }
       }
       .play-list-item:hover{
-        background-color: rgba(255,255,255,0.05);
+        background-image: linear-gradient(#ff1168, #fc3d49);
       }
       .current.play-list-item {
-        background-color: rgba(255,255,255,0.05);
+        background-image: linear-gradient(#ff1168, #fc3d49);
       }
+    }
+    .line {
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.1);
+      margin: 15px 10px;
     }
 
   }

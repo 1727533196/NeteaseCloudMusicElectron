@@ -6,14 +6,14 @@ export type ListItem = {
   name: string,
   icon: string,
   path: typeof paths[number]
-  fontSize?: number
+  asideFontSize?: number
 } & Partial<PlayList>
 interface MenuConfig {
   title: '我的音乐' | '创建的歌单' | '收藏的歌单' | false,
   mark: 'my' | 'play' | 'subscribedList' | false,
   list: ListItem[]
 }
-const fontSize = 13
+export const asideFontSize = 14
 export const needUseComparisonPaths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/cloud']
 export const originAsideMenuConfig: MenuConfig[] = [
   {
@@ -22,32 +22,32 @@ export const originAsideMenuConfig: MenuConfig[] = [
     list: [
       {
         name: '为我推荐',
-        icon: '',
+        icon: 'icon-home-fill',
         path: '/home',
-        fontSize,
+        asideFontSize,
         id: 1,
       },
       {
         name: '云音乐精选',
-        icon: '',
+        icon: 'icon-headphone-fill',
         path: '/fm',
-        fontSize,
+        asideFontSize,
         id: 2,
       },
-      {
-        name: '博客',
-        icon: '',
-        path: '/video',
-        fontSize,
-        id: 3,
-      },
-      {
-        name: '社区',
-        icon: '',
-        path: '/follow',
-        fontSize,
-        id: 4,
-      },
+      // {
+      //   name: '博客',
+      //   icon: '',
+      //   path: '/video',
+      //   asideFontSize,
+      //   id: 3,
+      // },
+      // {
+      //   name: '社区',
+      //   icon: '',
+      //   path: '/follow',
+      //   asideFontSize,
+      //   id: 4,
+      // },
     ],
   },
   {
@@ -56,20 +56,23 @@ export const originAsideMenuConfig: MenuConfig[] = [
     list: [
       {
         name: '本地与下载',
-        icon: '',
+        icon: 'icon-xiazaibendi',
         path: '/local',
+        asideFontSize,
         id: 5,
       },
       {
         name: '最近播放',
-        icon: '',
+        icon: 'icon-zuijinlaifang',
         path: '/lately',
+        asideFontSize,
         id: 6,
       },
       {
         name: '我的音乐云盘',
-        icon: '',
+        icon: 'icon-yunpan',
         path: '/cloud',
+        asideFontSize,
         id: 7,
       },
     ],
@@ -78,12 +81,6 @@ export const originAsideMenuConfig: MenuConfig[] = [
     title: '创建的歌单',
     mark: 'play',
     list: [
-      {
-        name: '我喜欢的音乐',
-        icon: '',
-        path: '/play-list',
-        id: 8,
-      },
     ]
   },
   {

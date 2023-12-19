@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import {Profile} from "@/api/user";
 import {PlayList} from "@/api/musicList";
-import {asideMenuConfig, ListItem} from "@/layout/BaseAside/config";
+import {asideFontSize, asideMenuConfig, ListItem} from "@/layout/BaseAside/config";
 
 export const useUserInfo = defineStore('userInfoId', {
   state: () => {
@@ -41,17 +41,29 @@ export const useUserInfo = defineStore('userInfoId', {
       const copyVal = JSON.parse(JSON.stringify(val)) as PlayList[]
       const myList: ListItem[] = []
       const subscribedList: ListItem[] = []
+      const myListItem = asideMenuConfig.find(item => item.mark === 'my')
       copyVal.forEach(item => {
         if(item.subscribed) {
-          subscribedList.push({...item, icon: '', path: "/play-list"})
+          subscribedList.push({...item, asideFontSize,icon: '', path: "/play-list"})
         } else {
-          myList.push({
-            ...item,
-            name: item.specialType === 5 ? '我喜欢的音乐' : item.name,
-            // icon: item.specialType === 5 ? 'icon-xihuan' : '',
-            icon: item.specialType === 5 ? '' : '',
-            path: "/play-list"
-          })
+          if(item.specialType === 5) {
+            asideMenuConfig.find(item => item.mark === 'my')
+            myListItem!.list = [{
+              ...item,
+              name: '我喜欢的音乐',
+              asideFontSize,
+              path: "/play-list",
+              icon: 'icon-aixin',
+            },...myListItem!.list]
+          } else {
+            myList.push({
+              ...item,
+              name: item.name,
+              icon: '',
+              asideFontSize,
+              path: "/play-list"
+            })
+          }
         }
       })
       let playItem = asideMenuConfig.find(item => item.mark === 'play')
@@ -64,20 +76,3 @@ export const useUserInfo = defineStore('userInfoId', {
     },
   },
 })
-
-/*
-export const useUserInfo = defineStore({
-  id: 'counter',
-  state: () => ({
-    counter: 0
-  }),
-  getters: {
-    doubleCount: (state) => state.counter * 2
-  },
-  actions: {
-    increment() {
-      this.counter++
-    }
-  }
-})
- */

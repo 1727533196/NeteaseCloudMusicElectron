@@ -28,12 +28,12 @@ export const useTheme = defineStore('themeId', {
           }
           this.bgColor = rgb
           if(this.pointer === 0) {
-            app.style.backgroundImage = `linear-gradient(rgb(${rgb}) , rgb(19, 19, 26) )`
+            app.style.backgroundImage = `linear-gradient(rgb(${rgb}) , rgb(19, 19, 26) 50%)`
             app.style.opacity = '1'
             opacityBg.style.opacity = '0'
             this.pointer = 1
           } else {
-            opacityBg.style.backgroundImage = `linear-gradient(rgb(${rgb}) , rgb(19, 19, 26) )`
+            opacityBg.style.backgroundImage = `linear-gradient(rgb(${rgb}) , rgb(19, 19, 26) 50%)`
             opacityBg.style.opacity = '1'
             app.style.opacity = '0'
             this.pointer = 0

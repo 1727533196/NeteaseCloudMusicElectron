@@ -179,12 +179,13 @@ const getSearchSuggest = async (keywords: string) => {
     border-radius: 10px;
     width: 400px;
     max-height: 77vh;
-    background-color: rgb(45,45,56);
+    background-color: rgba(45,45,56, 0.7);
     transform: translateX(-50%) translateY(100%);
     left: 50%;
     bottom: -3vh;
     z-index: 10;
     overflow: auto;
+    backdrop-filter: blur(60px) saturate(210%);
     .el-loading-mask {
       background: transparent;
     }

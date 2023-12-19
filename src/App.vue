@@ -42,7 +42,7 @@ getUserAccountFn()
   <div id="opacity-bg1" style="position: fixed;width: 100%;height: 100%;transition: 0.5s"></div>
   <MusicDetail v-model="flags.isOpenDetail"/>
   <PlayListDrawer v-model="flags.isOpenDrawer"/>
-  <div style="height: calc(100% - 75px);position: relative;z-index: auto">
+  <div style="height: 100%;position: relative;z-index: auto">
     <div id="box">
       <Aside></Aside>
       <div class="main">
@@ -59,7 +59,7 @@ getUserAccountFn()
     </div>
     <div style="height: 20px"></div>
   </div>
-  <Bottom>
+  <Bottom v-show="music.state.musicUrl.length">
     <teleport :disabled="!flags.isOpenDetail" to=".music-detail-container .test">
       <MusicPlayer
         ref="audioInstance"
