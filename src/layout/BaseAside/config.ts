@@ -12,6 +12,8 @@ interface MenuConfig {
   title: '我的音乐' | '创建的歌单' | '收藏的歌单' | false,
   mark: 'my' | 'play' | 'subscribedList' | false,
   list: ListItem[]
+  type?: 'collapsed' | 'tiled'
+  isCollapsed?: boolean
 }
 export const asideFontSize = 14
 export const needUseComparisonPaths = ['/home', '/fm', '/video', '/follow', '/local', '/lately', '/cloud']
@@ -51,7 +53,7 @@ export const originAsideMenuConfig: MenuConfig[] = [
     ],
   },
   {
-    title: '我的音乐',
+    title: false,
     mark: 'my',
     list: [
       {
@@ -80,12 +82,15 @@ export const originAsideMenuConfig: MenuConfig[] = [
   {
     title: '创建的歌单',
     mark: 'play',
-    list: [
-    ]
+    type: 'collapsed',
+    isCollapsed: true,
+    list: []
   },
   {
     title: '收藏的歌单',
     mark: 'subscribedList',
+    type: 'collapsed',
+    isCollapsed: true,
     list: []
   },
 ]

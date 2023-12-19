@@ -2,7 +2,8 @@
 import {ref, watch } from "vue";
 import {useUserInfo} from "@/store";
 import {useRoute, useRouter} from "vue-router";
-import {asideFontSize, asideMenuConfig, ListItem, needUseComparisonPaths, paths} from "@/layout/BaseAside/config";
+import {asideMenuConfig, ListItem, needUseComparisonPaths, paths} from "@/layout/BaseAside/config";
+import {afterEnter, afterLeave, beforeEnter, beforeLeave, enter, leave} from "@/layout/BaseAside/animation";
 
 const store = useUserInfo()
 const current = ref<ListItem>()
@@ -86,6 +87,9 @@ const gotoDetail = () => {
 const login = () => {
   window.$login.show()
 }
+const collapsedHandler = (item) => {
+  item.isCollapsed = !item.isCollapsed
+}
 </script>
 
 <template>
@@ -102,18 +106,48 @@ const login = () => {
     </div>
     <div class="play-container">
       <template :key="i" v-for="(menuItem, i) in asideMenuConfig">
-        <div class="lump">
-<!--          <div v-if="menuItem.mark && menuItem.list.length" class="title">{{menuItem.title}}</div>-->
-          <div
-            @click="itemClick(item)"
-            v-for="item in menuItem.list"
-            :style="{fontSize: item.asideFontSize+'px' || ''}"
-            :class="['play-list-item', {current: isCurrent(item.path, item.id)}]"
-          >
-            <i v-if="item.icon" :class="['iconfont', item.icon || '']"></i>
-            <img v-else-if="item.coverImgUrl" :src="item.coverImgUrl" alt="">
-            <span class="name">{{item.name}}</span>
-          </div>
+        <div :class="['lump', { 'collapsed-lump': menuItem.type === 'collapsed',}]">
+          <div @click="menuItem.type === 'collapsed' && collapsedHandler(menuItem)" v-if="menuItem.title && menuItem.list.length" class="title">{{menuItem.title}}</div>
+          <template v-if="menuItem.type === 'collapsed'">
+            <transition
+                name="height-fade"
+                @before-enter="beforeEnter"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @before-leave="beforeLeave"
+                @leave="leave"
+                @after-leave="afterLeave"
+            >
+              <div v-show="menuItem.isCollapsed" :class="[{
+            collapsed: menuItem.type === 'collapsed',
+            'tree-open': menuItem.isCollapsed === true,
+            'tree-close': menuItem.isCollapsed === false,
+            }]">
+                <div
+                    @click="itemClick(item)"
+                    v-for="item in menuItem.list"
+                    :style="{fontSize: item.asideFontSize+'px' || ''}"
+                    :class="['play-list-item', {current: isCurrent(item.path, item.id)}]"
+                >
+                  <i v-if="item.icon" :class="['iconfont', item.icon || '']"></i>
+                  <img v-else-if="item.coverImgUrl" :src="item.coverImgUrl" alt="">
+                  <span class="name">{{item.name}}</span>
+                </div>
+              </div>
+            </transition>
+          </template>
+          <template v-else>
+            <div
+                @click="itemClick(item)"
+                v-for="item in menuItem.list"
+                :style="{fontSize: item.asideFontSize+'px' || ''}"
+                :class="['play-list-item', {current: isCurrent(item.path, item.id)}]"
+            >
+              <i v-if="item.icon" :class="['iconfont', item.icon || '']"></i>
+              <img v-else-if="item.coverImgUrl" :src="item.coverImgUrl" alt="">
+              <span class="name">{{item.name}}</span>
+            </div>
+          </template>
         </div>
         <div v-if="i < asideMenuConfig.length - 1" class="line"></div>
       </template>
@@ -122,6 +156,13 @@ const login = () => {
 </template>
 
 <style lang="less" scoped>
+.height-fade-enter-active, .height-fade-leave-active {
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+.height-fade-enter, .height-fade-leave-to /* .height-fade-leave-active in <2.1.8 */ {
+  height: 0;
+}
 .aside {
   width: 285px;
   height: 100%;
@@ -176,6 +217,20 @@ const login = () => {
     height: calc(100% - 70px);
     padding: 0 20px;
     padding-bottom: 100px;
+    .collapsed-lump {
+      .title {
+        cursor: pointer;
+      }
+      .collapsed {
+        overflow: hidden;
+      }
+      .tree-close {
+        //height: 0;
+      }
+      .tree-open {
+        //height: 100%;
+      }
+    }
     .lump {
       .title {
         font-size: 14px;
