@@ -35,10 +35,10 @@ class Main {
             //     color: '#222225',
             //     symbolColor: '#ADAFB2FF'
             // },
-            minHeight: 850,
-            minWidth: 1250,
-            height: 850,
-            width: 1250,
+            minHeight: 750,
+            minWidth: 1150,
+            height: 750,
+            width: 1150,
             webPreferences: {
                 nodeIntegration: true, // 为了解决required识别问题
                 // // 需要设置contextIsolation属性为false。

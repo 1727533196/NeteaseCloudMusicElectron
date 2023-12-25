@@ -124,6 +124,9 @@ function step() {
 
   }
   else if(currentLyrEl.length && (currentTime >= music.state.lyric[index.value].time)) {
+    console.log('开始时的time：', currentTime)
+    console.log('达到时的time：', music.state.lyric[index.value].time)
+    console.log('歌词标识：', music.state.lyric[index.value].text)
     moveLyric(music.state.lyric[index.value])
   }
   lastTime = currentTime;
@@ -153,6 +156,8 @@ function transitionYrc(index: number) {
   if(yrcIndex < yrc.length) {
     const transition = (yrc[yrcIndex] || {transition: 0}).transition * 1000
 
+    console.log('达到时的time：', $audio.time)
+    console.log('------结束------')
     worker.postMessage({
       transition: transition,
       test: yrc[yrcIndex].text,

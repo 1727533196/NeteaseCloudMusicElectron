@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="container">
+  <div class="bottom-container container">
     <slot></slot>
   </div>
 </template>
@@ -18,5 +18,8 @@
   left: 0;
   z-index: 2003;
   width: 100%;
+}
+.bottom-container {
+  transition: 0.5s;
 }
 </style>

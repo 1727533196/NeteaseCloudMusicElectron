@@ -59,7 +59,7 @@ getUserAccountFn()
     </div>
     <div style="height: 20px"></div>
   </div>
-  <Bottom v-show="music.state.musicUrl.length">
+  <Bottom :class="[music.state.musicUrl.length ? 'bottom-show' : 'bottom-visible']">
     <teleport :disabled="!flags.isOpenDetail" to=".music-detail-container .test">
       <MusicPlayer
         ref="audioInstance"
@@ -75,4 +75,14 @@ getUserAccountFn()
 
 <style lang="less">
 @import '@/assets/base.less';
+
+
+.bottom-show {
+  visibility: visible;
+  opacity: 1;
+}
+.bottom-visible {
+  visibility: hidden;
+  opacity: 0;
+}
 </style>
