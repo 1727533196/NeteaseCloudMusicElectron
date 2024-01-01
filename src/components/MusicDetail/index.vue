@@ -66,9 +66,6 @@ watch(() => music.state.songs.id, () => {
 
 function findLyric(time: number) {
   const result = music.state.lyric.find((item, index) => {
-    // if(index + 1 >= music.lyric.length) {
-    //   return item
-    // }
     return item.time <= time && music.state.lyric[index+1].time > time
   })
   result && moveLyric(result)
@@ -131,10 +128,6 @@ function step() {
   }
   lastTime = currentTime;
 }
-function startMoveLyr() {
-  step()
-  requestAnimationFrame(startMoveLyr)
-}
 
 // 高亮当前快进
 function higWidth(index: number) {
@@ -166,7 +159,7 @@ function transitionYrc(index: number) {
   }
 }
 // 监听消息
-worker.onmessage = e => {
+const each = (e) => {
   const {elapsed, done, transition} = e.data
   if(cut) {
     return
@@ -305,6 +298,10 @@ window.onresize = () => {
 onUnmounted(() => {
   window.onresize = null
 })
+function startMoveLyr() {
+  step()
+  requestAnimationFrame(startMoveLyr)
+}
 </script>
 
 <template>
