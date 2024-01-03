@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import {formattingTime} from "@/utils";
+import {formattingTime, Yrc} from "@/utils";
 import {Lyric} from "@/store/music";
 import {ref} from "vue";
 
 interface Props {
-  lyric: any
+  lyric: Lyric[] | Yrc[]
   lrcMode: 1 | 0
-  currentLyrLine: any
+  currentLyrLine: Lyric
+  isBlur: boolean
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['wheelHandler', 'lyricClick'])
@@ -35,7 +36,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="shadow">
+  <div :style="{'backdrop-filter': isBlur ? 'blur(15px)' : 'none' }" class="shadow">
     <div class="lyric-and-bg-container">
       <div :style="{transform: props.lyric.length ? '' : 'translateX(0)'}" class="bg-img"></div>
       <div
@@ -54,13 +55,20 @@ defineExpose({
                 @mouseenter="mouseenter($event, item)"
                 @mouseleave="mouseleave"
                 @click="$emit('lyricClick', item.time)"
-                :class="{'lyric-item': true, 'current-lyric-item': currentLyrLine.line === item.line}" v-for="item in props.lyric">
+                :class="{'lyric-item': true, 'current-lyric-item': currentLyrLine.line === item.line}"
+                v-for="item in props.lyric"
+            >
               <div
                   v-for="yrcItem in item.yrc"
                   style="position: relative;display: inline-block;width: auto;padding: 0"
               >
-                <span style="white-space: pre-wrap">{{yrcItem.text}}</span>
-                <span class="transition" :style="{ width: yrcItem.width }">{{yrcItem.text}}</span>
+                <span
+                    class="transition"
+                    :style="{
+                  background: `linear-gradient(to right, #fff ${yrcItem.width}, rgba(255, 255, 255, 0.3) 0%)`,
+                  '-webkit-background-clip': 'text'
+                }"
+                >{{yrcItem.text}}</span>
               </div>
             </div>
             <span
@@ -179,15 +187,9 @@ defineExpose({
             background-color: rgba(255,255,255,0.05);
           }
           .transition {
-            left: 0;
-            top: 0;
-            position: absolute;
-            color: white;
-            width: 0;
-            overflow: hidden;
-            z-index: 99;
-            white-space: nowrap;
-            //white-space: pre-line;
+            background: linear-gradient(to right, #fff 0%, rgba(255, 255, 255, 0.3) 0%);
+            -webkit-background-clip: text;
+            color: transparent;
           }
         }
         .empty-lyric {

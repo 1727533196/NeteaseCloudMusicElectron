@@ -35,6 +35,7 @@ const setBg = (val: 'rgb' | 'rhythm') => {
   <div class="test"></div>
   <base-button @click="setBg('rgb')" style="width: 108px;margin-top: 20px">纯色模式</base-button>
   <base-button @click="setBg('rhythm')" style="width: 108px;margin-top: 20px">跳动模式</base-button>
+  <base-button @click="() => router.push('yrc-test')">goto YRC</base-button>
 </template>
 
 <style lang="less">

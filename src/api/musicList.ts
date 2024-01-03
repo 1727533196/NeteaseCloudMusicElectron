@@ -148,7 +148,7 @@ export const getUserPlayList = (uid: number) => request<{ uid: string }, GetUser
 export const getUserPlayListMusic = (id: number) => request(`/playlist/track/all?id=${id}&limit=10&offset=0`, 'get')
 
 // 获取音乐url
-export const getMusicUrl = (id: number) =>
+export const getMusicUrl = (id: string) =>
     request<string, GetMusicUrlRes>(`/song/url?id=${id}`, 'get')
 
 // 获取歌单详情  可以获取歌单全部歌曲

@@ -75,5 +75,10 @@ export default [
     path: '/comment',
     name: 'comment',
     component: () => import('@/views/Comment/index.vue'),
+  },
+  {
+    path: '/yrc-test',
+    name: 'yrcTest',
+    component: () => import('@/views/Test/YrcTest.vue')
   }
 ]
