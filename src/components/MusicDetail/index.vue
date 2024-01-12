@@ -55,19 +55,17 @@ function step() {
   const oldTime = $audio ? parseFloat($audio.oldTime.toFixed(2)) : 0
 
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
-  // if(Math.abs(time - oldTime) >= 1) {
-  //   findLyric(time)
-  //   // 如果是逐字歌词的情况下
-  //   if(music.state.lrcMode === 1) {
-  //     findYrcIndex(index.value)
-  //     higWidth(index.value)
-  //   }
-  //   return
-  // }
+  if(Math.abs(time - oldTime) >= 1) {
+    findLyric(time)
+    // 如果是逐字歌词的情况下
+    if(music.state.lrcMode === 1) {
+      findYrcIndex(index.value)
+      higWidth(index.value)
+    }
+    return
+  }
   if(time >= music.state.lyric[index.value].time) {
-    console.log(index.value)
     // currentLyrLine.value = music.state.lyric[index.value]
-    // alone(index.value++)
     moveLyric(music.state.lyric[index.value])
   }
 }
@@ -101,7 +99,9 @@ function runHig(index: number, lastIndex: number) {
     return
   }
   // yrcIndex = 0
-  clearWidth(lastIndex)
+  setTimeout(() => {
+    clearWidth(lastIndex)
+  }, 10)
   alone(index)
 }
 
