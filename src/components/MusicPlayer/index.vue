@@ -22,6 +22,7 @@ export interface MusicPlayerInstanceType {
   pause: typeof pause
   play: typeof play
   time: number
+  oldTime: number
   transitionIsPlay: UnwrapRef<boolean>
 }
 interface Props {
@@ -105,12 +106,15 @@ const timeState = reactive({
   model: 0,
   stop: false,
   currentTime: 0,
+  previousTime: 0, // 新增属性来保存旧的 currentTime
 })
 
 const timeupdate = () => {
   if(timeState.stop || isNaN($audio.el.duration)){
     return
   }
+  // 在更新 currentTime 之前，保存旧的值
+  timeState.previousTime = music.state.currentTime;
   music.state.currentTime = $audio.time
   timeState.model = ($audio.time / $audio.el.duration) * 100
 }
@@ -147,6 +151,11 @@ Object.defineProperty(exposeObj, 'time', {
   set(time: number) {
     audio.value!.currentTime = time
   },
+})
+Object.defineProperty(exposeObj, 'oldTime', {
+  get(): number {
+    return timeState.previousTime
+  }
 })
 defineExpose(exposeObj)
 

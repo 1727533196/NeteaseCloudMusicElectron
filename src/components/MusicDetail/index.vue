@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import {computed, nextTick, onMounted, ref, watch, onUnmounted} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
-import {findBestColors, toggleImg, Yrc} from "@/utils";
+import {animation, getScreenFps, Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
 import {useFlags} from "@/store/flags";
-import MyWorker from "@/utils/worker.ts?worker"
-import {colorExtraction, gradualChange, useRhythm} from './useMusic'
 import {useSettings} from "@/store/settings";
-import LyricDisplay from "@/components/MusicDetail/LyricDisplay.vue";
+import LyricDisplay from "./LyricDisplay.vue";
+import FlowBg from './FlowBg.vue'
 
 interface Props {
   modelValue: boolean
@@ -17,19 +16,13 @@ const emit = defineEmits(['update:modelValue'])
 const music = useMusicAction()
 const flags = useFlags()
 const settings = useSettings()
-const cntrEl = ref<HTMLDivElement>()
-const lyricDisplayInstance = ref<InstanceType<typeof LyricDisplay>>()
 const containerEl = ref<HTMLDivElement>()
 const top = ref<number>(0)
 const correctHeight = ref<number>(0)
 const index = ref(0)
-const currentLyrLine = ref<Lyric>({time: 0, line: 1, text: '0'})
-const worker = new MyWorker()
+const currentLyrLine = ref<Lyric | Yrc>({time: 0, line: 1, text: '0'})
 let direction = false
 let isTransition = ref(true)
-let currentLyrEl: HTMLCollectionOf<HTMLDivElement>
-let isUserWheel = false // 是否为用户滚动，当用户滚动时，会在用户停止三秒之后置为false
-let timeout: NodeJS.Timeout
 let yrcIndex = 0 // 当前字的索引
 let suspend = false // 歌曲运行时暂停的标识
 
@@ -44,89 +37,39 @@ const setModelValue = computed({
     emit('update:modelValue', val)
   }
 })
-
 let cut = false
 // 切换歌曲时
 watch(() => music.state.songs.id, () => {
   cut = true
   index.value = 0
-  isUserWheel = false
   yrcIndex = 0
-  nextTick(() => {
-    lyricDisplayInstance.value.lyrEl!.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-  })
-  worker.postMessage({
-    pause: true,
-    val: true,
-  })
 })
 
-function findLyric(time: number) {
-  const result = music.state.lyric.find((item, index) => {
-    return item.time <= time && music.state.lyric[index+1].time > time
-  })
-  result && moveLyric(result)
-}
-function moveLyric(currentLyr: Lyric) {
-  currentLyrLine.value = currentLyr
-  const lastIndex = index.value
-
-  index.value = currentLyr.line
-
-  runHig(index.value-1, lastIndex - 1)
-  // 当用户操作滚动条时，不自动滚动
-  if(!isUserWheel) {
-    nextTick(() => {
-      const top = lyricDisplayInstance.value.moveBox!.offsetTop / 1.5 + lyricDisplayInstance.value.moveBox!.offsetTop
-      lyricDisplayInstance.value.lyrEl!.scrollTo({
-        top: currentLyrEl[0].offsetTop+top - (lyricDisplayInstance.value.lyrEl!.clientHeight/2),
-        behavior: 'smooth'
-      })
-    })
-  }
-}
-let lastTime = 0
 function step() {
-  if(
-      !window.$audio?.isPlay ||
-      !lyricDisplayInstance.value.lyrEl ||
-      !lyricDisplayInstance.value.moveBox ||
-      music.state.lyric.notSupportedScroll
-  ) {
+  // 没有播放，或不支持滚动歌词
+  if(!music.state.lyric.length || !window.$audio?.isPlay || music.state.lyric.notSupportedScroll) {
     return
   }
 
-  let currentTime = window.$audio ? $audio.el.currentTime : 0
+  const time = $audio ? parseFloat($audio.time.toFixed(2)) : 0
+  const oldTime = $audio ? parseFloat($audio.oldTime.toFixed(2)) : 0
 
-  if(cut) {
-    cut = false
-  }
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
-  else if(Math.abs(currentTime - lastTime) >= 1) {
-    findLyric(currentTime)
-    if(music.state.lrcMode === 1) {
-      findYrcIndex(index.value - 1)
-      worker.postMessage({
-        pause: true,
-        val: true,
-      })
-      higWidth(index.value - 1)
-    }
-  }
-  // 歌词是否到底
-  else if(!music.state.lyric[index.value]) {
-
-  }
-  else if(currentLyrEl.length && (currentTime >= music.state.lyric[index.value].time)) {
-    console.log('开始时的time：', currentTime)
-    console.log('达到时的time：', music.state.lyric[index.value].time)
-    console.log('歌词标识：', music.state.lyric[index.value].text)
+  // if(Math.abs(time - oldTime) >= 1) {
+  //   findLyric(time)
+  //   // 如果是逐字歌词的情况下
+  //   if(music.state.lrcMode === 1) {
+  //     findYrcIndex(index.value)
+  //     higWidth(index.value)
+  //   }
+  //   return
+  // }
+  if(time >= music.state.lyric[index.value].time) {
+    console.log(index.value)
+    // currentLyrLine.value = music.state.lyric[index.value]
+    // alone(index.value++)
     moveLyric(music.state.lyric[index.value])
   }
-  lastTime = currentTime;
 }
 
 // 高亮当前快进
@@ -137,57 +80,92 @@ function higWidth(index: number) {
     yrc[i].width = 100 + '%'
   }
 }
+function findLyric(time: number) {
+  const result = music.state.lyric.find((item, index) => {
+    return item.time <= time && music.state.lyric[index+1].time > time
+  })
+  result && moveLyric(result)
+}
+function moveLyric(currentLyr: Lyric | Yrc) {
+  currentLyrLine.value = currentLyr
+  const lastIndex = index.value
+
+  // line 是从1开始的，所以就相当于++了
+  index.value = currentLyr.line
+
+  runHig(index.value - 1, lastIndex - 1)
+}
+// 逐字歌词的过渡
+function runHig(index: number, lastIndex: number) {
+  if(music.state.lrcMode !== 1) {
+    return
+  }
+  // yrcIndex = 0
+  clearWidth(lastIndex)
+  alone(index)
+}
+
 // 清除上一次
 function clearWidth(lastIndex: number) {
-  const yrc = ((music.state.lyric as Yrc[])[lastIndex] || {yrc: []}).yrc
+  if(lastIndex < 0 || lastIndex > music.state.lyric.length-1) {
+    console.error('清除宽度时已超出索引:',lastIndex)
+    return
+  }
+  const yrc = (music.state.lyric as Yrc[])[lastIndex].yrc
   yrc.forEach(item => {
     item.width = 0
   })
 }
-function transitionYrc(index: number) {
-  const yrc = (music.state.lyric as Yrc[])[index].yrc
-  if(yrcIndex < yrc.length) {
-    const transition = (yrc[yrcIndex] || {transition: 0}).transition * 1000
+function alone(index: number) {
+  let yrcIndex = 0
 
-    console.log('达到时的time：', $audio.time)
-    console.log('------结束------')
-    worker.postMessage({
-      transition: transition,
-      test: yrc[yrcIndex].text,
-      yrcIndex
-    })
-  }
-}
-// 监听消息
-const each = (e) => {
-  const {elapsed, done, transition} = e.data
-  if(cut) {
-    return
-  }
-  const yrc = ((music.state.lyric as Yrc[])[index.value - 1] || {}).yrc
-  let width: number
-  width = 100
-  if($audio.transitionIsPlay) {
-    if(yrc[yrcIndex]) {
-      width = elapsed / transition * 100
-      yrc[yrcIndex].width = width + '%'
+  transitionYrc()
+  function transitionYrc() {
+    if(index < 0 || index > music.state.lyric.length-1) {
+      console.error('过渡逐字时已超出索引:',index)
+      return
     }
-    if(done && yrc[yrcIndex]) {
-      yrc[yrcIndex].width = 100 + '%'
-      yrcIndex++
+    const yrc = (music.state.lyric as Yrc[])[index].yrc
+    if(yrcIndex < yrc.length && yrcIndex >= 0) {
 
-      if(yrcIndex <= yrc.length) {
-        transitionYrc(index.value - 1)
+      const current = yrc[yrcIndex]
+      let delayTime = 0
+      if(parseFloat($audio.time.toFixed(2)) - (current.cursor) <= 0) {
+
+      } else {
+        delayTime = (parseFloat($audio.time.toFixed(2)) - current.cursor) * 1000
       }
+      const transition = current.transition * 1000 - delayTime
+
+      const pause = animation(transition, (elapsed, done) => {
+        const width = elapsed / transition * 100
+        current.width = width + '%'
+        if(done) {
+          if(width !== 100) {
+            console.error(`'结束但没过渡完成:',width,
+                '时间:',${elapsed},${transition},
+                '目标:', ${yrc[yrcIndex]},
+                '索引:', ${yrc}
+            `)
+          }
+          console.log(`
+          '歌曲时间:', ${parseFloat($audio.time.toFixed(2))},
+          '字的结束时间:', ${current.cursor + current.transition}
+          '延迟时间:', ${parseFloat($audio.time.toFixed(2)) - (current.cursor + yrc[yrcIndex].transition)}
+        `)
+          if(yrcIndex === yrc.length - 1) {
+
+          }
+          pause(true)
+          yrcIndex++
+          transitionYrc()
+        }
+      })
+
     }
-  } else {
-    suspend = true
-    worker.postMessage({
-      pause: true,
-      val: true,
-    })
   }
 }
+
 function findYrcIndex(index: number) {
   if(index < 0 || index > music.state.lyric.length - 1) {
     return
@@ -206,79 +184,7 @@ function findYrcIndex(index: number) {
     return time > yrc[index - 1].cursor && time <= item.cursor
   })
 }
-function runHig(index: number, lastIndex: number) {
-  if(music.state.lrcMode !== 1) {
-    return
-  }
-  yrcIndex = 0
-  clearWidth(lastIndex)
-  if(yrcIndex !== -1) {
-    transitionYrc(index)
-  } else {
-    worker.postMessage({
-      pause: true,
-      val: true,
-    })
-  }
-}
 
-onMounted(() => {
-  startMoveLyr()
-
-  const rhythmBox = document.querySelector('#rhythm-box') as HTMLDivElement
-  const {splitImg} = useRhythm(rhythmBox)
-  currentLyrEl = document.querySelector('.lyric-container')!
-    .getElementsByClassName('current-lyric-item') as HTMLCollectionOf<HTMLDivElement>
-  correctHeight.value = document.body.clientHeight
-
-  // 解决切换图片闪烁问题
-  watch(bg, (val) => {
-    toggleImg(val).then(img => {
-      if(cntrEl.value) {
-        const rgb = colorExtraction(img)
-        console.log(rgb)
-        const bestColors = findBestColors(rgb, 2)
-        gradualChange(img, bestColors);
-        music.updateBgColor(bestColors)
-        splitImg(img)
-
-        ;(cntrEl.value.querySelector('.bg-img') as HTMLDivElement).style.backgroundImage = `url(${img.src})`
-      }
-    })
-  })
-  nextTick(() => {
-    watch(() => $audio.isPlay, (value) => {
-      if(value && suspend) {
-        suspend = false
-        worker.postMessage({
-          pause: true,
-          val: false,
-        })
-      }
-    })
-  })
-  containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
-    isTransition.value = true
-    // event.wheelDelta 值为负则向下滚动，值为正则向上
-    if(event.wheelDelta > 0) {
-      top.value = 0
-      direction = false
-    } else {
-      // 这里加上1像素的偏移量是为了防止出现高度小数点的情况
-      direction = true
-      top.value = -correctHeight.value - 1
-    }
-  })
-})
-
-// 此事件只有当用户主动滑动滚轮才会触发，而编程的方式来操作滚动条则不会触发
-const wheelHandler = () => {
-  isUserWheel = true
-  clearTimeout(timeout)
-  timeout = setTimeout(() => {
-    isUserWheel = false
-  },3000)
-}
 const closeDetail = () => {
   setModelValue.value = false
 }
@@ -295,13 +201,53 @@ window.onresize = () => {
     top.value = -correctHeight.value - 1
   }
 }
-onUnmounted(() => {
-  window.onresize = null
-})
+
+function initWatcher() {
+  getScreenFps().then(fps => {
+    console.log('fps:',fps)
+    if(fps > 115) {
+      startMoveLyr()
+    } else {
+      console.log(111)
+      setInterval(step, 1)
+    }
+  })
+}
 function startMoveLyr() {
   step()
   requestAnimationFrame(startMoveLyr)
 }
+onMounted(() => {
+  initWatcher()
+  correctHeight.value = document.body.clientHeight
+
+  nextTick(() => {
+    watch(() => $audio.isPlay, (value) => {
+      if(value && suspend) {
+        suspend = false
+        // worker.postMessage({
+        //   pause: true,
+        //   val: false,
+        // })
+      }
+    })
+  })
+  containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
+    isTransition.value = true
+    // event.wheelDelta 值为负则向下滚动，值为正则向上
+    if(event.wheelDelta > 0) {
+      top.value = 0
+      direction = false
+    } else {
+      // 这里加上1像素的偏移量是为了防止出现高度小数点的情况
+      direction = true
+      top.value = -correctHeight.value - 1
+    }
+  })
+})
+onUnmounted(() => {
+  window.onresize = null
+})
 </script>
 
 <template>
@@ -313,19 +259,14 @@ function startMoveLyr() {
         :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"
       >
-        <div>
-          <div id="gradual1"/>
-          <div id="gradual2"/>
-          <div id="rhythm-box"/>
-        </div>
-        <div ref="cntrEl" class="music-detail-container">
+        <FlowBg :bg="bg"/>
+        <div class="music-detail-container">
           <LyricDisplay
-              ref="lyricDisplayInstance"
-              @wheelHandler="wheelHandler"
               @lyricClick="lyricClick"
               :lyric="music.state.lyric"
               :lrcMode="music.state.lrcMode"
               :current-lyr-line="currentLyrLine"
+              :bg="bg"
           />
           <div
               class="test"
@@ -359,21 +300,6 @@ function startMoveLyr() {
       transition: 0.5s;
       overflow: hidden;
       background-color: @bgColor;
-      #gradual1, #gradual2 {
-        height: 100%;
-        width: 100%;
-        transition: 1s;
-        position: absolute;
-      }
-      #rhythm-box {
-        position: absolute;
-        filter: blur(120px);
-
-        :global(.cut-image) {
-          transition: 0.3s linear;
-          //animation: rotate 100s infinite linear;
-        }
-      }
     }
   }
   .close {

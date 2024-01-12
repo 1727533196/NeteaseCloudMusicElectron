@@ -16,7 +16,7 @@ interface State {
   runtimeList: CurrentItem | {}
   oldList: CurrentItem | {}
   runtimeIds: number[]
-  lyric: Lyric[] | Yrc[]
+  lyric: Lyric[] & {notSupportedScroll?: boolean} | Yrc[] & {notSupportedScroll?: boolean}
   klyric: string
   currentTime: 0
   lrcMode: 0 | 1
@@ -53,6 +53,7 @@ export const useMusicAction = defineStore('musicActionId', () => {
     // {time: number(s), text: string}
     if(yrc && yrc.lyric) {
       state.lyric = parseYrc(yrc.lyric)
+      console.log(state.lyric)
       state.lrcMode = 1
     } else {
       state.lyric = formatLyric(lrc.lyric)

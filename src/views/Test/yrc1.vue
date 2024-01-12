@@ -37,8 +37,9 @@ const step = () => {
   }
   const currentTime = parseFloat(audio.value.currentTime.toFixed(2));
   time.value = currentTime
-  currentYrc.value = lyr.value[stepIndex - 1]
+  currentYrc.value = stepIndex !== 0 ? lyr.value[stepIndex - 1] : {}
   if(currentTime >= lyr.value[stepIndex].time) {
+    currentLyrLine.value = lyr.value[stepIndex]
     arrive.value = currentTime
     stepIndex++
     alone(stepIndex-1)

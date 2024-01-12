@@ -1,21 +1,56 @@
 <script lang="ts" setup>
-import {formattingTime, Yrc} from "@/utils";
+import {findBestColors, formattingTime, toggleImg, Yrc} from "@/utils";
 import {Lyric} from "@/store/music";
-import {ref} from "vue";
+import {nextTick, ref, watch} from "vue";
+import {colorExtraction, gradualChange} from '@/components/MusicDetail/useMusic';
 
 interface Props {
   lyric: Lyric[] | Yrc[]
   lrcMode: 1 | 0
   currentLyrLine: Lyric
-  isBlur: boolean
+  bg?: string
+  isBlur?: boolean
 }
-const props = defineProps<Props>()
-const emit = defineEmits(['wheelHandler', 'lyricClick'])
+const props = withDefaults(defineProps<Props>(), {
+  isBlur: true,
+})
+const emit = defineEmits(['lyricClick'])
 const isEnterLyric = ref(false) // 用来显示当前歌词的时间
-const targetTime = ref<HTMLDivElement>()
 const currentEnterLyric = ref<Lyric>({time: 0, line: 1, text: '0'})
-const lyrEl = ref<HTMLDivElement>()
-const moveBox = ref<HTMLDivElement>()
+const targetTime = ref<HTMLDivElement | null>(null)
+const lyrEl = ref<HTMLDivElement | null>(null)
+const moveBox = ref<HTMLDivElement | null>(null)
+let currentLyrEl: HTMLDivElement | null
+let isUserWheel = false // 是否为用户滚动，当用户滚动时，会在用户停止三秒之后置为false
+let timeout: NodeJS.Timeout
+
+watch(() => props.currentLyrLine, async (newLine) => {
+  // 当用户操作滚动条时，不自动滚动
+  if(isUserWheel) {
+    return
+  }
+  await nextTick(); // 确保DOM已更新
+
+  const moveBoxTop = moveBox.value?.offsetTop || 0
+  const top = moveBoxTop / 1.5 + moveBoxTop || 0
+  currentLyrEl = lyrEl.value?.querySelector('.current-lyric-item') as HTMLDivElement | null
+
+  if (currentLyrEl) {
+    const clientHeight = lyrEl.value?.clientHeight || 0;
+    lyrEl.value?.scrollTo({
+      top: currentLyrEl.offsetTop + top - (clientHeight / 2),
+      behavior: 'smooth'
+    })
+  }
+
+}, { immediate: true })
+
+watch(() => props.bg, (val) => {
+  toggleImg(val).then(img => {
+    const bgEl = document.querySelector('.bg-img') as HTMLDivElement
+    bgEl.style.backgroundImage = `url(${img.src})`
+  })
+})
 
 const mouseenter = (e: Event, lyric: Lyric) => {
   isEnterLyric.value = true
@@ -25,8 +60,18 @@ const mouseenter = (e: Event, lyric: Lyric) => {
   targetTime.value!.style.top = el.offsetTop + (el.offsetHeight / 3)  + 'px'
   currentEnterLyric.value = lyric
 }
+
 const mouseleave = () => {
   isEnterLyric.value = false
+}
+
+// 此事件只有当用户主动滑动滚轮才会触发，而编程的方式来操作滚动条则不会触发
+const wheelHandler = () => {
+  isUserWheel = true
+  clearTimeout(timeout)
+  timeout = setTimeout(() => {
+    isUserWheel = false
+  },3000)
 }
 
 defineExpose({
@@ -41,7 +86,7 @@ defineExpose({
       <div :style="{transform: props.lyric.length ? '' : 'translateX(0)'}" class="bg-img"></div>
       <div
           ref="lyrEl"
-          @wheel.stop="$emit('wheelHandler')"
+          @wheel.stop="wheelHandler"
           class="lyric-container"
           v-show="props.lyric.length"
       >

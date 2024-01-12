@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "dist/electron/index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite & node ../NeteaseCloudMusicApi/app.js",
     "build": "vue-tsc --noEmit && vite build",
     "build-electron": "rimraf dist && vite build && electron-builder",
     "preview": "vite preview"
@@ -16,6 +16,7 @@
     "axios": "^0.27.2",
     "colorthief": "^2.4.0",
     "element-plus": "^2.4.4",
+    "gsap": "^3.12.4",
     "js-cookie": "^3.0.1",
     "less": "^4.1.3",
     "pinia": "^2.0.14",

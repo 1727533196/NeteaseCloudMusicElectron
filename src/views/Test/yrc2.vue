@@ -22,7 +22,7 @@ function isPlaying(audioElement: HTMLAudioElement | null): boolean {
 }
 const init = () => {
   lyr.value = parseYrc(lyric)
-  getMusicUrl('418602085').then(res => {
+  getMusicUrl('186004').then(res => {
     url.value = res.data[0].url
   })
   console.log(lyr.value)
@@ -35,10 +35,11 @@ const step = () => {
   }
   const currentTime = parseFloat(audio.value.currentTime.toFixed(2));
   time.value = currentTime
-  currentYrc.value = lyr.value[stepIndex - 1]
+  currentYrc.value = stepIndex !== 0 ? lyr.value[stepIndex - 1] : {}
   if(currentTime >= lyr.value[stepIndex].time) {
-    arrive.value = currentTime
+    currentLyrLine.value = lyr.value[stepIndex]
     stepIndex++
+    arrive.value = currentTime
     alone(stepIndex-1)
     // cancelAnimationFrame(id)
     // return
@@ -49,7 +50,9 @@ id = setInterval(step, 1)
 function alone(i: number) {
   let itemIndex = 0
   let index = i
+  let debug = false
 
+  console.log('=======达到下一行=======')
   start()
   function start() {
     if(itemIndex > lyr.value[index].yrc.length - 1) {
@@ -58,11 +61,40 @@ function alone(i: number) {
       // id = requestAnimationFrame(step)
       return
     }
+
     const current = lyr.value[index].yrc[itemIndex]
-    const transition = lyr.value[index].yrc[itemIndex].transition * 1000
+    let delayTime = 0
+    if(parseFloat(audio.value.currentTime.toFixed(2)) - (current.cursor) <= 0) {
+
+    } else {
+      delayTime = (parseFloat(audio.value.currentTime.toFixed(2)) - current.cursor) * 1000
+    }
+    const transition = lyr.value[index].yrc[itemIndex].transition * 1000 - delayTime
+    // console.log(` 还未执行动画流时
+    //           '歌曲时间:', ${parseFloat(audio.value.currentTime.toFixed(2))},
+    //           '字的到达时间:', ${current.cursor }
+    //           '延迟时间:', ${parseFloat(audio.value.currentTime.toFixed(2)) - (current.cursor)}
+    //       `)
     const pause = animation(transition, (elapsed, done) => {
       current.width = elapsed / transition * 100 + '%'
+
+      if(!debug) {
+        debug = true
+        // console.log(` 已进入动画流时
+        //       '歌曲时间:', ${parseFloat(audio.value.currentTime.toFixed(2))},
+        //       '字的到达时间:', ${current.cursor }
+        //       '延迟时间:', ${parseFloat(audio.value.currentTime.toFixed(2)) - (current.cursor)}
+        //   `)
+      }
       if(done) {
+        debug = false
+        console.log(`
+              '歌曲时间:', ${parseFloat(audio.value.currentTime.toFixed(2))},
+              '字的到达时间:', ${current.cursor }
+              '字的结束时间:', ${current.cursor + current.transition}
+              '延迟时间:', ${parseFloat(audio.value.currentTime.toFixed(2)) - (current.cursor + current.transition)}
+          `)
+        // console.log('-----------------------------------')
         pause(true)
         itemIndex++
         start()

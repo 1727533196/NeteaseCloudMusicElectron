@@ -12,7 +12,7 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 
 export default defineConfig({
   server: {
-    port: 3001,
+    port: 4005,
   },
   plugins: [
     VueSetupExtend(),

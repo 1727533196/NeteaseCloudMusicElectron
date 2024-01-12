@@ -323,43 +323,37 @@ export function parsePathQuery(path: string) {
 
 // 根据时间执行总时长    !!!! 请注意，当done为true时，必须调用pause来中断函数执行
 export function animation(time: number, cb: (elapsed: number, done: boolean) => void): (isPause: boolean) => void {
-  let start: number,
-      id: number,
-      animationStartTime = 0,
-      stoppedAt = 0;
-  let done = false
+  let start: number | undefined;
+  let intervalId: number | undefined;
+  let elapsed = 0;
+  let paused = false;
 
-  function step(timestamp: number) {
-    done = false
-    if (start === undefined) {
-      start = timestamp;
-    }
-    const elapsed = timestamp - start - animationStartTime // 以确保精度准确
-    if (elapsed < time) {
-      cb(elapsed, done)
-    } else {
-      done = true
-      cancelAnimationFrame(id)
-      cb(time, done)
-    }
-
-    if (elapsed < time) {
-      // time 秒之后停止动画
-      id = requestAnimationFrame(step);
+  function step() {
+    if (!paused) {
+      elapsed = Date.now() - (start ?? Date.now());
+      const done = elapsed >= time;
+      if (done) {
+        cb(time, true);
+        clearInterval(intervalId);
+      } else {
+        cb(elapsed, false);
+      }
     }
   }
 
-  requestAnimationFrame(step);
+  start = Date.now();
+  intervalId = setInterval(step, 0); // 模拟 requestAnimationFrame 的频率
 
   return (isPause: boolean) => {
-    if(isPause) {
-      cancelAnimationFrame(id)
-      stoppedAt = performance.now()
+    if (isPause) {
+      paused = true;
     } else {
-      animationStartTime += performance.now() - stoppedAt
-      id = requestAnimationFrame(step)
+      if (paused) {
+        paused = false;
+        start = Date.now() - elapsed; // 重置开始时间
+      }
     }
-  }
+  };
 }
 // const element = document.getElementById("box1");
 // animation(10000, (elapsed) => {
@@ -430,3 +424,35 @@ export function findBestColors(colors: Array<Array<string>>, num: number): Array
 
   return bestColors;
 }
+
+// 获取屏幕刷新率
+export const getScreenFps = (() => {
+  // 先做一下兼容性处理
+  const nextFrame = ([
+    window.requestAnimationFrame,
+    window.webkitRequestAnimationFrame,
+    window.mozRequestAnimationFrame
+  ]).find(fn => fn)
+  if (!nextFrame) {
+    console.error('requestAnimationFrame is not supported!')
+    return
+  }
+  return (targetCount = 50) => {
+    // 判断参数是否合规
+    if (targetCount < 1) throw new Error('targetCount cannot be less than 1.')
+    const beginDate = Date.now()
+    let count = 0
+    return new Promise(resolve => {
+      (function log() {
+        nextFrame(() => {
+          if (++count >= targetCount) {
+            const diffDate = Date.now() - beginDate
+            const fps = (count / diffDate) * 1000
+            return resolve(fps)
+          }
+          log()
+        })
+      })()
+    })
+  }
+})()
