@@ -42,17 +42,24 @@ let cut = false
 watch(() => music.state.songs.id, () => {
   cut = true
   index.value = 0
+  currentLyrLine.value = {time: 0, line: 1, text: '0'}
   yrcIndex = 0
 })
 
 function step() {
   // 没有播放，或不支持滚动歌词
-  if(!music.state.lyric.length || !window.$audio?.isPlay || music.state.lyric.notSupportedScroll) {
+  if(
+    !music.state.lyric.length
+    || !window.$audio?.isPlay
+    || music.state.lyric.notSupportedScroll
+    || cut
+    || index.value > music.state.lyric.length - 1)
+  {
     return
   }
 
-  const time = $audio ? parseFloat($audio.time.toFixed(2)) : 0
-  const oldTime = $audio ? parseFloat($audio.oldTime.toFixed(2)) : 0
+  const time = $audio ? parseFloat($audio.time.toFixed(3)) : 0
+  const oldTime = $audio ? parseFloat($audio.oldTime.toFixed(3)) : 0
 
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(time - oldTime) >= 1) {
@@ -65,9 +72,10 @@ function step() {
     return
   }
   if(time >= music.state.lyric[index.value].time) {
-    // currentLyrLine.value = music.state.lyric[index.value]
     moveLyric(music.state.lyric[index.value])
   }
+
+
 }
 
 // 高亮当前快进
@@ -78,14 +86,20 @@ function higWidth(index: number) {
     yrc[i].width = 100 + '%'
   }
 }
+// 24.184 <= time && 25.93 > 24.184
 function findLyric(time: number) {
+  console.log(time)
+  const len = music.state.lyric.length - 1
   const result = music.state.lyric.find((item, index) => {
+    if(index >= len) {
+      return music.state.lyric[len]
+    }
     return item.time <= time && music.state.lyric[index+1].time > time
   })
+  console.log('result',result)
   result && moveLyric(result)
 }
 function moveLyric(currentLyr: Lyric | Yrc) {
-  currentLyrLine.value = currentLyr
   const lastIndex = index.value
 
   // line 是从1开始的，所以就相当于++了
@@ -98,10 +112,6 @@ function runHig(index: number, lastIndex: number) {
   if(music.state.lrcMode !== 1) {
     return
   }
-  // yrcIndex = 0
-  setTimeout(() => {
-    clearWidth(lastIndex)
-  }, 10)
   alone(index)
 }
 
@@ -126,43 +136,49 @@ function alone(index: number) {
       return
     }
     const yrc = (music.state.lyric as Yrc[])[index].yrc
-    if(yrcIndex < yrc.length && yrcIndex >= 0) {
+    if(yrcIndex > yrc.length - 1 || yrcIndex < 0 || cut) {
+      // 5  6
+      // return
+      clearWidth(index)
+      // 如果切换了，则指向第一行
+      currentLyrLine.value = cut ? music.state.lyric[0] :music.state.lyric[index+1]
+      return
+    }
+    const current = yrc[yrcIndex]
+    let delayTime = 0
+    // 如果距离当前时间没有延迟
+    if(parseFloat($audio.time.toFixed(2)) - (current.cursor) <= 0) {
 
-      const current = yrc[yrcIndex]
-      let delayTime = 0
-      if(parseFloat($audio.time.toFixed(2)) - (current.cursor) <= 0) {
+    } else {
+      delayTime = (parseFloat($audio.time.toFixed(2)) - current.cursor) * 1000
+    }
+    const transition = current.transition * 1000 - delayTime
 
-      } else {
-        delayTime = (parseFloat($audio.time.toFixed(2)) - current.cursor) * 1000
-      }
-      const transition = current.transition * 1000 - delayTime
-
-      const pause = animation(transition, (elapsed, done) => {
-        const width = elapsed / transition * 100
-        current.width = width + '%'
-        if(done) {
-          if(width !== 100) {
-            console.error(`'结束但没过渡完成:',width,
+    const pause = animation(transition, (elapsed, done) => {
+      const width = elapsed / transition * 100
+      current.width = width + '%'
+      if(done) {
+        if(width !== 100) {
+          console.error(`'结束但没过渡完成:',width,
                 '时间:',${elapsed},${transition},
                 '目标:', ${yrc[yrcIndex]},
                 '索引:', ${yrc}
             `)
-          }
-          console.log(`
+        }
+        console.log(`
           '歌曲时间:', ${parseFloat($audio.time.toFixed(2))},
           '字的结束时间:', ${current.cursor + current.transition}
           '延迟时间:', ${parseFloat($audio.time.toFixed(2)) - (current.cursor + yrc[yrcIndex].transition)}
         `)
-          if(yrcIndex === yrc.length - 1) {
+        if(yrcIndex === yrc.length - 1) {
 
-          }
-          pause(true)
-          yrcIndex++
-          transitionYrc()
         }
-      })
+        pause(true)
+        yrcIndex++
+        transitionYrc()
+      }
+    })
 
-    }
   }
 }
 
@@ -218,7 +234,9 @@ function startMoveLyr() {
   requestAnimationFrame(startMoveLyr)
 }
 onMounted(() => {
-  initWatcher()
+  setTimeout(() => {
+    initWatcher()
+  }, 2000)
   correctHeight.value = document.body.clientHeight
 
   nextTick(() => {
@@ -230,6 +248,10 @@ onMounted(() => {
         //   val: false,
         // })
       }
+    })
+    $audio.el.addEventListener('canplay', () => {
+      cut = false
+      currentLyrLine.value = music.state.lyric[0]
     })
   })
   containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
