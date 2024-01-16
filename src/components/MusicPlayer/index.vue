@@ -7,6 +7,7 @@ import {GetMusicDetailData} from "@/api/musicList";
 import DetailLeft from "@/components/MusicPlayer/DetailLeft.vue";
 import DetailCenter from "@/components/MusicPlayer/DetailCenter.vue";
 import DetailRight from "@/components/MusicPlayer/DetailRight.vue";
+import {ListenerName, useListener} from '@/components/MusicPlayer/listener';
 
 const orderStatus = ['icon-xunhuan', 'icon-danquxunhuan', 'icon-suijibofang', 'icon-shunxubofang',]
 type userAudio = {
@@ -24,6 +25,7 @@ export interface MusicPlayerInstanceType {
   time: number
   oldTime: number
   transitionIsPlay: UnwrapRef<boolean>
+  addListener: (listener: ListenerName) => void
 }
 interface Props {
   src: string
@@ -40,7 +42,7 @@ const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
 const music = useMusicAction()
 const transitionIsPlay = ref(false)
-
+const { addListener } = useListener(audio)
 
 let originPlay: HTMLMediaElement["play"]
 let originPause: HTMLMediaElement["pause"]
@@ -118,6 +120,8 @@ const timeupdate = () => {
   music.state.currentTime = $audio.time
   timeState.model = ($audio.time / $audio.el.duration) * 100
 }
+addListener('handleTimeUpdate', timeupdate)
+
 
 const reset = (val: boolean) => {
   timeState.model = 0
@@ -143,6 +147,7 @@ const exposeObj = {
   play,
   pause,
   transitionIsPlay,
+  addListener,
 }
 Object.defineProperty(exposeObj, 'time', {
   get(): number {
@@ -164,7 +169,6 @@ defineExpose(exposeObj)
 <template>
   <div class="bottom-container">
     <audio
-      @timeupdate="timeupdate"
       @ended="end"
       ref="audio"
       class="plyr-audio"

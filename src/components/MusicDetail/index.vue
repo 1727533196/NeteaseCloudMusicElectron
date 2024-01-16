@@ -40,26 +40,25 @@ const setModelValue = computed({
 let cut = false
 // 切换歌曲时
 watch(() => music.state.songs.id, () => {
-  cut = true
   index.value = 0
   currentLyrLine.value = {time: 0, line: 1, text: '0'}
   yrcIndex = 0
 })
 
+let oldTime = 0
+function shouldSkipStep() {
+  return !music.state.lyric.length ||
+      !window.$audio?.isPlay ||
+      music.state.lyric.notSupportedScroll ||
+      index.value > music.state.lyric.length - 1;
+}
 function step() {
   // 没有播放，或不支持滚动歌词
-  if(
-    !music.state.lyric.length
-    || !window.$audio?.isPlay
-    || music.state.lyric.notSupportedScroll
-    || cut
-    || index.value > music.state.lyric.length - 1)
-  {
+  if(shouldSkipStep()) {
     return
   }
 
   const time = $audio ? parseFloat($audio.time.toFixed(3)) : 0
-  const oldTime = $audio ? parseFloat($audio.oldTime.toFixed(3)) : 0
 
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(time - oldTime) >= 1) {
@@ -69,13 +68,11 @@ function step() {
       findYrcIndex(index.value)
       higWidth(index.value)
     }
-    return
-  }
-  if(time >= music.state.lyric[index.value].time) {
+  } else if(time >= music.state.lyric[index.value].time) {
     moveLyric(music.state.lyric[index.value])
   }
 
-
+  oldTime = time;
 }
 
 // 高亮当前快进
@@ -88,15 +85,17 @@ function higWidth(index: number) {
 }
 // 24.184 <= time && 25.93 > 24.184
 function findLyric(time: number) {
-  console.log(time)
+  if(time < music.state.lyric[0].time) {
+    return
+  }
   const len = music.state.lyric.length - 1
   const result = music.state.lyric.find((item, index) => {
+
     if(index >= len) {
       return music.state.lyric[len]
     }
     return item.time <= time && music.state.lyric[index+1].time > time
   })
-  console.log('result',result)
   result && moveLyric(result)
 }
 function moveLyric(currentLyr: Lyric | Yrc) {
@@ -136,7 +135,7 @@ function alone(index: number) {
       return
     }
     const yrc = (music.state.lyric as Yrc[])[index].yrc
-    if(yrcIndex > yrc.length - 1 || yrcIndex < 0 || cut) {
+    if(yrcIndex > yrc.length - 1 || yrcIndex < 0) {
       // 5  6
       // return
       clearWidth(index)
@@ -155,6 +154,12 @@ function alone(index: number) {
     const transition = current.transition * 1000 - delayTime
 
     const pause = animation(transition, (elapsed, done) => {
+
+      // if(currentLyrLine.value.line - 1 !== index) {
+      //   pause(true)
+      //   return
+      // }
+
       const width = elapsed / transition * 100
       current.width = width + '%'
       if(done) {
@@ -200,7 +205,6 @@ function findYrcIndex(index: number) {
     return time > yrc[index - 1].cursor && time <= item.cursor
   })
 }
-
 const closeDetail = () => {
   setModelValue.value = false
 }
@@ -210,6 +214,7 @@ const lyricClick = (time: number) => {
   }
   $audio.el.currentTime = time
 }
+
 window.onresize = () => {
   correctHeight.value = document.body.clientHeight
   if(direction) {
@@ -217,26 +222,7 @@ window.onresize = () => {
     top.value = -correctHeight.value - 1
   }
 }
-
-function initWatcher() {
-  getScreenFps().then(fps => {
-    console.log('fps:',fps)
-    if(fps > 115) {
-      startMoveLyr()
-    } else {
-      console.log(111)
-      setInterval(step, 1)
-    }
-  })
-}
-function startMoveLyr() {
-  step()
-  requestAnimationFrame(startMoveLyr)
-}
 onMounted(() => {
-  setTimeout(() => {
-    initWatcher()
-  }, 2000)
   correctHeight.value = document.body.clientHeight
 
   nextTick(() => {
@@ -249,10 +235,7 @@ onMounted(() => {
         // })
       }
     })
-    $audio.el.addEventListener('canplay', () => {
-      cut = false
-      currentLyrLine.value = music.state.lyric[0]
-    })
+    $audio.addListener('handleTimeUpdate', step)
   })
   containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
     isTransition.value = true
@@ -277,8 +260,8 @@ onUnmounted(() => {
     <el-icon :size="45" @click="closeDetail" class="close np-drag"><ArrowDown /></el-icon>
     <div class="box" :style="{height: correctHeight +'px'}">
       <div
-        class="scroll-box"
-        :style="{height: correctHeight * 2 + 'px', top: top +'px',
+          class="scroll-box"
+          :style="{height: correctHeight * 2 + 'px', top: top +'px',
         transition: isTransition ? '0.5s' : 'none'}"
       >
         <FlowBg :bg="bg"/>
@@ -332,9 +315,6 @@ onUnmounted(() => {
     padding: 10px;
     font-size: 20px;
     cursor: pointer;
-    //border: 1px solid rgba(255, 255, 255, 0.1);
-    //background-color: rgba(255, 255, 255, 0.05);
-    //border-radius: 10px;
   }
   // 这里使用fixed是为了让高度固定, 如果参考container的高度,会导致在过渡过程中图片按比例缩放
   .music-detail-container {
@@ -342,18 +322,14 @@ onUnmounted(() => {
     height: 100%;
     width: 100%;
     transition: 1s;
-    //background-image: url("../../assets/../assets/defaultBg.png");
-    //background-color: @bgColor;
     .bgSetting();
   }
 }
 .container.open {
   transform: translateY(0) !important;
   visibility: visible;
-  //height: calc(100%) !important;
   .test {
     background-color: rgba(255, 255, 255, 0.05);
-    //background-color: rgba(0, 0, 0, 0.2);
   }
 }
 
