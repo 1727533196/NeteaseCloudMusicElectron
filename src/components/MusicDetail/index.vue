@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import {computed, nextTick, onMounted, ref, watch, onUnmounted} from "vue";
 import {Lyric, useMusicAction} from "@/store/music";
-import {animation, getScreenFps, Yrc} from "@/utils";
+import {Yrc} from "@/utils";
 import Comment from "@/components/MusicDetail/Comment.vue";
 import {useFlags} from "@/store/flags";
 import {useSettings} from "@/store/settings";
 import LyricDisplay from "./LyricDisplay.vue";
 import FlowBg from './FlowBg.vue'
+import gsap from 'gsap'
 
 interface Props {
   modelValue: boolean
@@ -24,7 +25,6 @@ const currentLyrLine = ref<Lyric | Yrc>({time: 0, line: 1, text: '0'})
 let direction = false
 let isTransition = ref(true)
 let yrcIndex = 0 // 当前字的索引
-let suspend = false // 歌曲运行时暂停的标识
 
 const bg = computed(() => {
   return music.state.songs.al?.picUrl
@@ -43,6 +43,7 @@ watch(() => music.state.songs.id, () => {
   index.value = 0
   currentLyrLine.value = {time: 0, line: 1, text: '0'}
   yrcIndex = 0
+  animation && animation.kill()
 })
 
 let oldTime = 0
@@ -62,7 +63,15 @@ function step() {
 
   // 当时间跨度大于等于一秒时，就代表快进了时间, 取绝对值，防止是倒退
   if(Math.abs(time - oldTime) >= 1) {
+    // 如果是逐字歌词的情况下
+    if(music.state.lrcMode === 1) {
+      // 清除当前行的动画资源 & 清除当前行
+      clearWidth(index.value - 1)
+      animation && animation.kill()
+    }
+
     findLyric(time)
+
     // 如果是逐字歌词的情况下
     if(music.state.lrcMode === 1) {
       findYrcIndex(index.value)
@@ -90,13 +99,15 @@ function findLyric(time: number) {
   }
   const len = music.state.lyric.length - 1
   const result = music.state.lyric.find((item, index) => {
-
     if(index >= len) {
       return music.state.lyric[len]
     }
     return item.time <= time && music.state.lyric[index+1].time > time
   })
-  result && moveLyric(result)
+  if(result) {
+    currentLyrLine.value = result
+    moveLyric(result)
+  }
 }
 function moveLyric(currentLyr: Lyric | Yrc) {
   const lastIndex = index.value
@@ -125,6 +136,7 @@ function clearWidth(lastIndex: number) {
     item.width = 0
   })
 }
+let animation = null
 function alone(index: number) {
   let yrcIndex = 0
 
@@ -153,37 +165,35 @@ function alone(index: number) {
     }
     const transition = current.transition * 1000 - delayTime
 
-    const pause = animation(transition, (elapsed, done) => {
+    animation = gsap.to(current, {
+      // 动画持续时间
+      duration: transition / 1000,
+      // 目标 width 值
+      width: '100%',
+      ease: "none", // 缓动效果
+      // 使用 onUpdate 回调来在每次更新时执行自定义逻辑
+      onUpdate: () => {
+        // 这里可以执行任何需要的操作，例如更新视图或状态
+        // 例如，你可能有一个响应式状态对象，你可以这样更新它的 width：
+        // currentLyrLine.value.width = current.width;
 
-      // if(currentLyrLine.value.line - 1 !== index) {
-      //   pause(true)
-      //   return
-      // }
-
-      const width = elapsed / transition * 100
-      current.width = width + '%'
-      if(done) {
-        if(width !== 100) {
-          console.error(`'结束但没过渡完成:',width,
-                '时间:',${elapsed},${transition},
-                '目标:', ${yrc[yrcIndex]},
-                '索引:', ${yrc}
-            `)
+        // 这里的 current.width 会随着动画的进行而更新
+        // console.log(current.width);
+        if(!$audio.transitionIsPlay && animation) {
+          animation.pause();
         }
-        console.log(`
-          '歌曲时间:', ${parseFloat($audio.time.toFixed(2))},
-          '字的结束时间:', ${current.cursor + current.transition}
-          '延迟时间:', ${parseFloat($audio.time.toFixed(2)) - (current.cursor + yrc[yrcIndex].transition)}
-        `)
-        if(yrcIndex === yrc.length - 1) {
-
-        }
-        pause(true)
+      },
+      onComplete: function() {
+    //     console.log(`
+    // //       '歌曲时间:', ${parseFloat($audio.time.toFixed(2))},
+    // //       '字的结束时间:', ${current.cursor + current.transition}
+    // //       '延迟时间:', ${parseFloat($audio.time.toFixed(2)) - (current.cursor + yrc[yrcIndex].transition)}
+    // //     `)
         yrcIndex++
+        // console.log(1111)
         transitionYrc()
-      }
+      },
     })
-
   }
 }
 
@@ -227,15 +237,20 @@ onMounted(() => {
 
   nextTick(() => {
     watch(() => $audio.isPlay, (value) => {
-      if(value && suspend) {
-        suspend = false
-        // worker.postMessage({
-        //   pause: true,
-        //   val: false,
-        // })
+      if(value) {
+        animation && animation.resume()
       }
     })
     $audio.addListener('handleTimeUpdate', step)
+    $audio.addListener('cutSong', () => {
+      if(animation) {
+        animation.kill()
+        animation = null
+      }
+      index.value = 0
+      currentLyrLine.value = {time: 0, line: 1, text: '0'}
+      yrcIndex = 0
+    })
   })
   containerEl.value && containerEl.value.addEventListener('wheel', (event: WheelEvent) => {
     isTransition.value = true

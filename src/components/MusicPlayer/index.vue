@@ -42,7 +42,7 @@ const audio = ref<userAudio>()
 const plan = ref<InstanceType<typeof CurrentTime>>() // 进度条组件实例
 const music = useMusicAction()
 const transitionIsPlay = ref(false)
-const { addListener } = useListener(audio)
+const { addListener, executeListener, pauseSomethingListener } = useListener(audio)
 
 let originPlay: HTMLMediaElement["play"]
 let originPause: HTMLMediaElement["pause"]
@@ -122,7 +122,6 @@ const timeupdate = () => {
 }
 addListener('handleTimeUpdate', timeupdate)
 
-
 const reset = (val: boolean) => {
   timeState.model = 0
   timeState.currentTime = 0
@@ -137,6 +136,11 @@ const end = () => {
 }
 const setOrderHandler = () => {
   orderStatusVal.value = (orderStatusVal.value + 1 >= orderStatus.length ? 0 : orderStatusVal.value + 1) as typeof orderStatusVal.value
+}
+const cutSong = (val) => {
+  emit('cutSong', val)
+  executeListener('cutSong')
+  pauseSomethingListener('handleTimeUpdate')
 }
 
 const exposeObj = {
@@ -181,7 +185,7 @@ defineExpose(exposeObj)
         :orderStatusVal="orderStatusVal"
         @play="play"
         @pause="pause"
-        @cutSong="(val) => emit('cutSong', val)"
+        @cutSong="cutSong"
         @setOrderHandler="setOrderHandler"
     />
     <DetailRight

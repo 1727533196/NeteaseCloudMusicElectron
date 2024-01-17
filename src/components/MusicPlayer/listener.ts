@@ -2,7 +2,7 @@ import {onMounted} from 'vue';
 import {getScreenFps} from '@/utils';
 
 
-export type ListenerName = 'changeSong' | 'handleFirstLoad' | 'handleTimeUpdate'
+export type ListenerName = 'changeSong' | 'handleFirstLoad' | 'handleTimeUpdate' | 'cutSong'
 
 export const useListener = (audio: any) => {
   let fps = null
@@ -35,8 +35,9 @@ export const useListener = (audio: any) => {
 
   onMounted(() => {
     console.log(audio.value)
-    // 每次资源切换时执行，可以监听歌曲切换，不在使用watch
+    // 歌曲资源切换完成时
     audio.value?.addEventListener('loadeddata', () => {
+      playSomethingListener('handleTimeUpdate')
       console.log('歌曲切换')
       executeListener('changeSong')
     })
@@ -56,10 +57,18 @@ export const useListener = (audio: any) => {
     changeSong: [], // 歌曲切换
     handleFirstLoad: [], //  首次设置src，进行初始化操作
     handleTimeUpdate: [], // timeupdate
+    cutSong: [],
+  }
+  const tempListener = {
+    changeSong: [], // 歌曲切换
+    handleFirstLoad: [], //  首次设置src，进行初始化操作
+    handleTimeUpdate: [], // timeupdate
+    cutSong: [],
   }
 
   const addListener = (listener: ListenerName, cb) => {
     listenerObj[listener].push(cb)
+    tempListener[listener].push(cb)
   }
   const executeListener = (listener: ListenerName) => {
     const len = listenerObj[listener].length
@@ -70,8 +79,18 @@ export const useListener = (audio: any) => {
       listenerObj[listener][i]()
     }
   }
+  const pauseSomethingListener = (listener: ListenerName) => {
+    tempListener[listener] = listenerObj[listener]
+    listenerObj[listener] = []
+  }
+  const playSomethingListener = (listener: ListenerName) => {
+    listenerObj[listener] = tempListener[listener] || []
+  }
 
   return {
-    addListener
+    addListener,
+    executeListener,
+    pauseSomethingListener,
+    playSomethingListener,
   }
 }
