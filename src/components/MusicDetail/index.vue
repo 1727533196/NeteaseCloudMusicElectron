@@ -21,7 +21,7 @@ const containerEl = ref<HTMLDivElement>()
 const top = ref<number>(0)
 const correctHeight = ref<number>(0)
 const index = ref(0)
-const currentLyrLine = ref<Lyric | Yrc>({time: 0, line: 1, text: '0'})
+const currentLyrLine = ref<Lyric | Yrc>({time: 0, line: 1, text: ''})
 let direction = false
 let isTransition = ref(true)
 let yrcIndex = 0 // 当前字的索引
@@ -41,7 +41,7 @@ let cut = false
 // 切换歌曲时
 watch(() => music.state.songs.id, () => {
   index.value = 0
-  currentLyrLine.value = {time: 0, line: 1, text: '0'}
+  currentLyrLine.value = {time: 0, line: 1, text: ''}
   yrcIndex = 0
   animation && animation.kill()
 })
@@ -115,13 +115,14 @@ function moveLyric(currentLyr: Lyric | Yrc) {
   // line 是从1开始的，所以就相当于++了
   index.value = currentLyr.line
 
+  if(music.state.lrcMode !== 1) {
+    currentLyrLine.value = currentLyr
+    return
+  }
   runHig(index.value - 1, lastIndex - 1)
 }
 // 逐字歌词的过渡
 function runHig(index: number, lastIndex: number) {
-  if(music.state.lrcMode !== 1) {
-    return
-  }
   alone(index)
 }
 
@@ -248,7 +249,7 @@ onMounted(() => {
         animation = null
       }
       index.value = 0
-      currentLyrLine.value = {time: 0, line: 1, text: '0'}
+      currentLyrLine.value = {time: 0, line: 1, text: ''}
       yrcIndex = 0
     })
   })

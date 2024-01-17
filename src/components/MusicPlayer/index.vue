@@ -26,6 +26,7 @@ export interface MusicPlayerInstanceType {
   oldTime: number
   transitionIsPlay: UnwrapRef<boolean>
   addListener: (listener: ListenerName) => void
+  cutSongHandler: () => void
 }
 interface Props {
   src: string
@@ -137,8 +138,9 @@ const end = () => {
 const setOrderHandler = () => {
   orderStatusVal.value = (orderStatusVal.value + 1 >= orderStatus.length ? 0 : orderStatusVal.value + 1) as typeof orderStatusVal.value
 }
-const cutSong = (val) => {
-  emit('cutSong', val)
+
+// 执行切换事件，随后暂停time监听器，等待歌曲加载完成后会打开
+const cutSongHandler = () => {
   executeListener('cutSong')
   pauseSomethingListener('handleTimeUpdate')
 }
@@ -152,6 +154,7 @@ const exposeObj = {
   pause,
   transitionIsPlay,
   addListener,
+  cutSongHandler,
 }
 Object.defineProperty(exposeObj, 'time', {
   get(): number {
@@ -185,7 +188,7 @@ defineExpose(exposeObj)
         :orderStatusVal="orderStatusVal"
         @play="play"
         @pause="pause"
-        @cutSong="cutSong"
+        @cutSong="(val) => emit('cutSong', val)"
         @setOrderHandler="setOrderHandler"
     />
     <DetailRight

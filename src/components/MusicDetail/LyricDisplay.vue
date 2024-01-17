@@ -111,7 +111,8 @@ defineExpose({
                     class="transition"
                     :style="{
                   background: `linear-gradient(to right, #fff ${yrcItem.width}, rgba(255, 255, 255, 0.3) 0%)`,
-                  '-webkit-background-clip': 'text'
+                  '-webkit-background-clip': 'text',
+                  'white-space': 'pre',
                 }"
                 >{{yrcItem.text}}</span>
               </div>
@@ -135,7 +136,7 @@ defineExpose({
                   @mouseenter="mouseenter($event, item)"
                   @mouseleave="mouseleave"
                   @click="$emit('lyricClick', item.time)"
-                  :class="['hover-item', 'lyric-item', {'current-lyric-item': currentLyrLine.line === item.line, 'current-lyric-line-item': currentLyrLine.line === item.line}]"
+                  :class="['hover-item', 'lyric-item', {'current-lyric-item': currentLyrLine.line === item.line, 'current-lyric-line-item': currentLyrLine.text.length && currentLyrLine.line === item.line}]"
               >{{item.text}}</div>
               <div
                   :class="['empty-lyric',{'current-lyric-item': currentLyrLine.line === item.line}]"
@@ -184,9 +185,8 @@ defineExpose({
       border-radius: 5px;
       overflow: auto;
       mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-      //box-shadow: 0 5px 15px 5px rgba(0,0,0,0.05);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
       position: relative;
-      //scroll-behavior: smooth; // 111
       .not-supported-scroll {
         transform: translateX(-50%);
         position: absolute;
@@ -239,9 +239,6 @@ defineExpose({
         }
         .empty-lyric {
           height: 41px;
-        }
-        .lyric-item.current-lyric-item {
-          //font-size: 18px;
         }
         .lyric-item.current-lyric-line-item {
           color: white;
