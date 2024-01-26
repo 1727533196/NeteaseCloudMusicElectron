@@ -3,6 +3,7 @@ import {colorExtraction, gradualChange, useRhythm} from '@/components/MusicDetai
 import {onMounted, watch} from 'vue';
 import {findBestColors, toggleImg} from '@/utils';
 import {useMusicAction} from '@/store/music';
+import ShaderToy from '@/components/ShaderToy/ShaderToy.vue';
 
 interface Props {
   bg: string
@@ -12,17 +13,17 @@ const props = defineProps<Props>()
 const music = useMusicAction()
 
 onMounted(() => {
-  const rhythmBox = document.querySelector('#rhythm-box') as HTMLDivElement
-  const {splitImg} = useRhythm(rhythmBox)
+  // const rhythmBox = document.querySelector('#rhythm-box') as HTMLDivElement
+  // const {splitImg} = useRhythm(rhythmBox)
 
   // 图片切换时，更新流动背景
   watch(() => props.bg, (val) => {
     toggleImg(val).then(img => {
       const rgb = colorExtraction(img)
       const bestColors = findBestColors(rgb, 2)
-      gradualChange(img, bestColors);
+      // gradualChange(img, bestColors);
       music.updateBgColor(bestColors)
-      splitImg(img)
+      // splitImg(img)
     })
   })
 })
@@ -32,9 +33,10 @@ onMounted(() => {
 
 <template>
   <div>
-    <div id="gradual1"/>
-    <div id="gradual2"/>
-    <div id="rhythm-box"/>
+    <ShaderToy/>
+<!--    <div id="gradual1"/>-->
+<!--    <div id="gradual2"/>-->
+<!--    <div id="rhythm-box"/>-->
   </div>
 </template>
 

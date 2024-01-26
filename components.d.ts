@@ -34,6 +34,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Search: typeof import('./src/components/Search/index.vue')['default']
+    ShaderToy: typeof import('./src/components/ShaderToy/ShaderToy.vue')['default']
     SongInfo: typeof import('./src/components/SongInfo/index.vue')['default']
     SongList: typeof import('./src/components/SongList/index.vue')['default']
     TabPane: typeof import('./src/components/Tabs/TabPane.vue')['default']

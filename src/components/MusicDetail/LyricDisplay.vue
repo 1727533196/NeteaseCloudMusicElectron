@@ -81,9 +81,11 @@ defineExpose({
 </script>
 
 <template>
-  <div :style="{'backdrop-filter': isBlur ? 'blur(15px)' : 'none' }" class="shadow">
+  <div :style="{'backdrop-filter': isBlur ? 'blur(0px)' : 'none' }" class="shadow">
     <div class="lyric-and-bg-container">
-      <div :style="{transform: props.lyric.length ? '' : 'translateX(0)'}" class="bg-img"></div>
+      <div :style="{transform: props.lyric.length ? '' : 'translateX(0)'}" class="bg-img">
+
+      </div>
       <div
           ref="lyrEl"
           @wheel.stop="wheelHandler"
@@ -157,13 +159,13 @@ defineExpose({
 
 <style scoped lang="less">
 .shadow {
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(8px);
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0,0,0,0.2);
   .lyric-and-bg-container {
     display: flex;
     margin-top: 17vh;
